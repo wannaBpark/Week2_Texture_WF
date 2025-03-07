@@ -3,42 +3,69 @@
 #include <utility>
 #include <vector>
 
-#include "Core/HAL/PlatformType.h"
+#include "ContainerAllocator.h"
 
 
-template <typename T>
-class TArray : protected std::vector<T>
+template <typename T, typename Allocator>
+class TArray
 {
 public:
-    // Iterator를 사용하기 위함
-    using std::vector<T>::begin;
-    using std::vector<T>::end;
-    using std::vector<T>::rbegin;
-    using std::vector<T>::rend;
-    using std::vector<T>::operator[];
+    using SizeType = typename Allocator::SizeType;
+
+private:
+    std::vector<T, Allocator> PrivateVector;
 
 public:
-    void Init(const T& Element, size_t Number);
+    // Iterator를 사용하기 위함
+    auto begin() noexcept { return PrivateVector.begin(); }
+    auto end() noexcept { return PrivateVector.end(); }
+    auto begin() const noexcept { return PrivateVector.begin(); }
+    auto end() const noexcept { return PrivateVector.end(); }
+    auto rbegin() noexcept { return PrivateVector.rbegin(); }
+    auto rend() noexcept { return PrivateVector.rend(); }
+    auto rbegin() const noexcept { return PrivateVector.rbegin(); }
+    auto rend() const noexcept { return PrivateVector.rend(); }
+
+    T& operator[](SizeType Index);
+    const T& operator[](SizeType Index) const;
+
+public:
+    TArray();
+    ~TArray() = default;
+
+    // 복사 생성자
+    TArray(const TArray& Other);
+
+    // 이동 생성자
+    TArray(TArray&& Other) noexcept;
+
+    // 복사 할당 연산자
+    TArray& operator=(const TArray& Other);
+
+    // 이동 할당 연산자
+    TArray& operator=(TArray&& Other) noexcept;
+
+    void Init(const T& Element, SizeType Number);
     void Add(const T& Item);
     void AddUnique(const T& Item);
     void Emplace(T&& Item);
     void Empty();
-    int32 Remove(const T& Item);
+    SizeType Remove(const T& Item);
     bool RemoveSingle(const T& Item);
-    void RemoveAt(int32 Index);
+    void RemoveAt(SizeType Index);
     template <typename Predicate>
         requires std::is_invocable_r_v<bool, Predicate, const T&>
-    int32 RemoveAll(const Predicate& Pred);
+    SizeType RemoveAll(const Predicate& Pred);
     T* GetData();
 
-    int32 Find(const T& Item);
-    bool Find(const T& Item, int32& Index);
+    SizeType Find(const T& Item);
+    bool Find(const T& Item, SizeType& Index);
 
     /** Size */
-    size_t Num() const;
+    SizeType Num() const;
 
     /** Capacity */
-    size_t Len() const;
+    SizeType Len() const;
 
     void Sort();
     template <typename Compare>
@@ -46,120 +73,170 @@ public:
     void Sort(const Compare& CompFn);
 };
 
-template <typename T>
-void TArray<T>::Init(const T& Element, size_t Number)
+
+template <typename T, typename Allocator>
+T& TArray<T, Allocator>::operator[](SizeType Index)
 {
-    this->assign(Number, Element);
+    return PrivateVector[Index];
 }
 
-template <typename T>
-void TArray<T>::Add(const T& Item)
+template <typename T, typename Allocator>
+const T& TArray<T, Allocator>::operator[](SizeType Index) const
 {
-    this->push_back(Item);
+    return PrivateVector[Index];
 }
 
-template <typename T>
-void TArray<T>::AddUnique(const T& Item)
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(): PrivateVector()
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(const TArray& Other): PrivateVector(Other.PrivateVector)
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(TArray&& Other) noexcept: PrivateVector(std::move(Other.PrivateVector))
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>& TArray<T, Allocator>::operator=(const TArray& Other)
+{
+    if (this != &Other)
+    {
+        PrivateVector = Other.PrivateVector;
+    }
+    return *this;
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>& TArray<T, Allocator>::operator=(TArray&& Other) noexcept
+{
+    if (this != &Other)
+    {
+        PrivateVector = std::move(Other.PrivateVector);
+    }
+    return *this;
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Init(const T& Element, SizeType Number)
+{
+    PrivateVector.assign(Number, Element);
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Add(const T& Item)
+{
+    PrivateVector.push_back(Item);
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::AddUnique(const T& Item)
 {
     if (Find(Item) == -1)
     {
-        this->push_back(Item);
+        PrivateVector.push_back(Item);
     }
 }
 
-template <typename T>
-void TArray<T>::Emplace(T&& Item)
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Emplace(T&& Item)
 {
-    this->emplace_back(std::move(Item));
+    PrivateVector.emplace_back(std::move(Item));
 }
 
-template <typename T>
-void TArray<T>::Empty()
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Empty()
 {
-    this->clear();
+    PrivateVector.clear();
 }
 
-template <typename T>
-int32 TArray<T>::Remove(const T& Item)
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Remove(const T& Item)
 {
-    auto oldSize = this->size();
-    this->erase(std::remove(this->begin(), this->end(), Item), this->end());
-    return static_cast<int32>(oldSize - this->size());
+    auto oldSize = PrivateVector.size();
+    PrivateVector.erase(std::remove(PrivateVector.begin(), PrivateVector.end(), Item), PrivateVector.end());
+    return static_cast<SizeType>(oldSize - PrivateVector.size());
 }
 
-template <typename T>
-bool TArray<T>::RemoveSingle(const T& Item)
+template <typename T, typename Allocator>
+bool TArray<T, Allocator>::RemoveSingle(const T& Item)
 {
-    auto it = std::find(this->begin(), this->end(), Item);
-    if (it != this->end())
+    auto it = std::find(PrivateVector.begin(), PrivateVector.end(), Item);
+    if (it != PrivateVector.end())
     {
-        this->erase(it);
+        PrivateVector.erase(it);
         return true;
     }
     return false;
 }
 
-template <typename T>
-void TArray<T>::RemoveAt(int32 Index)
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::RemoveAt(SizeType Index)
 {
-    if (Index >= 0 && static_cast<size_t>(Index) < this->size())
+    if (Index >= 0 && static_cast<SizeType>(Index) < PrivateVector.size())
     {
-        this->erase(this->begin() + Index);
+        PrivateVector.erase(PrivateVector.begin() + Index);
     }
 }
 
-template <typename T>
+template <typename T, typename Allocator>
 template <typename Predicate>
     requires std::is_invocable_r_v<bool, Predicate, const T&>
-int32 TArray<T>::RemoveAll(const Predicate& Pred)
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::RemoveAll(const Predicate& Pred)
 {
-    auto oldSize = this->size();
-    this->erase(std::remove_if(this->begin(), this->end(), Pred), this->end());
-    return static_cast<int32>(oldSize - this->size());
+    auto oldSize = PrivateVector.size();
+    PrivateVector.erase(std::remove_if(PrivateVector.begin(), PrivateVector.end(), Pred), PrivateVector.end());
+    return static_cast<SizeType>(oldSize - PrivateVector.size());
 }
 
-template <typename T>
-T* TArray<T>::GetData()
+template <typename T, typename Allocator>
+T* TArray<T, Allocator>::GetData()
 {
-    return this->data();
+    return PrivateVector.data();
 }
 
-template <typename T>
-int32 TArray<T>::Find(const T& Item)
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Find(const T& Item)
 {
-    const auto it = std::find(this->begin(), this->end(), Item);
-    return it != this->end() ? std::distance(this->begin(), it) : -1;
+    const auto it = std::find(PrivateVector.begin(), PrivateVector.end(), Item);
+    return it != PrivateVector.end() ? std::distance(PrivateVector.begin(), it) : -1;
 }
 
-template <typename T>
-bool TArray<T>::Find(const T& Item, int32& Index)
+template <typename T, typename Allocator>
+bool TArray<T, Allocator>::Find(const T& Item, SizeType& Index)
 {
     Index = Find(Item);
     return (Index != -1);
 }
 
-template <typename T>
-size_t TArray<T>::Num() const
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Num() const
 {
-    return this->size();
+    return PrivateVector.size();
 }
 
-template <typename T>
-size_t TArray<T>::Len() const
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Len() const
 {
-    return this->capacity();
+    return PrivateVector.capacity();
 }
 
-template <typename T>
-void TArray<T>::Sort()
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Sort()
 {
-    std::sort(this->begin(), this->end());
+    std::sort(PrivateVector.begin(), PrivateVector.end());
 }
 
-template <typename T>
+template <typename T, typename Allocator>
 template <typename Compare>
     requires std::is_invocable_r_v<bool, Compare, const T&, const T&>
-void TArray<T>::Sort(const Compare& CompFn)
+void TArray<T, Allocator>::Sort(const Compare& CompFn)
 {
-    std::sort(this->begin(), this->end(), CompFn);
+    std::sort(PrivateVector.begin(), PrivateVector.end(), CompFn);
 }
+
+template <typename T, typename Allocator = FDefaultAllocator<T>> class TArray;
