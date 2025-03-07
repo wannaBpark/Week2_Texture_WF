@@ -29,6 +29,7 @@ template <typename Derived>
 TSingleton<Derived>::~TSingleton()
 {
     delete Instance;
+    Instance = nullptr;
 }
 
 template <typename Derived>
