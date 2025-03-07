@@ -180,6 +180,7 @@
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h" />
     <ClInclude Include="Source\Core\Container\Array.h" />
     <ClInclude Include="Source\Core\Container\ContainerAllocator.h" />
+    <ClInclude Include="Source\Core\CoreTypes.h" />
     <ClInclude Include="Source\Core\HAL\PlatfromMemory.h" />
     <ClInclude Include="Source\Core\HAL\PlatformType.h" />
     <ClInclude Include="Source\Core\Math\Vector.h" />
