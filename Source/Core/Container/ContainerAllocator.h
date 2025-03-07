@@ -63,12 +63,26 @@ public:
     //~ std::allocator_traits 관련 타입
 
 public:
-    T* allocate(size_type n);
-    void deallocate(T* p, size_type n) noexcept;
+
+    constexpr TContainerAllocator() noexcept = default;
+
+    constexpr TContainerAllocator(const TContainerAllocator&) noexcept = default;
+    constexpr TContainerAllocator& operator=(const TContainerAllocator&) = default;
+    constexpr TContainerAllocator(TContainerAllocator&&) noexcept = default;
+    constexpr TContainerAllocator& operator=(TContainerAllocator&&) noexcept = default;
+
+    template <class U>
+    constexpr TContainerAllocator(const TContainerAllocator<U, IndexSize>&) noexcept {}
+
+    constexpr ~TContainerAllocator() = default;
+
+public:
+    constexpr T* allocate(size_type n) noexcept;
+    constexpr void deallocate(T* p, size_type n) noexcept;
 };
 
 template <typename T, int IndexSize>
-T* TContainerAllocator<T, IndexSize>::allocate(size_type n)
+constexpr T* TContainerAllocator<T, IndexSize>::allocate(size_type n) noexcept
 {
     const size_t AllocSize = sizeof(T) * n;
     FPlatformMemory::IncrementStats(AllocSize);
@@ -76,7 +90,7 @@ T* TContainerAllocator<T, IndexSize>::allocate(size_type n)
 }
 
 template <typename T, int IndexSize>
-void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
+constexpr void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
 {
     FPlatformMemory::DecrementStats(sizeof(T) * n);
     std::free(p);
