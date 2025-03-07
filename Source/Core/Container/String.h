@@ -7,7 +7,7 @@
 class FString
 {
 private:
-    using BaseStringType = TCHAR;
+    using BaseStringType = ANSICHAR;
     std::basic_string<
         BaseStringType,
         std::char_traits<BaseStringType>,
