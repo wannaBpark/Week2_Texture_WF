@@ -4,6 +4,8 @@
 Binaries/
 Intermediate/
 
+*.vcxproj.user
+
 
 # Prerequisites
 *.d
