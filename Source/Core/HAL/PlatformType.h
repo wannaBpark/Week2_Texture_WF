@@ -16,4 +16,4 @@ typedef std::int64_t int64;
 
 typedef char ANSICHAR;
 typedef wchar_t WIDECHAR;
-typedef ANSICHAR TCHAR;
+// typedef ANSICHAR TCHAR;

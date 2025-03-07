@@ -4,11 +4,8 @@
 #include "UI.h"
 #include "Core/Math/Vector.h"
 
-struct FVertexSimple
-{
-    float x, y, z;    // Position
-    float r, g, b, a; // Color
-};
+
+struct FVertexSimple;
 
 class URenderer
 {
