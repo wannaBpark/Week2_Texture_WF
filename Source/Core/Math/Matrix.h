@@ -289,9 +289,9 @@ struct alignas(16) FMatrix
 	{
 		// based on row major
 		FMatrix Result;
-		Result.M[0][3] = Y; 
-		Result.M[1][3] = Z; 
-		Result.M[2][3] = X; 
+		Result.M[0][3] = X; 
+		Result.M[1][3] = Y; 
+		Result.M[2][3] = Z; 
 		return Result;
 	}
 
