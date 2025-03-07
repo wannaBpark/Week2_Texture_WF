@@ -31,6 +31,7 @@ public:
 
 public:
     TArray();
+    ~TArray() = default;
 
     // 복사 생성자
     TArray(const TArray& Other);
