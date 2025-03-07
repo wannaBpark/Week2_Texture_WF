@@ -16,40 +16,67 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{50a9e080-34df-4606-9a48-8971588416a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{47ad5a93-77b1-4fbb-862f-546180cab204}</UniqueIdentifier>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{520e6fb1-ad3d-48b3-8097-9fdb465a118c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\ImGui">
+      <UniqueIdentifier>{5c324ea0-cc9c-4378-9b6b-de8746d77e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{878dbbcf-9535-47c2-ae8d-f09e84b296de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\SimpleJSON">
+      <UniqueIdentifier>{0e6e0a0c-8ce4-4b5b-bcd4-1263867a9eb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\AbstractClass">
+      <UniqueIdentifier>{0c2598a2-7dc5-49b6-bbe7-12ce3fe37390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Container">
+      <UniqueIdentifier>{5d941c13-1350-43de-8532-ea51cab7f129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Math">
+      <UniqueIdentifier>{5a006500-5942-49ab-a70e-7ae1b1a717a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Memory">
+      <UniqueIdentifier>{fd3c02dd-9620-4393-9bc1-cf1c52c3509c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{1e7481c0-06a3-43b9-bb36-b5db75cb77d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Memory">
+      <UniqueIdentifier>{f681a64e-0f55-4659-9e70-96dd8472aa59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_demo.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_draw.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_impl_dx11.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_dx11.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_win32.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_tables.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_tables.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_widgets.cpp">
-      <Filter>ImGui</Filter>
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_widgets.cpp">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Math\Vector.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Core\Memory\MemoryAllocInfo.cpp">
+      <Filter>Source Files\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Memory\MemoryAllocInfo.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Core\Math\Vector.cpp">
+      <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,44 +85,44 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_dx11.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_win32.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui_internal.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_win32.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imstb_rectpack.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_internal.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imstb_textedit.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_rectpack.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imstb_truetype.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_textedit.h">
+      <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Container\Array.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.h">
+      <Filter>ThirdParty\SimpleJSON</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Math\Vector.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\Container\Array.h">
+      <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\SimpleJSON\Json.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\Memory\MemoryAllocInfo.h">
+      <Filter>Header Files\Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Core\AbstractClass\Singleton.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
+      <Filter>Header Files\Core\AbstractClass</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Memory\MemoryAllocInfo.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\Math\Vector.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
