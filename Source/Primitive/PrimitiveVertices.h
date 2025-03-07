@@ -8,6 +8,7 @@ struct FVertexSimple
 
 enum class EPrimitiveType : uint8
 {
+	EPT_None,
 	EPT_Triangle,
 	EPT_Cube,
 	EPT_Sphere,

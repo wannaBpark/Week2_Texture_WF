@@ -1,5 +1,7 @@
 ﻿#include "Engine.h"
 #include <iostream>
+#include <Object/FObjectFactory.h>
+#include <Object/USceneComponent.h>
 
 // ImGui WndProc 정의
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -62,6 +64,10 @@ void UEngine::Run()
 
     LARGE_INTEGER StartTime;
     QueryPerformanceCounter(&StartTime);
+
+    // TEST
+	std::shared_ptr<USceneComponent> component = FObjectFactory::ConstructObject<USceneComponent>();
+    component.reset();
 
 
     IsRunning = true;

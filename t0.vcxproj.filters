@@ -93,7 +93,7 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\HAL\PlatfromMemory.cpp">
+    <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp">
       <Filter>Source Files\Core\HAL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\Container\String.cpp">
@@ -112,6 +112,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\UObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\USceneComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\FObjectFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\BufferCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -166,7 +181,7 @@
     <ClInclude Include="Source\Core\Math\Matrix.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\HAL\PlatfromMemory.h">
+    <ClInclude Include="Source\Core\HAL\PlatformMemory.h">
       <Filter>Header Files\Core\HAL</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Container\ContainerAllocator.h">
@@ -197,6 +212,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\UObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\USceneComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\FObjectFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\BufferCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

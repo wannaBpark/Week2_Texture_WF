@@ -42,6 +42,8 @@ public:
      */
     void Shutdown();
 
+	URenderer* GetRenderer() const { return Renderer.get(); }
+
 #ifdef _DEBUG
     void OpenDebugConsole() const;
     void CloseDebugConsole() const;
