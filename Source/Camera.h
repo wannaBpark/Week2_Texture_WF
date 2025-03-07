@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Core/AbstractClass/Singleton.h"
+#include "Core/HAL/PlatformType.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Vector.h"
 
 namespace ECameraProjectionMode
 {
-    enum Type : int
+    enum Type : uint8
     {
         Perspective,
         Orthographic

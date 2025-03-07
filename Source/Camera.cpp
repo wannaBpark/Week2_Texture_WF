@@ -33,22 +33,22 @@ void Camera::UpdateData()
 
 
     Right = FVector(
-            cosY * cosZ,              // X
-            sinX * sinY * cosZ + cosX * sinZ,  // Y
-            -cosX * sinY * cosZ + sinX * sinZ // Z
-        );
+        cosY * cosZ,                      // X
+        sinX * sinY * cosZ + cosX * sinZ, // Y
+        -cosX * sinY * cosZ + sinX * sinZ // Z
+    );
 
     Up = FVector(
-                cosY * -sinZ,            // X
-                sinX * sinY * -sinZ + cosX * cosZ, // Y
-                -cosX * sinY * -sinZ + sinX * cosZ // Z
-            );
+        cosY * -sinZ,                      // X
+        sinX * sinY * -sinZ + cosX * cosZ, // Y
+        -cosX * sinY * -sinZ + sinX * cosZ // Z
+    );
 
     Forward = FVector(
-                sinY, // X
-                -sinX * cosY,  // Y
-                cosX * cosY    // Z
-            );
+        sinY,         // X
+        -sinX * cosY, // Y
+        cosX * cosY   // Z
+    );
 }
 
 FMatrix Camera::GetViewMatrix() const
