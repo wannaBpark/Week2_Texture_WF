@@ -47,6 +47,7 @@ void UEngine::Initialize(
     ScreenHeight = InScreenHeight;
 
     InitWindow(InScreenWidth, InScreenWidth);
+    InitRenderer();
 }
 
 void UEngine::Run()
@@ -94,6 +95,15 @@ void UEngine::Run()
 
         // TODO: Object Update Logic
 
+		// Renderer Update
+        Renderer->Prepare();
+        Renderer->PrepareShader();
+
+
+		// ui Update
+        ui.Update();
+
+        Renderer->SwapBuffer();
 
         // FPS 제한
         double ElapsedTime;
@@ -164,6 +174,17 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
     OpenDebugConsole();
 }
 
+void UEngine::InitRenderer()
+{
+	// 렌더러 초기화
+	Renderer = std::make_unique<URenderer>();
+	Renderer->Create(WindowHandle);
+	Renderer->CreateShader();
+	Renderer->CreateConstantBuffer();
+
+	ui.Initialize(WindowHandle, *Renderer);
+}
+
 void UEngine::ShutdownWindow()
 {
     CloseDebugConsole();
@@ -173,4 +194,6 @@ void UEngine::ShutdownWindow()
 
     UnregisterClassW(WindowClassName, WindowInstance);
     WindowInstance = nullptr;
+
+	ui.Shutdown();
 }

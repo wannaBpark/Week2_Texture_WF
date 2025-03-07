@@ -1,4 +1,4 @@
-#include "UI.h"
+﻿#include "UI.h"
 
 #include <Windows.h>
 
@@ -8,7 +8,7 @@
 #include "ImGui/imgui_impl_win32.h"
 
 
-void UI::Initialize(HWND hWnd, URenderer Renderer)
+void UI::Initialize(HWND hWnd, const URenderer& Renderer)
 {
     // ImGui 초기화
     IMGUI_CHECKVERSION();
