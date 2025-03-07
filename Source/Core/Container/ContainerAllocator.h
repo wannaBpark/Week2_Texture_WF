@@ -70,7 +70,6 @@ public:
 template <typename T, int IndexSize>
 T* TContainerAllocator<T, IndexSize>::allocate(size_type n)
 {
-    std::cout << "FContainerAllocator<T, IndexSize>::allocate() " << static_cast<uint64>(n) << "bytes\n";
     const size_t AllocSize = sizeof(T) * n;
     FPlatformMemory::IncrementStats(AllocSize);
     return static_cast<T*>(std::malloc(AllocSize));
@@ -79,7 +78,6 @@ T* TContainerAllocator<T, IndexSize>::allocate(size_type n)
 template <typename T, int IndexSize>
 void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
 {
-    std::cout << "FContainerAllocator<T, IndexSize>::deallocate() " << static_cast<uint64>(n) << " bytes\n";
     FPlatformMemory::DecrementStats(sizeof(T) * n);
     std::free(p);
 }
