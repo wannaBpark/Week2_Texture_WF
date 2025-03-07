@@ -163,6 +163,7 @@
     <ClCompile Include="Source\Core\Container\String.cpp" />
     <ClCompile Include="Source\Core\EngineStatics.cpp" />
     <ClCompile Include="Source\Core\HAL\PlatfromMemory.cpp" />
+    <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -187,6 +188,9 @@
     <ClInclude Include="Source\Core\EngineStatics.h" />
     <ClInclude Include="Source\Core\HAL\PlatfromMemory.h" />
     <ClInclude Include="Source\Core\HAL\PlatformType.h" />
+    <ClInclude Include="Source\Core\Math\MathUtility.h" />
+    <ClInclude Include="Source\Core\Math\Matrix.h" />
+    <ClInclude Include="Source\Core\Math\Plane.h" />
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
