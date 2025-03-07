@@ -2957,7 +2957,7 @@ public:
 	void HandleBallCollision(UBall& OtherBall)
 	{
 		// 충돌 법선 벡터와 상대속도 계산
-		const FVector Normal = (OtherBall.Location - Location).Normalize();
+		const FVector Normal = (OtherBall.Location - Location).GetSafeNormal();
 		const FVector RelativeVelocity = OtherBall.Velocity - Velocity;
 
 		const float VelocityAlongNormal = FVector::DotProduct(RelativeVelocity, Normal);
@@ -2979,7 +2979,7 @@ public:
 		FVector Tangent = RelativeVelocity - Normal * VelocityAlongNormal;
 		if (Tangent.LengthSquared() > 0.0001f)  // 탄젠트의 길이가 매우 작으면 건너뛰기
 		{
-			Tangent = Tangent.Normalize();
+			Tangent = Tangent.GetSafeNormal();
 
 			// 탄젠트 충격량 계산
 			float JT = -FVector::DotProduct(RelativeVelocity, Tangent);  // 접선 방향 상대 속도에 기반한 충격량 크기
