@@ -37,14 +37,26 @@
     <Filter Include="Header Files\Core\Math">
       <UniqueIdentifier>{5a006500-5942-49ab-a70e-7ae1b1a717a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core\Memory">
+    <Filter Include="Header Files\Core\HAL">
       <UniqueIdentifier>{fd3c02dd-9620-4393-9bc1-cf1c52c3509c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Math">
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{28f62626-1cd3-483a-90c1-e9e897911ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Math">
       <UniqueIdentifier>{1e7481c0-06a3-43b9-bb36-b5db75cb77d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Memory">
+    <Filter Include="Source Files\Core\HAL">
       <UniqueIdentifier>{f681a64e-0f55-4659-9e70-96dd8472aa59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Container">
+      <UniqueIdentifier>{390684ae-d47a-4ba3-a189-df3e3fe29296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Rendering">
+      <UniqueIdentifier>{2c0bda6b-2a6d-413b-be19-c9a2e38066a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Rendering">
+      <UniqueIdentifier>{56b6436b-bf4c-494b-a04c-07350d7ca313}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,16 +85,25 @@
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\Math\Vector.cpp">
-      <Filter>Source Files\Math</Filter>
+      <Filter>Source Files\Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\EngineStatics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Math\Matrix.cpp">
+      <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\HAL\PlatfromMemory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Core\HAL</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UI.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Core\Container\String.cpp">
+      <Filter>Source Files\Core\Container</Filter>
     </ClCompile>
-    <ClCompile Include="Source\URenderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Core\Rendering\UI.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\URenderer.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,23 +148,38 @@
     <ClInclude Include="Source\Core\Math\Vector.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Container\ContainerAllocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\CoreTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\HAL\PlatfromMemory.h">
+    <ClInclude Include="Source\Core\EngineStatics.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Matrix.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\HAL\PlatfromMemory.h">
+      <Filter>Header Files\Core\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Container\ContainerAllocator.h">
+      <Filter>Header Files\Core\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Container\String.h">
+      <Filter>Header Files\Core\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Plane.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Core\HAL</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UI.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\Math\MathUtility.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\URenderer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Core\Rendering\UI.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\URenderer.h">
+      <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
