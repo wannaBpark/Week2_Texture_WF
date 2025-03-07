@@ -30,7 +30,19 @@ public:
     const T& operator[](SizeType Index) const;
 
 public:
-    TArray() : PrivateVector() {}
+    TArray();
+
+    // 복사 생성자
+    TArray(const TArray& Other);
+
+    // 이동 생성자
+    TArray(TArray&& Other) noexcept;
+
+    // 복사 할당 연산자
+    TArray& operator=(const TArray& Other);
+
+    // 이동 할당 연산자
+    TArray& operator=(TArray&& Other) noexcept;
 
     void Init(const T& Element, SizeType Number);
     void Add(const T& Item);
@@ -71,6 +83,41 @@ template <typename T, typename Allocator>
 const T& TArray<T, Allocator>::operator[](SizeType Index) const
 {
     return PrivateVector[Index];
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(): PrivateVector()
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(const TArray& Other): PrivateVector(Other.PrivateVector)
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(TArray&& Other) noexcept: PrivateVector(std::move(Other.PrivateVector))
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>& TArray<T, Allocator>::operator=(const TArray& Other)
+{
+    if (this != &Other)
+    {
+        PrivateVector = Other.PrivateVector;
+    }
+    return *this;
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>& TArray<T, Allocator>::operator=(TArray&& Other) noexcept
+{
+    if (this != &Other)
+    {
+        PrivateVector = std::move(Other.PrivateVector);
+    }
+    return *this;
 }
 
 template <typename T, typename Allocator>
