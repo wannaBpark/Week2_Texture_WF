@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include "Camera.h"
+#include "Core/HAL/PlatfromMemory.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -33,7 +34,11 @@ void UI::Update()
     {
         ImGui::Text("Hello, Jungle World!");
         ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
-        ImGui::Text("Memory: what");
+        ImGui::Text(
+            "Memory Uses: %llubyte, Count: %llu",
+            FPlatformMemory::GetTotalAllocationBytes(),
+            FPlatformMemory::GetTotalAllocationCount()
+        );
         
         ImGui::Separator();
         
@@ -87,9 +92,7 @@ void UI::Update()
         }
 
         
-        if (ImGui::InputFloat("FOV", &camera.FieldOfView, 0))
-        {
-        }
+        ImGui::InputFloat("FOV", &camera.FieldOfView, 0);
 
         float NearFar[2] = {camera.Near, camera.Far};
         if (ImGui::InputFloat2("Near, Far", NearFar))
