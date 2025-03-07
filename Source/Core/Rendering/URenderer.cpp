@@ -1,4 +1,5 @@
 #include "URenderer.h"
+#include "Primitive/PrimitiveVertices.h"
 #include <d3dcompiler.h>
 
 void URenderer::Create(HWND hWindow)
