@@ -8,5 +8,10 @@ public:
 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
+
+	bool CanEverTick() const { return bCanEverTick; }
+
+protected:
+	bool bCanEverTick = true;
 };
 

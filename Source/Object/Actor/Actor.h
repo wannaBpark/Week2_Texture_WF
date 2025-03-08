@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Object/UObject.h"
-#include "Object/USceneComponent.h"
+#include "Object/ActorComponent/ActorComponent.h"
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
@@ -22,7 +22,7 @@ public:
 
 public:
 	template<typename T>
-		requires std::derived_from<T, USceneComponent>
+		requires std::derived_from<T, UActorComponent>
 	T* AddComponent()
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
@@ -33,7 +33,7 @@ public:
 
 	// delete
 	template<typename T>
-		requires std::derived_from<T, USceneComponent>
+		requires std::derived_from<T, UActorComponent>
 	void RemoveComponent(T* Object)
 	{
 		Components.Remove(Object);
@@ -44,7 +44,7 @@ public:
 
 protected:
 	bool bCanEverTick = true;
-	TSet<USceneComponent*> Components;
+	TSet<UActorComponent*> Components;
 	FTransform Transform;
 	UWorld* World = nullptr;
 };

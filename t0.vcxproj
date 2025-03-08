@@ -163,8 +163,6 @@
   <ItemGroup>
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
     <ClCompile Include="Source\Debug\DebugConsole.cpp" />
-    <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
-    <ClCompile Include="Source\Debug\DebugConsole.cpp" />
     <ClCompile Include="Source\Object\Actor\Actor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="main.cpp" />
@@ -197,11 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
-    <ClInclude Include="Source\Debug\DebugConsole.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Container\Map.h" />
     <ClInclude Include="Source\Core\Container\Pair.h" />
-    <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Debug\DebugConsole.h" />
     <ClInclude Include="Source\Core\Container\Set.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
