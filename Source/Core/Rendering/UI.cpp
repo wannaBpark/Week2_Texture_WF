@@ -3,8 +3,8 @@
 #include <algorithm>
 
 #include "Camera.h"
-#include "Core/HAL/PlatformMemory.h"
 #include "URenderer.h"
+#include "Core/HAL/PlatformMemory.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -26,6 +26,10 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer)
     // ImGui Backend 초기화
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX11_Init(Renderer.GetDevice(), Renderer.GetDeviceContext());
+
+    AActor* actor = FObjectFactory::ConstructActor<AActor>();
+    actor->AddComponent<USphereComp>();
+    selectedActor = actor;
 }
 
 void UI::Update()
@@ -108,9 +112,7 @@ void UI::Update()
         ImGui::Separator();
 
         ImGui::Text("Camera");
-        
-        FCamera& camera = FCamera::Get();
-
+    
         FCamera& Camera = FCamera::Get();
 
         bool IsOrthogonal;
@@ -196,23 +198,24 @@ void UI::Update()
     {
         if (ImGui::Begin("Jungle Property Window"))
         {
-            // FTransform& selectedTransform = selectedActor->GetTransform();
-            // //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
-            // float position[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
-            //  float rotation[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
-            //  float scale[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
-            // if (ImGui::InputFloat3("Translation", position))
-            // {
-            //     selectedTransform.SetPosition(position[0], position[1], position[2]);
-            // }
-            // if (ImGui::InputFloat3("Rotation", rotation))
-            // {
-            //     selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
-            // }
-            // if (ImGui::InputFloat3("Scale", scale))
-            // {
-            //     selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-            // }
+            //FTransform selectedTransform = FTransform();
+            FTransform& selectedTransform = selectedActor->GetTransform();
+            //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
+            float position[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
+             float rotation[] = {selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z};
+             float scale[] = {selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z};
+            if (ImGui::DragFloat3("Translation", position, 0.1f))
+            {
+                selectedTransform.SetPosition(position[0], position[1], position[2]);
+            }
+            if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+            {
+                selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+            }
+            if (ImGui::DragFloat3("Scale", scale, 0.1f))
+            {
+                selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+            }
         }
         ImGui::End();
     }

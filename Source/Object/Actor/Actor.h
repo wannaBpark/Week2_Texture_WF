@@ -11,7 +11,7 @@ class AActor : public UObject
 {
 public:
 	AActor() = default;
-	virtual ~AActor() = default;
+	virtual ~AActor();
 
 public:
 	virtual void BeginPlay();
@@ -26,6 +26,7 @@ public:
 	T* AddComponent()
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
+		ObjectInstance->Initialize(&Transform);
 		Components.Add(ObjectInstance);
 
 		return ObjectInstance;

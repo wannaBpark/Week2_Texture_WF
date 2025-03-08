@@ -6,20 +6,23 @@
 
 class USceneComponent : public UActorComponent
 {
+	friend class AActor;
 	using Super = UActorComponent;
 public:
 	USceneComponent() = default;
 	virtual ~USceneComponent() = default;
 
-public:	
+public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 
-	FTransform& GetTransform() { return Transform; }
+	FTransform& GetTransform() const { return *Transform; }
 	bool CanEverTick() const { return bCanEverTick; }
-
 protected:
-	FTransform Transform;
+	FTransform* Transform;
 	bool bCanEverTick = true;
+
+private:
+	void Initialize(FTransform* Transform) { this->Transform = Transform;}
 };
