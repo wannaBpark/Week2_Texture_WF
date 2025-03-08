@@ -1,7 +1,5 @@
 ﻿#include "UI.h"
 
-#include <Windows.h>
-
 #include "Camera.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "ImGui/imgui.h"

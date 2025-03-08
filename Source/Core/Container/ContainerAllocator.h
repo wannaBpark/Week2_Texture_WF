@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "Core/HAL/PlatformType.h"
-#include "Core/HAL/PlatfromMemory.h"
+#include "Core/HAL/PlatformMemory.h"
 
 
 struct FPlatformMemory;
