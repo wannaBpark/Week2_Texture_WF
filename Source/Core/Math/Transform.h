@@ -2,6 +2,8 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+#define TORAD 0.0174532925199432957f
+
 struct FTransform
 {
 private:
@@ -49,4 +51,22 @@ public:
 			* FMatrix::Scale(Scale.X, Scale.Y, Scale.Z);
 	}
 
+	FVector GetForward() const
+	{
+		return FVector(
+			std::cos(Rotation.Z * TORAD) * std::cos(Rotation.Y * TORAD),
+			std::sin(Rotation.Y * TORAD),
+			std::sin(Rotation.Z * TORAD) * std::cos(Rotation.Y * TORAD)
+		).GetSafeNormal();
+	}
+
+	FVector GetRight() const
+	{
+		return FVector::CrossProduct(GetForward(), FVector(0, 1, 0));
+	}
+
+	FVector GetUp() const
+	{
+		return FVector::CrossProduct(GetRight(), GetForward());
+	}
 };

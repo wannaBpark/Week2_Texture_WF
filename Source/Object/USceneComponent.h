@@ -10,7 +10,9 @@ public:
 	virtual void Tick(float DeltaTime);
 
 	FTransform& GetTransform() { return Transform; }
+	bool CanEverTick() const { return bCanEverTick; }
 
 protected:
 	FTransform Transform;
+	bool bCanEverTick = false;
 };
