@@ -350,16 +350,16 @@ void URenderer::InitMatrix()
 	ProjectionMatrix = FMatrix::Identity();
 }
 
-void URenderer::UpdateViewMatrix(const FCamera& Camera)
+void URenderer::UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransform)
 {
-    ViewMatrix = Camera.GetViewMatrix();
+    ViewMatrix = CameraTransform.GetViewMatrix();
 }
 
 void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
 {
-    float AspectRatio = UEngine::Get().GetScreenRatio();
+    float AspectRatio = 1.f;
 
-    float FOV = Camera.GetFieldOfView();
+    float FOV = FMath::DegreesToRadians(Camera.GetFieldOfView());
     float Near = Camera.GetNear();
     float Far = Camera.GetFar();
 

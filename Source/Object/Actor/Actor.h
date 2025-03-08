@@ -6,7 +6,6 @@
 #include "Object/ObjectFactory.h"
 
 class UWorld;
-class FObjectFactory;
 
 class AActor : public UObject
 {
@@ -47,6 +46,6 @@ protected:
 	bool bCanEverTick = true;
 	TSet<USceneComponent*> Components;
 	FTransform Transform;
-	UWorld* World;
+	UWorld* World = nullptr;
 };
 

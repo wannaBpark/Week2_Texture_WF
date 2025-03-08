@@ -7,7 +7,12 @@ class URenderer;
 class UI
 {
 public:
-    void Initialize(HWND hWnd, const URenderer& Renderer);
+    int currentItem = 0;
+    int NumOfSpawn = 0;
+    
+    void Initialize(HWND hWnd, const class URenderer& Renderer);
     void Update();
     void Shutdown();
+
+    bool bIsConsoleOpen = true;
 };

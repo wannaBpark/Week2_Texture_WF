@@ -370,12 +370,12 @@ struct alignas(16) FMatrix
 	}
 
 	/// <summary>
-	/// �� ��ȯ ����� �����մϴ�.
+	/// 뷰 변환 행렬을 생성합니다.
 	/// </summary>
-	/// <param name="EyePosition">ī�޶��� �������Դϴ�.</param>
-	/// <param name="FocusPoint">ī�޶� �ٶ󺸴� ���� �������Դϴ�.</param>
-	/// <param name="UpDirection">ī�޶��� ���� �����Դϴ�.</param>
-	/// <returns>�� ��ȯ ����� ��ȯ�մϴ�.</returns>
+	/// <param name="EyePosition">카메라의 포지션입니다.</param>
+	/// <param name="FocusPoint">카메라가 바라보는 곳의 포지션입니다.</param>
+	/// <param name="UpDirection">카메라의 위쪽 방향입니다.</param>
+	/// <returns>뷰 변환 행렬을 반환합니다.</returns>
 	static FMatrix LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp)
 	{
 		FVector Forward = (FocusPoint - EyePosition).GetSafeNormal();
