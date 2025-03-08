@@ -142,7 +142,6 @@ void URenderer::PrepareShader() const
 
 void URenderer::RenderPrimitive(EPrimitiveType PrimitiveType) const
 {
-    // !TODO : 버퍼캐시 가져오기
     if (BufferCache == nullptr)
     {
         return;

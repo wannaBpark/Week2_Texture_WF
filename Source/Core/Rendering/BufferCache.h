@@ -25,7 +25,6 @@ class FBufferCache
 {
 private:
 	std::unordered_map <EPrimitiveType, BufferInfo> Cache;
-	std::unordered_map <EPrimitiveType, int> BufferSize;
 
 public:
 	FBufferCache();
