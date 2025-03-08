@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Core/HAL/PlatformMemory.h"
+#include "URenderer.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -74,7 +75,7 @@ void UI::Update()
 
         ImGui::Text("Camera");
         
-        Camera& camera = Camera::Get();
+        FCamera& camera = FCamera::Get();
         
         bool IsOrthogonal;
         if (ImGui::Checkbox("Orthogonal", &IsOrthogonal))

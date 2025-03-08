@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/HAL/PlatformType.h"
@@ -14,7 +14,7 @@ namespace ECameraProjectionMode
     };
 }
 
-class Camera : public TSingleton<Camera>
+class FCamera : public TSingleton<FCamera>
 {
 private:
     // Rotation - Quaternion vs Vector3
@@ -40,7 +40,7 @@ public:
 
 
 public:
-    Camera();
+    FCamera();
 	
     void SetRotation(float x, float y, float z);
 
@@ -50,4 +50,6 @@ public:
     FMatrix GetViewMatrix() const;
 
     FVector GetRotation() const;
+
+    void OnUpdateCamera();
 };
