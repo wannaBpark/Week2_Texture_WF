@@ -186,10 +186,10 @@ void UI::Update()
         ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
         ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
         ImGui::Text("Camera Right: (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
-
-        ImGui::End();
+    
     }
-
+        ImGui::End();
+    
     bool IsSelectedObjectExist = true;
     // Test -> SelectedObject를 직접 가져오면 됨.
     if (IsSelectedObjectExist)
@@ -213,8 +213,8 @@ void UI::Update()
             // {
             //     selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             // }
-            ImGui::End();
         }
+        ImGui::End();
     }
 
     //if (ImGui::Begin("Console Window"))
@@ -240,8 +240,8 @@ void UI::Update()
     //    {
     //    
     //    }
-    //    ImGui::End();
     //}
+    //    ImGui::End();
     Debug::ShowConsole(&bIsConsoleOpen);
     
     // ImGui 렌더링
