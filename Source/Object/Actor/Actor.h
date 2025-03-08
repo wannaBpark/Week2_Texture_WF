@@ -46,6 +46,6 @@ protected:
 	bool bCanEverTick = true;
 	TSet<USceneComponent*> Components;
 	FTransform Transform;
-	UWorld* World;
+	UWorld* World = nullptr;
 };
 
