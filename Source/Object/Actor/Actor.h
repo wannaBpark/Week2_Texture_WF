@@ -10,6 +10,10 @@
 class AActor : public UObject
 {
 public:
+	AActor() = default;
+	virtual ~AActor() = default;
+
+public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 
@@ -18,10 +22,11 @@ public:
 		requires std::derived_from<T, USceneComponent>
 	T* AddComponent()
 	{
-		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
-		Components.Add(ObjectInstance);
+		//T* ObjectInstance = FObjectFactory::ConstructObject<T>();
+		//Components.Add(ObjectInstance);
 
-		return ObjectInstance;
+		//return ObjectInstance;
+		return nullptr;
 	}
 
 	// delete

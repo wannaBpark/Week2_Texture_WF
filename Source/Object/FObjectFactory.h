@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <memory>
 #include "UObject.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Core/Engine.h"
