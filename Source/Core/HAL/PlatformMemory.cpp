@@ -4,32 +4,32 @@
 std::atomic<uint64> FPlatformMemory::TotalAllocationBytes = 0;
 std::atomic<uint64> FPlatformMemory::TotalAllocationCount = 0;
 
-void FPlatformMemory::IncrementStats(size_t Size)
-{
-    // TotalAllocationBytes += Size;
-    // ++TotalAllocationCount;
 
-    // 멀티스레드 대비
-    TotalAllocationBytes.fetch_add(Size, std::memory_order_relaxed);
-    TotalAllocationCount.fetch_add(1, std::memory_order_relaxed);
+void* FPlatformMemory::Malloc(size_t Size)
+{
+    void* Ptr = std::malloc(Size);
+    if (Ptr)
+    {
+        IncrementStats(Size);
+    }
+    return Ptr;
 }
 
-void FPlatformMemory::DecrementStats(size_t Size)
+void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
 {
-    // TotalAllocationBytes -= Size;
-    // --TotalAllocationCount;
-
-    // 멀티스레드 대비
-    TotalAllocationBytes.fetch_sub(Size, std::memory_order_relaxed);
-    TotalAllocationCount.fetch_sub(1, std::memory_order_relaxed);
+    void* Ptr = _aligned_malloc(Size, Alignment);
+    if (Ptr)
+    {
+        IncrementStats(Size);
+    }
+    return Ptr;
 }
 
-uint64 FPlatformMemory::GetTotalAllocationBytes()
+void FPlatformMemory::Free(void* Address, size_t Size)
 {
-    return TotalAllocationBytes;
-}
-
-uint64 FPlatformMemory::GetTotalAllocationCount()
-{
-    return TotalAllocationCount;
+    if (Address)
+    {
+        DecrementStats(Size);
+        std::free(Address);
+    }
 }
