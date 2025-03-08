@@ -2,6 +2,7 @@
 #include "Object/UObject.h"
 #include "Object/USceneComponent.h"
 #include "Object/FObjectFactory.h"
+#include "Core/Math/Transform.h"
 #include <memory>
 #include <unordered_set>
 
@@ -35,8 +36,12 @@ public:
 	}
 
 
+	FTransform& GetTransform() { return Transform; }
+	bool CanEverTick() const { return bCanEverTick; }
+
 protected:
 	bool bCanEverTick = false;
 	std::unordered_set<std::shared_ptr<USceneComponent>> Components;
+	FTransform Transform;
 };
 

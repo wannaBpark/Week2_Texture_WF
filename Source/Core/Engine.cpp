@@ -106,6 +106,11 @@ void UEngine::Run()
         Renderer->Prepare();
         Renderer->PrepareShader();
 
+		// World Update
+		if (World)
+		{
+			World->Tick(DeltaTime);
+		}
 
 		// ui Update
         ui.Update();
@@ -190,6 +195,15 @@ void UEngine::InitRenderer()
 	Renderer->CreateConstantBuffer();
 
 	ui.Initialize(WindowHandle, *Renderer);
+}
+
+void UEngine::InitWorld()
+{
+    World = FObjectFactory::ConstructObject<UWorld>();
+
+	// !TODO : Load World
+
+	World->BeginPlay();
 }
 
 void UEngine::ShutdownWindow()

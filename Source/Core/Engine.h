@@ -9,6 +9,7 @@
 #include "Rendering/URenderer.h"
 #include "Rendering/UI.h"
 #include "AbstractClass/Singleton.h"
+#include "Object/World/World.h"
 
 enum class EScreenMode : uint8
 {
@@ -55,6 +56,7 @@ public:
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();
+    void InitWorld();
     void ShutdownWindow();
 
 private:
@@ -74,4 +76,7 @@ private:
 
 private:
 	UI ui;
+
+private:
+    std::shared_ptr<UWorld> World;
 };

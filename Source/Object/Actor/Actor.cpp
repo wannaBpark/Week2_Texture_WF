@@ -1,4 +1,4 @@
-﻿#include "AActor.h"
+﻿#include "Actor.h"
 
 void AActor::BeginPlay()
 {
@@ -12,6 +12,9 @@ void AActor::Tick(float DeltaTime)
 {
 	for (auto& Component : Components)
 	{
-		Component->Tick(DeltaTime);
+		if (Component->CanEverTick())
+		{
+			Component->Tick(DeltaTime);
+		}
 	}
 }

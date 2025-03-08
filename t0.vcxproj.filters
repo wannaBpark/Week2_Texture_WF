@@ -132,7 +132,10 @@
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Actor\AActor.cpp">
+    <ClCompile Include="Source\Object\Actor\Actor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\World\World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -238,7 +241,13 @@
     <ClInclude Include="Source\Core\Rendering\BufferCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Actor\AActor.h">
+    <ClInclude Include="Source\Object\Actor\Actor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\World\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

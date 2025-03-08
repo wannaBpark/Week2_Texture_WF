@@ -161,7 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Object\Actor\AActor.cpp" />
+    <ClCompile Include="Source\Object\Actor\Actor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="Source\Object\FObjectFactory.cpp" />
     <ClCompile Include="main.cpp" />
@@ -183,6 +183,7 @@
     <ClCompile Include="Source\Object\UObject.cpp" />
     <ClCompile Include="Source\Object\USceneComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
+    <ClCompile Include="Source\Object\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -191,7 +192,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Object\Actor\AActor.h" />
+    <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Object\FObjectFactory.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Source\Object\UObject.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
+    <ClInclude Include="Source\Object\World\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

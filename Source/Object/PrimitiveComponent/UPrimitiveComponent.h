@@ -9,23 +9,10 @@ class UPrimitiveComponent : public USceneComponent
 {
 	using Super = USceneComponent;
 public:
-	virtual void Tick(float DeltaTime) override
-	{
-		Super::Tick(DeltaTime);
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void Render();
 
-		Render();
-	}
-
-	virtual void Render()
-	{
-		URenderer* Renderer = UEngine::Get().GetRenderer();
-		if (Renderer == nullptr || !bCanBeRendered)
-		{
-			return;
-		}
-
-		Renderer->RenderPrimitive(PrimitiveType);
-	}
 
 protected:
 	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_None;
@@ -35,10 +22,6 @@ protected:
 class UCubeComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
-	virtual void Render() override
-	{
-		Super::Render();
-	}
 
 protected:
 	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_Cube;
@@ -47,10 +30,6 @@ protected:
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
-	virtual void Render() override
-	{
-		Super::Render();
-	}
 
 protected:
 	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_Sphere;
