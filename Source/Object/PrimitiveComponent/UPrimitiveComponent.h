@@ -1,8 +1,9 @@
 ﻿#pragma once
 
+#include "Core/Engine.h"
 #include "Object/USceneComponent.h"
 #include "Primitive/PrimitiveVertices.h"
-#include "Core/Engine.h"
+
 
 class UPrimitiveComponent : public USceneComponent
 {

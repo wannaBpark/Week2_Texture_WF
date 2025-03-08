@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <memory>
 
-#include "AbstractClass/Singleton.h"
 #include "HAL/PlatformType.h"
 #include "Rendering/URenderer.h"
-#include <memory>
+#include "AbstractClass/Singleton.h"
 
 enum class EScreenMode : uint8
 {
