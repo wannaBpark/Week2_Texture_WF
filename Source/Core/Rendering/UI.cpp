@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "Camera.h"
-#include "Core/HAL/PlatfromMemory.h"
+#include "Core/HAL/PlatformMemory.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"

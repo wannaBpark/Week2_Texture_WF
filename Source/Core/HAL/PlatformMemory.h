@@ -22,7 +22,11 @@ private:
     template <typename T, int IndexSize>
     friend struct TContainerAllocator;
 
+    friend class FObjectFactory;
+
 public:
     static uint64 GetTotalAllocationBytes();
     static uint64 GetTotalAllocationCount();
+
+
 };

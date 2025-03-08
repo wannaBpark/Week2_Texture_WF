@@ -1,4 +1,4 @@
-﻿#include "PlatfromMemory.h"
+﻿#include "PlatformMemory.h"
 
 
 std::atomic<uint64> FPlatformMemory::TotalAllocationBytes = 0;

@@ -1,8 +1,11 @@
-#pragma once
+﻿#pragma once
 #include <d3d11.h>
 
 #include "UI.h"
 #include "Core/Math/Vector.h"
+#include "Primitive/PrimitiveVertices.h"
+#include <memory>
+#include "Core/Rendering/BufferCache.h"
 
 
 struct FVertexSimple;
@@ -40,12 +43,14 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
+	void RenderPrimitive(EPrimitiveType PrimitiveType) const;
+
     /**
      * Buffer에 있는 Vertex를 그립니다.
      * @param pBuffer 렌더링에 사용할 버텍스 버퍼에 대한 포인터
      * @param numVertices 버텍스 버퍼에 저장된 버텍스의 총 개수
      */
-    void RenderPrimitive(ID3D11Buffer* pBuffer, UINT numVertices) const;
+    void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const;
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
@@ -85,6 +90,8 @@ protected:
     /** 레스터라이저 상태를 해제합니다. */
     void ReleaseRasterizerState();
 
+    void CreateBufferCache();
+
 protected:
     // Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
     ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
@@ -105,4 +112,6 @@ protected:
     ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
+
+	std::unique_ptr<FBufferCache> BufferCache;
 };
