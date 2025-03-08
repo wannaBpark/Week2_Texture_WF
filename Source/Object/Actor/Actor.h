@@ -6,7 +6,6 @@
 #include "Object/FObjectFactory.h"
 
 class UWorld;
-class FObjectFactory;
 
 class AActor : public UObject
 {

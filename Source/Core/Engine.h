@@ -49,11 +49,6 @@ public:
 	class URenderer* GetRenderer() const { return Renderer.get(); }
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
 
-#ifdef _DEBUG
-    void OpenDebugConsole() const;
-    void CloseDebugConsole() const;
-#endif
-
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();

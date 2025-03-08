@@ -4,6 +4,7 @@
 #include "Object/FObjectFactory.h"
 #include "Object/USceneComponent.h"
 #include "Object/World/World.h"
+#include "Debug/DebugConsole.h"
 
 // ImGui WndProc 정의
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -53,6 +54,8 @@ void UEngine::Initialize(
     InitWindow(InScreenWidth, InScreenWidth);
     InitWorld();
     InitRenderer();
+
+	UE_LOG("Engine Initialized!");
 }
 
 void UEngine::Run()
@@ -130,23 +133,6 @@ void UEngine::Shutdown()
     ShutdownWindow();
 }
 
-#ifdef _DEBUG
-void UEngine::OpenDebugConsole() const
-{
-    AllocConsole(); // 콘솔 창 생성
-
-    // 표준 출력 및 입력을 콘솔과 연결
-    freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
-    freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
-
-    std::cout << "Debug Console Opened!" << '\n';
-}
-
-void UEngine::CloseDebugConsole() const
-{
-    FreeConsole(); // 콘솔 창 닫기
-}
-#endif
 
 void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 {
@@ -176,8 +162,6 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
     ShowWindow(WindowHandle, SW_SHOW);
     SetForegroundWindow(WindowHandle);
     SetFocus(WindowHandle);
-
-    OpenDebugConsole();
 }
 
 void UEngine::InitRenderer()
@@ -202,8 +186,6 @@ void UEngine::InitWorld()
 
 void UEngine::ShutdownWindow()
 {
-    CloseDebugConsole();
-
     DestroyWindow(WindowHandle);
     WindowHandle = nullptr;
 

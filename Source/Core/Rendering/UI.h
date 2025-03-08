@@ -10,4 +10,6 @@ public:
     void Initialize(HWND hWnd, const URenderer& Renderer);
     void Update();
     void Shutdown();
+
+    bool bIsConsoleOpen = true;
 };

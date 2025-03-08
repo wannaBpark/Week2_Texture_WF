@@ -11,7 +11,7 @@
 #include "Object/Actor/Actor.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/FObjectFactory.h"
-
+#include "Debug/DebugConsole.h"
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
 {
@@ -130,12 +130,14 @@ void UI::Update()
         if (ImGui::InputFloat3("Camera Location", CameraLocation))
         {
             camera.SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
+			UE_LOG("Camera Location: (%.2f %.2f %.2f)", CameraLocation[0], CameraLocation[1], CameraLocation[2]);
         }
 
         float CameraRotation[] = {camera.GetRotation().X, camera.GetRotation().Y, camera.GetRotation().Z};
         if (ImGui::InputFloat3("Camera Rotation", CameraRotation))
         {
             camera.SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+			UE_LOG("Camera Rotation: (%.2f %.2f %.2f)", CameraRotation[0], CameraRotation[1], CameraRotation[2]);
         }
 
         FVector Forward = camera.GetForward();
@@ -158,31 +160,32 @@ void UI::Update()
         ImGui::End();
     }
 
-    if (ImGui::Begin("Console Window"))
-    {
-        ImGui::Text("completion (TAB Key), history (Up/Down).");
-        if (ImGui::Button("Add Debug Text"))
-        {
-        
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Add Debug Error"))
-        {
-        
-        }
+    //if (ImGui::Begin("Console Window"))
+    //{
+    //    ImGui::Text("completion (TAB Key), history (Up/Down).");
+    //    if (ImGui::Button("Add Debug Text"))
+    //    {
+    //    
+    //    }
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Add Debug Error"))
+    //    {
+    //    
+    //    }
 
-        ImGui::SameLine();
-        if (ImGui::Button("Clear"))
-        {
-        
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Copy"))
-        {
-        
-        }
-        ImGui::End();
-    }
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Clear"))
+    //    {
+    //    
+    //    }
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Copy"))
+    //    {
+    //    
+    //    }
+    //    // ImGui 렌더링
+    //    ImGui::End();
+    //}
 
     //test
   //  if (ImGui::Button("Create Sphere Actor"))
@@ -192,7 +195,9 @@ void UI::Update()
 		//Actor->AddComponent<UCubeComp>();
   //  }
   //  
-    // ImGui 렌더링
+    Debug::ShowConsole(&bIsConsoleOpen);
+
+
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

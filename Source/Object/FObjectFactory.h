@@ -2,6 +2,8 @@
 #include "UObject.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Core/Engine.h"
+#include "Debug/DebugConsole.h"
+#include "Object/Actor/Actor.h"
 
 class FObjectFactory
 {
@@ -29,7 +31,7 @@ public:
 		requires std::derived_from<T, AActor>
 	static T* ConstructActor()
 	{
-		auto Actor = ConstructObject<T>();
+		T* Actor = ConstructObject<T>();
 		UWorld* World = UEngine::Get().GetWorld();
 
 		if (World == nullptr)
@@ -40,8 +42,9 @@ public:
 		Actor->SetWorld(UEngine::Get().GetWorld());
 
 		World->AddActor(Actor);
+
+		//UE_LOG("Actor Created"));
 		return Actor;
 	}
-
 };
 
