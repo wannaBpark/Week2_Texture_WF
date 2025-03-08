@@ -4,6 +4,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
+#include "Object/USceneComponent.h"
 
 class UWorld;
 
@@ -11,7 +12,7 @@ class AActor : public UObject
 {
 public:
 	AActor() = default;
-	virtual ~AActor();
+	virtual ~AActor() = default;
 
 public:
 	virtual void BeginPlay();
@@ -26,7 +27,10 @@ public:
 	T* AddComponent()
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
-		ObjectInstance->Initialize(&Transform);
+		if (auto* comp = dynamic_cast<USceneComponent*>(ObjectInstance))
+		{
+			ObjectInstance->SetParent(&Transform);
+		}
 		Components.Add(ObjectInstance);
 
 		return ObjectInstance;

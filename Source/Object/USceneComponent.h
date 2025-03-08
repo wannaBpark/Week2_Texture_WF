@@ -16,13 +16,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-
-	FTransform& GetTransform() const { return *Transform; }
+	FTransform& GetTransform();
+	FTransform& GetLocalTransform() { return Transform; }
 	bool CanEverTick() const { return bCanEverTick; }
 protected:
-	FTransform* Transform;
+	FTransform Transform;
+	FTransform* Parent = nullptr;
 	bool bCanEverTick = true;
 
 private:
-	void Initialize(FTransform* Transform) { this->Transform = Transform;}
+	void SetParent(FTransform* NewParent) { Parent = NewParent; }
 };
