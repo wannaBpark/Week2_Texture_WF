@@ -1,7 +1,10 @@
 ﻿#pragma once
-#include <unordered_map>
+
+#define _TCHAR_DEFINED
 #include <d3d11.h>
+
 #include <wrl/client.h>
+#include <unordered_map>
 #include "Primitive/PrimitiveVertices.h"
 
 struct BufferInfo

@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#define _TCHAR_DEFINED
 #include <d3d11.h>
+#include <memory>
 
 #include "UI.h"
 #include "Core/Math/Vector.h"
-#include "Primitive/PrimitiveVertices.h"
-#include <memory>
 #include "Core/Rendering/BufferCache.h"
+#include "Primitive/PrimitiveVertices.h"
 
 
 struct FVertexSimple;
