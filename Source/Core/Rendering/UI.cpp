@@ -144,14 +144,14 @@ void UI::Update()
         FVector CameraLocation = camera.GetPosition();
         if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraLocation), 0.1f))
         {
-			UE_LOG("Camera Location: (%.2f %.2f %.2f)", CameraLocation[0], CameraLocation[1], CameraLocation[2]);
+			UE_LOG("Camera Location: (%.2f %.2f %.2f)", CameraLocation.X, CameraLocation.Y, CameraLocation.Z);
             camera.SetPosition(CameraLocation);
         }
 
         FVector CameraRotation = camera.GetRotation();
         if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
         {
-			UE_LOG("Camera Rotation: (%.2f %.2f %.2f)", CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+			UE_LOG("Camera Rotation: (%.2f %.2f %.2f)", CameraRotation.X, CameraRotation.Y, CameraRotation.Z);
             camera.SetRotation(CameraRotation);
         }
 

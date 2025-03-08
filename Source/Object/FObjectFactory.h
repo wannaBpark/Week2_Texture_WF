@@ -3,7 +3,6 @@
 #include "Core/HAL/PlatformMemory.h"
 #include "Core/Engine.h"
 #include "Debug/DebugConsole.h"
-#include "Object/Actor/Actor.h"
 
 
 class FObjectFactory

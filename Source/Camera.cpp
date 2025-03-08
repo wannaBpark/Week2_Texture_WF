@@ -39,6 +39,8 @@ void FCamera::SetPosition(const FVector& Pos)
 void FCamera::SetFieldOfVew(float Fov)
 {
     FieldOfView = Fov;
+    UEngine::Get().GetRenderer()->UpdateProjectionMatrix(*this);
+
 }
 
 void FCamera::SetFar(float Far)
@@ -127,6 +129,7 @@ void FCamera::OnUpdateTransform()
     );
 
     UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
+    OnUpdateProjectionChanges();
 }
 
 void FCamera::OnUpdateProjectionChanges() const
