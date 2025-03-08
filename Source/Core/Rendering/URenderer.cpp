@@ -1,6 +1,8 @@
 ﻿#include "URenderer.h"
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
+#include "Core/Math/Transform.h"
+#include <Camera.h>
 
 void URenderer::Create(HWND hWindow)
 {
@@ -189,7 +191,7 @@ void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
     pBuffer->Release();
 }
 
-void URenderer::UpdateConstant(const FVector& Offset, float Scale) const
+void URenderer::UpdateConstant(const FTransform& Transform) const
 {
     if (!ConstantBuffer) return;
 
@@ -201,8 +203,9 @@ void URenderer::UpdateConstant(const FVector& Offset, float Scale) const
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        Constants->Offset = Offset;
-        Constants->Scale = Scale;
+		Constants->World = Transform.GetWorldMatrix();
+		Constants->View = FMatrix::Transpose(ViewMatrix);
+		Constants->Projection = FMatrix::Transpose(ProjectionMatrix);
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
@@ -335,4 +338,27 @@ void URenderer::ReleaseRasterizerState()
 void URenderer::CreateBufferCache()
 {
     BufferCache = std::make_unique<FBufferCache>();
+}
+
+void URenderer::InitMatrix()
+{
+	WorldMatrix = FMatrix::Identity();
+	ViewMatrix = FMatrix::Identity();
+	ProjectionMatrix = FMatrix::Identity();
+}
+
+void URenderer::UpdateViewMatrix(const FCamera& Camera)
+{
+    ViewMatrix = Camera.GetViewMatrix();
+}
+
+void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
+{
+    float AspectRatio = UEngine::Get().GetScreenRatio();
+
+    float FOV = Camera.FieldOfView;
+    float Near = Camera.Near;
+    float Far = Camera.Far;
+
+	ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
 }

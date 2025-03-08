@@ -6,8 +6,10 @@
 class USceneComponent : public UObject
 {
 public:
+	virtual void BeginPlay();
+	virtual void Tick(float DeltaTime);
+
 	FTransform& GetTransform() { return Transform; }
-	virtual void Tick(float DeltaTime) {};
 
 protected:
 	FTransform Transform;

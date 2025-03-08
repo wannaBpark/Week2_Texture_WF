@@ -43,6 +43,7 @@ public:
     void Shutdown();
 
 	URenderer* GetRenderer() const { return Renderer.get(); }
+	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
 
 #ifdef _DEBUG
     void OpenDebugConsole() const;

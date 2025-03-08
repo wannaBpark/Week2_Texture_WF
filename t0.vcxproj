@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Actor\AActor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="Source\Object\FObjectFactory.cpp" />
     <ClCompile Include="main.cpp" />
@@ -189,6 +190,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Actor\AActor.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Object\FObjectFactory.h" />
     <ClInclude Include="Source\Camera.h" />

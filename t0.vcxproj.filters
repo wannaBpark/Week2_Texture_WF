@@ -129,6 +129,9 @@
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Actor\AActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -230,6 +233,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Rendering\BufferCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Actor\AActor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
