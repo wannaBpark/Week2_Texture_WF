@@ -1,5 +1,7 @@
 ﻿#include "Camera.h"
 
+#include "Core/Rendering/URenderer.h"
+
 FCamera::FCamera()
 {
     Position = FVector();
@@ -8,19 +10,93 @@ FCamera::FCamera()
     Far = 1000.f;
     FieldOfView = 45.f;
 		
-    UpdateData();
+    OnUpdateTransform();
+    OnUpdateProjectionChanges();
 }
 
 void FCamera::SetRotation(const float x, const float y, const float z)
 {
-    Rotation.X = x;
-    Rotation.Y = y;
-    Rotation.Z = z;
-
-    UpdateData();
+    SetRotation({x, y, z});
 }
 
-void FCamera::UpdateData()
+void FCamera::SetRotation(const FVector& Rot)
+{
+    Rotation = Rot;
+    OnUpdateTransform();
+}
+
+void FCamera::SetPosition(const float x, const float y, const float z)
+{
+    SetPosition(FVector(x, y, z));
+}
+
+void FCamera::SetPosition(const FVector& Pos)
+{
+    Position = Pos;
+    OnUpdateTransform();
+}
+
+void FCamera::SetFieldOfVew(float Fov)
+{
+    FieldOfView = Fov;
+}
+
+void FCamera::SetFar(float Far)
+{
+    this->Far = Far;
+}
+
+void FCamera::SetNear(float Near)
+{
+    this->Near = Near;
+}
+
+FVector FCamera::GetPosition() const
+{
+    return Position;
+}
+
+FVector FCamera::GetRotation() const
+{
+    return Rotation;
+}
+
+FVector FCamera::GetForward() const
+{
+    return Forward;
+}
+
+FVector FCamera::GetRight() const
+{
+    return Right;
+}
+
+FVector FCamera::GetUp() const
+{
+    return Up;
+}
+
+float FCamera::GetFieldOfView() const
+{
+    return FieldOfView;
+}
+
+FMatrix FCamera::GetViewMatrix() const
+{
+    return FMatrix::LookAtLH(Position, Position + Forward, Up);
+}
+
+float FCamera::GetNear() const
+{
+    return Near;
+}
+
+float FCamera::GetFar() const
+{
+    return Far;
+}
+
+void FCamera::OnUpdateTransform()
 {
     float sinX = sin(Rotation.X * PI / 180.f);
     float cosX = cos(Rotation.X * PI / 180.f);
@@ -50,19 +126,10 @@ void FCamera::UpdateData()
         cosX * cosY   // Z
     );
 
+    UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
 }
 
-FMatrix FCamera::GetViewMatrix() const
+void FCamera::OnUpdateProjectionChanges() const
 {
-    return FMatrix::LookAtLH(Position, Position + Forward, Up);
-}
-
-FVector FCamera::GetRotation() const
-{
-    return Rotation;
-}
-
-void FCamera::OnUpdateCamera()
-{
-
+    UEngine::Get().GetRenderer()->UpdateProjectionMatrix(*this);
 }
