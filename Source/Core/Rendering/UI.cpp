@@ -38,17 +38,27 @@ void UI::Update()
     {
         ImGui::Text("Hello, Jungle World!");
         ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
+
+        const uint64 ContainerAllocByte = FPlatformMemory::GetAllocationBytes<EAT_Container>();
+        const uint64 ContainerAllocCount = FPlatformMemory::GetAllocationCount<EAT_Container>();
+        const uint64 ObjectAllocByte = FPlatformMemory::GetAllocationBytes<EAT_Object>();
+        const uint64 ObjectAllocCount = FPlatformMemory::GetAllocationCount<EAT_Object>();
         ImGui::Text(
             "Container Memory Uses: %llubyte, Count: %llu",
-            FPlatformMemory::GetAllocationBytes<EAT_Container>(),
-            FPlatformMemory::GetAllocationCount<EAT_Container>()
+            ContainerAllocByte,
+            ContainerAllocCount
         );
         ImGui::Text(
-            "Object Memory Uses: %llubyte, Count: %llu",
-            FPlatformMemory::GetAllocationBytes<EAT_Object>(),
-            FPlatformMemory::GetAllocationCount<EAT_Object>()
+            "Object Memory Uses: %llubyte, Count: %llu Objects",
+            ObjectAllocByte,
+            ObjectAllocCount
         );
-        
+        ImGui::Text(
+            "Total Memory Uses: %llubyte, Count: %llu",
+            ContainerAllocByte + ObjectAllocByte,
+            ContainerAllocCount + ObjectAllocCount
+        );
+
         ImGui::Separator();
         
         const char* items[] = { "Sphere", "Cube"};
