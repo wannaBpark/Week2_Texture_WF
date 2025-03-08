@@ -22,7 +22,7 @@ struct UObjectInfo
     UObjectTypeInfo::Type ObjectType;
 
     int UUID;
-    std::vector<int> Components;
+    std::vector<int>    aComponentUUIDs;
     static const char* GetType(const UObjectInfo* ObjectType);
 };
 

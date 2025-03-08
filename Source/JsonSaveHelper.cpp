@@ -43,7 +43,7 @@ UWorldInfo* JsonSaveHelper::LoadScene(const char* SceneName)
         int ComponentCount = Json["Primitives"][Uuid]["Components"].length();
         for (int i = 0; i < ComponentCount; i++)
         {
-            ObjectInfo->Components.push_back(Json["Primitives"][Uuid]["Components"][i].ToInt());   
+            ObjectInfo->ComponentUUIDs.push_back(Json["Primitives"][Uuid]["Components"][i].ToInt());   
         }
         
         
@@ -79,7 +79,7 @@ void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
         Json["Primitives"][Uuid]["Rotation"].append(ObjectInfo->Rotation.X, ObjectInfo->Rotation.Y, ObjectInfo->Rotation.Z);
         Json["Primitives"][Uuid]["Scale"].append(ObjectInfo->Scale.X, ObjectInfo->Scale.Y, ObjectInfo->Scale.Z);
         Json["Primitives"][Uuid]["Type"] = UObjectInfo::GetType(ObjectInfo);
-        for (int uuid : ObjectInfo->Components)
+        for (int uuid : ObjectInfo->ComponentUUIDs)
         { 
             Json["Primitives"][Uuid]["Components"].append(uuid);
         }
