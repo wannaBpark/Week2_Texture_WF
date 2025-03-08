@@ -10,7 +10,7 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "Object/Actor/Actor.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Object/FObjectFactory.h"
+#include "Object/ObjectFactory.h"
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)

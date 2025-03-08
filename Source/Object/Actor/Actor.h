@@ -3,7 +3,7 @@
 #include "Object/USceneComponent.h"
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
-#include "Object/FObjectFactory.h"
+#include "Object/ObjectFactory.h"
 
 class UWorld;
 class FObjectFactory;

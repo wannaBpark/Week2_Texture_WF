@@ -163,7 +163,6 @@
   <ItemGroup>
     <ClCompile Include="Source\Object\Actor\Actor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
-    <ClCompile Include="Source\Object\FObjectFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Core\Engine.cpp" />
@@ -173,6 +172,7 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
+    <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -195,7 +195,6 @@
     <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Container\Set.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
-    <ClInclude Include="Source\Object\FObjectFactory.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h" />
     <ClInclude Include="Source\Core\Container\Array.h" />
@@ -211,6 +210,7 @@
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
+    <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
