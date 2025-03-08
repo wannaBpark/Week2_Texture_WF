@@ -20,9 +20,7 @@ class URenderer
 private:
     struct alignas(16) FConstants
     {
-        FMatrix World;
-        FMatrix View;
-        FMatrix Projection;
+        FMatrix MVP;
     };
 
 public:

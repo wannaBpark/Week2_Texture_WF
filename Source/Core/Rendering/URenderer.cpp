@@ -41,8 +41,10 @@ void URenderer::CreateShader()
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
 
+	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, nullptr);
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
+	//std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
@@ -200,15 +202,14 @@ void URenderer::UpdateConstant(const FTransform& Transform) const
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
+    FMatrix MVP = FMatrix::Transpose(ProjectionMatrix) * FMatrix::Transpose(ViewMatrix) * Transform.GetWorldMatrix();
     // 상수 버퍼를 CPU 메모리에 매핑
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-		Constants->World = Transform.GetWorldMatrix();
-		Constants->View = FMatrix::Transpose(ViewMatrix);
-		Constants->Projection = FMatrix::Transpose(ProjectionMatrix);
+        Constants->MVP = MVP;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
