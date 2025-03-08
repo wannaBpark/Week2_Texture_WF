@@ -60,15 +60,11 @@ void FPlatformMemory::IncrementStats(size_t Size)
     {
         ContainerAllocationBytes.fetch_add(Size, std::memory_order_relaxed);
         ContainerAllocationCount.fetch_add(1, std::memory_order_relaxed);
-        std::cout << "ContainerAllocationBytes: " << ContainerAllocationBytes << '\n';
-        std::cout << "ContainerAllocationCount: " << ContainerAllocationCount << '\n';
     }
     else if constexpr (AllocType == EAT_Object)
     {
         ObjectAllocationBytes.fetch_add(Size, std::memory_order_relaxed);
         ObjectAllocationCount.fetch_add(1, std::memory_order_relaxed);
-        std::cout << "ObjectAllocationBytes: " << ObjectAllocationBytes << '\n';
-        std::cout << "ObjectAllocationCount: " << ObjectAllocationCount << '\n';
     }
     else
     {
@@ -87,15 +83,11 @@ void FPlatformMemory::DecrementStats(size_t Size)
     {
         ContainerAllocationBytes.fetch_sub(Size, std::memory_order_relaxed);
         ContainerAllocationCount.fetch_sub(1, std::memory_order_relaxed);
-        std::cout << "ContainerAllocationBytes: " << ContainerAllocationBytes << '\n';
-        std::cout << "ContainerAllocationCount: " << ContainerAllocationCount << '\n';
     }
     else if constexpr (AllocType == EAT_Object)
     {
         ObjectAllocationBytes.fetch_sub(Size, std::memory_order_relaxed);
         ObjectAllocationCount.fetch_sub(1, std::memory_order_relaxed);
-        std::cout << "ObjectAllocationBytes: " << ObjectAllocationBytes << '\n';
-        std::cout << "ObjectAllocationCount: " << ObjectAllocationCount << '\n';
     }
     else
     {
