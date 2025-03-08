@@ -11,6 +11,7 @@
 #include "Object/Actor/Actor.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/ObjectFactory.h"
+#include "Debug/DebugConsole.h"
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
@@ -173,32 +174,32 @@ void UI::Update()
         ImGui::End();
     }
 
-    if (ImGui::Begin("Console Window"))
-    {
-        ImGui::Text("completion (TAB Key), history (Up/Down).");
-        if (ImGui::Button("Add Debug Text"))
-        {
-        
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Add Debug Error"))
-        {
-        
-        }
+    //if (ImGui::Begin("Console Window"))
+    //{
+    //    ImGui::Text("completion (TAB Key), history (Up/Down).");
+    //    if (ImGui::Button("Add Debug Text"))
+    //    {
+    //    
+    //    }
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Add Debug Error"))
+    //    {
+    //    
+    //    }
 
-        ImGui::SameLine();
-        if (ImGui::Button("Clear"))
-        {
-        
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Copy"))
-        {
-        
-        }
-        ImGui::End();
-    }
-
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Clear"))
+    //    {
+    //    
+    //    }
+    //    ImGui::SameLine();
+    //    if (ImGui::Button("Copy"))
+    //    {
+    //    
+    //    }
+    //    ImGui::End();
+    //}
+    Debug::ShowConsole(&bIsConsoleOpen);
     //test
     if (ImGui::Button("Create Sphere Actor"))
     {
