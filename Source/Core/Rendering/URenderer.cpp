@@ -10,6 +10,7 @@ void URenderer::Create(HWND hWindow)
     CreateFrameBuffer();
     CreateRasterizerState();
     CreateBufferCache();
+    InitMatrix();
 }
 
 void URenderer::Release()
