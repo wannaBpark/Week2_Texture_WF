@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "URenderer.h"
-
+#define _TCHAR_DEFINED
+#include <Windows.h>
 
 class URenderer;
 

@@ -7,6 +7,7 @@
 
 #include "HAL/PlatformType.h"
 #include "Rendering/URenderer.h"
+#include "Rendering/UI.h"
 #include "AbstractClass/Singleton.h"
 
 enum class EScreenMode : uint8
@@ -43,7 +44,7 @@ public:
      */
     void Shutdown();
 
-	URenderer* GetRenderer() const { return Renderer.get(); }
+	class URenderer* GetRenderer() const { return Renderer.get(); }
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
 
 #ifdef _DEBUG
