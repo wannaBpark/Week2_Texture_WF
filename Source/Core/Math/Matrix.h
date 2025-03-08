@@ -15,7 +15,7 @@ struct alignas(16) FMatrix
 		M[3][0] = 0.0f; M[3][1] = 0.0f; M[3][2] = 0.0f; M[3][3] = 1.0f;
 	}
 
-	FMatrix(const FPlane& InX, const FPlane& InY, const FPlane& InZ, const FPlane& InW)
+	FMatrix(const FVector4& InX, const FVector4& InY, const FVector4& InZ, const FVector4& InW)
 	{
 		// row major
 		M[0][0] = InX.X; M[0][1] = InX.Y; M[0][2] = InX.Z; M[0][3] = InX.W;
@@ -304,9 +304,9 @@ struct alignas(16) FMatrix
 	{
 		// based on row major
 		FMatrix Result;
-		Result.M[0][0] = Y; 
-		Result.M[1][1] = Z; 
-		Result.M[2][2] = X; 
+		Result.M[0][0] = X; 
+		Result.M[1][1] = Y; 
+		Result.M[2][2] = Z; 
 		return Result;
 	}
 
@@ -317,6 +317,8 @@ struct alignas(16) FMatrix
 
 	static FMatrix RotateRoll(float Angle) //x�� ȸ��
 	{
+		Angle = FMath::DegreesToRadians(Angle);
+
 		FMatrix Result;
 
 		float C = cos(Angle);
@@ -332,6 +334,8 @@ struct alignas(16) FMatrix
 
 	static FMatrix RotatePitch(float Angle) // y�� ȸ��
 	{
+		Angle = FMath::DegreesToRadians(Angle);
+
 		FMatrix Result;
 
 		float C = cos(Angle);
@@ -346,6 +350,7 @@ struct alignas(16) FMatrix
 
 	static FMatrix RotateYaw(float Angle) // z�� ȸ��
 	{
+		Angle = FMath::DegreesToRadians(Angle);
 		FMatrix Result;
 
 		float C = cos(Angle);
@@ -384,10 +389,10 @@ struct alignas(16) FMatrix
 
 		// row major
 		FMatrix Result = FMatrix(
-			FPlane(Right.X, Up.X, Forward.X, 0.0f),
-			FPlane(Right.Y, Up.Y, Forward.Y, 0.0f),
-			FPlane(Right.Z, Up.Z, Forward.Z, 0.0f), 
-			FPlane(-Right.Dot(EyePosition), -Up.Dot(EyePosition), -Forward.Dot(EyePosition), 1.0f)                           
+			FVector4(Right.X, Up.X, Forward.X, 0.0f),
+			FVector4(Right.Y, Up.Y, Forward.Y, 0.0f),
+			FVector4(Right.Z, Up.Z, Forward.Z, 0.0f), 
+			FVector4(-Right.Dot(EyePosition), -Up.Dot(EyePosition), -Forward.Dot(EyePosition), 1.0f)                           
 		);
 
 		return Result;

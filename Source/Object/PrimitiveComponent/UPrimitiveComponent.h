@@ -19,8 +19,19 @@ public:
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
+	bool IsUseVertexColor() const { return bUseVertexColor; }
+
+	void SetCustomColor(const FVector4& InColor)
+	{
+		CustomColor = InColor; 
+		bUseVertexColor = false;
+	}
+	const FVector4& GetCustomColor() const { return CustomColor; }
+
 protected:
 	const bool bCanBeRendered = GetType() != EPrimitiveType::EPT_None;
+	bool bUseVertexColor = true;
+	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -50,5 +61,16 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Triangle;
+	}
+};
+
+class ULineComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+
+public:
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Line;
 	}
 };

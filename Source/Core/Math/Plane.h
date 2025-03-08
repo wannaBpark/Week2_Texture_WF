@@ -2,18 +2,18 @@
 #include "Vector.h"
 
 
-struct alignas(16) FPlane : public FVector
+struct alignas(16) FVector4 : public FVector
 {
     using FVector::X;
     using FVector::Y;
     using FVector::Z;
 
     float W;
-    FPlane()
+    FVector4()
         : FVector(0, 0, 0), W(0)
     {
     }
-    FPlane(float InX, float InY, float InZ, float InW)
+    FVector4(float InX, float InY, float InZ, float InW)
         : FVector(InX, InY, InZ), W(InW)
     {
     }

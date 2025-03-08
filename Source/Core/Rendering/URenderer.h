@@ -21,6 +21,17 @@ private:
     struct alignas(16) FConstants
     {
         FMatrix MVP;
+        FVector4 Color;
+		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
+        uint32 bUseVertexColor;
+        FVector Padding;
+    };
+
+    struct ConstantUpdateInfo
+    {
+        const FTransform& Transform;
+		const FVector4& Color;
+        bool bUseVertexColor;
     };
 
 public:
@@ -47,7 +58,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
-	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp) const;
+	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
 
     /**
      * Buffer에 있는 Vertex를 그립니다.
@@ -70,7 +81,7 @@ public:
     void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const struct FTransform& Transform) const;
+    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -131,4 +142,5 @@ protected:
     FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
 
+	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 };
