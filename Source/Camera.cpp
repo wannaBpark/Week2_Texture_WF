@@ -1,6 +1,6 @@
 ﻿#include "Camera.h"
 
-Camera::Camera()
+FCamera::FCamera()
 {
     Position = FVector();
     Rotation = FVector();
@@ -11,7 +11,7 @@ Camera::Camera()
     UpdateData();
 }
 
-void Camera::SetRotation(const float x, const float y, const float z)
+void FCamera::SetRotation(const float x, const float y, const float z)
 {
     Rotation.X = x;
     Rotation.Y = y;
@@ -20,7 +20,7 @@ void Camera::SetRotation(const float x, const float y, const float z)
     UpdateData();
 }
 
-void Camera::UpdateData()
+void FCamera::UpdateData()
 {
     float sinX = sin(Rotation.X * PI / 180.f);
     float cosX = cos(Rotation.X * PI / 180.f);
@@ -49,14 +49,20 @@ void Camera::UpdateData()
         -sinX * cosY, // Y
         cosX * cosY   // Z
     );
+
 }
 
-FMatrix Camera::GetViewMatrix() const
+FMatrix FCamera::GetViewMatrix() const
 {
     return FMatrix::LookAtLH(Position, Position + Forward, Up);
 }
 
-FVector Camera::GetRotation() const
+FVector FCamera::GetRotation() const
 {
     return Rotation;
+}
+
+void FCamera::OnUpdateCamera()
+{
+
 }

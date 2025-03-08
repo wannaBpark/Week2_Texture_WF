@@ -7,6 +7,8 @@
 #include "UI.h"
 #include "Core/Math/Vector.h"
 #include "Core/Rendering/BufferCache.h"
+#include "Core/Math/Matrix.h"
+#include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 
 
@@ -17,8 +19,9 @@ class URenderer
 private:
     struct alignas(16) FConstants
     {
-        FVector Offset;
-    	float Scale;
+        FMatrix World;
+        FMatrix View;
+        FMatrix Projection;
     };
 
 public:
@@ -68,7 +71,7 @@ public:
     void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const FVector& Offset, float Scale) const;
+    void UpdateConstant(const struct FTransform& Transform) const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -94,6 +97,12 @@ protected:
 
     void CreateBufferCache();
 
+    void InitMatrix();
+
+    void UpdateViewMatrix(const class FCamera& Camera);
+
+    void UpdateProjectionMatrix(const class FCamera& Camera);
+
 protected:
     // Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
     ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
@@ -116,4 +125,9 @@ protected:
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
 	std::unique_ptr<FBufferCache> BufferCache;
+
+	FMatrix WorldMatrix;
+    FMatrix ViewMatrix;
+	FMatrix ProjectionMatrix;
+
 };

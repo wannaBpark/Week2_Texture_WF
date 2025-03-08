@@ -74,7 +74,7 @@ void UI::Update()
 
         ImGui::Text("Camera");
         
-        Camera& camera = Camera::Get();
+        FCamera& camera = FCamera::Get();
         
         bool IsOrthogonal;
         if (ImGui::Checkbox("Orthogonal", &IsOrthogonal))
