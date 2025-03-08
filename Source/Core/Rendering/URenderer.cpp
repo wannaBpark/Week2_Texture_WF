@@ -1,12 +1,13 @@
-#include "URenderer.h"
-#include "Primitive/PrimitiveVertices.h"
+﻿#include "URenderer.h"
 #include <d3dcompiler.h>
+#include "Core/Rendering/BufferCache.h"
 
 void URenderer::Create(HWND hWindow)
 {
     CreateDeviceAndSwapChain(hWindow);
     CreateFrameBuffer();
     CreateRasterizerState();
+    CreateBufferCache();
 }
 
 void URenderer::Release()
@@ -139,7 +140,24 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(ID3D11Buffer* pBuffer, UINT numVertices) const
+void URenderer::RenderPrimitive(EPrimitiveType PrimitiveType) const
+{
+    if (BufferCache == nullptr)
+    {
+        return;
+    }
+
+	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveType);
+
+	if (Info.GetBuffer() == nullptr)
+	{
+		return;
+	}
+
+	RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+}
+
+void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const
 {
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
@@ -312,4 +330,9 @@ void URenderer::ReleaseRasterizerState()
         RasterizerState->Release();
         RasterizerState = nullptr;
     }
+}
+
+void URenderer::CreateBufferCache()
+{
+    BufferCache = std::make_unique<FBufferCache>();
 }

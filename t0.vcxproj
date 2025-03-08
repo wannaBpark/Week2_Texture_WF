@@ -132,6 +132,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)Source\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,12 +161,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
+    <ClCompile Include="Source\Object\FObjectFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Core\Engine.cpp" />
     <ClCompile Include="Source\Core\Container\String.cpp" />
     <ClCompile Include="Source\Core\EngineStatics.cpp" />
-    <ClCompile Include="Source\Core\HAL\PlatfromMemory.cpp" />
+    <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
@@ -175,6 +179,9 @@
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Object\UObject.cpp" />
+    <ClCompile Include="Source\Object\USceneComponent.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -183,6 +190,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
+    <ClInclude Include="Source\Object\FObjectFactory.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h" />
     <ClInclude Include="Source\Core\Container\Array.h" />
@@ -190,13 +199,14 @@
     <ClInclude Include="Source\Core\Container\String.h" />
     <ClInclude Include="Source\Core\CoreTypes.h" />
     <ClInclude Include="Source\Core\EngineStatics.h" />
-    <ClInclude Include="Source\Core\HAL\PlatfromMemory.h" />
+    <ClInclude Include="Source\Core\HAL\PlatformMemory.h" />
     <ClInclude Include="Source\Core\HAL\PlatformType.h" />
     <ClInclude Include="Source\Core\Math\MathUtility.h" />
     <ClInclude Include="Source\Core\Math\Matrix.h" />
     <ClInclude Include="Source\Core\Math\Plane.h" />
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\JsonSaveHelper.h" />
+    <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
@@ -213,6 +223,9 @@
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
     <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
+    <ClInclude Include="Source\Object\UObject.h" />
+    <ClInclude Include="Source\Object\USceneComponent.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

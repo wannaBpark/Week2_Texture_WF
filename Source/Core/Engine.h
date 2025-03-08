@@ -5,7 +5,8 @@
 
 #include "AbstractClass/Singleton.h"
 #include "HAL/PlatformType.h"
-
+#include "Rendering/URenderer.h"
+#include <memory>
 
 enum class EScreenMode : uint8
 {
@@ -14,7 +15,7 @@ enum class EScreenMode : uint8
     Borderless,  // 테두리 없는 창 모드
 };
 
-class UEngine : TSingleton<UEngine>
+class UEngine : public TSingleton<UEngine>
 {
 public:
     // 각종 윈도우 관련 메시지(이벤트)를 처리하는 함수
@@ -41,6 +42,8 @@ public:
      */
     void Shutdown();
 
+	URenderer* GetRenderer() const { return Renderer.get(); }
+
 #ifdef _DEBUG
     void OpenDebugConsole() const;
     void CloseDebugConsole() const;
@@ -48,6 +51,7 @@ public:
 
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
+    void InitRenderer();
     void ShutdownWindow();
 
 private:
@@ -61,4 +65,10 @@ private:
 
     int ScreenWidth = 0;
     int ScreenHeight = 0;
+
+private:
+	std::unique_ptr<URenderer> Renderer;
+
+private:
+	UI ui;
 };
