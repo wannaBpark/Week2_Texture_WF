@@ -1,9 +1,11 @@
 #include "JsonSaveHelper.h"
 
 #include <fstream>
-#include <string>
 
-UUScene* JsonSaveHelper::LoadScene(const char* SceneName)
+using json::JSON;
+
+// SceneName - 확장자 제외
+UWorldInfo* JsonSaveHelper::LoadScene(const char* SceneName)
 {
     std::ifstream Input(SceneName);
 
@@ -18,109 +20,89 @@ UUScene* JsonSaveHelper::LoadScene(const char* SceneName)
 
     Contents.assign( std::istreambuf_iterator<char>( Input ), std::istreambuf_iterator<char>() );
 
-    JSON JsonData = JSON::Load(Contents);
+    JSON Json = JSON::Load(Contents);
 
-    UUScene* Scene = new UUScene();
+    UWorldInfo* WorldInfo = new UWorldInfo();
      
-    Scene->Version = JsonData["Version"].ToInt();
-    Scene->sceneName = JsonData["SceneName"].ToString();
-    Scene->NextUUID = JsonData["NextUUID"].ToInt();
-    Scene->Objcts = new UUObject*[Scene->NextUUID];
-    for (int i = 0; i < Scene->NextUUID; i++)
+    WorldInfo->Version = Json["Version"].ToInt();
+    WorldInfo->sceneName = Json["SceneName"].ToString();
+    WorldInfo->NextUUID = Json["NextUUID"].ToInt();
+    WorldInfo->Objcts = new UObjectInfo*[WorldInfo->NextUUID];
+    for (int i = 0; i < WorldInfo->NextUUID; i++)
     {
-        UUObject* Object = new UUObject();
-        Scene->Objcts[i] = Object;
-        std::string Uuid = std::to_string(Object->UUID);
-        JSON Location = JsonData["Primitives"][Uuid]["Location"];
-        JSON Rotation = JsonData["Primitives"][Uuid]["Rotation"];
-        JSON Scale = JsonData["Primitives"][Uuid]["Scale"];
-        Object->Location = FVector(Location[0].ToFloat(), Location[1].ToFloat(), Location[2].ToFloat());
-        Object->Rotation = FVector(Rotation[0].ToFloat(), Rotation[1].ToFloat(), Rotation[2].ToFloat());
-        Object->Scale = FVector(Scale[0].ToFloat(), Scale[1].ToFloat(), Scale[2].ToFloat());
+        UObjectInfo* ObjectInfo = new UObjectInfo();
+        WorldInfo->Objcts[i] = ObjectInfo;
+        std::string Uuid = std::to_string(ObjectInfo->UUID);
+        JSON Location = Json["Primitives"][Uuid]["Location"];
+        JSON Rotation = Json["Primitives"][Uuid]["Rotation"];
+        JSON Scale = Json["Primitives"][Uuid]["Scale"];
+        ObjectInfo->Location = FVector(Location[0].ToFloat(), Location[1].ToFloat(), Location[2].ToFloat());
+        ObjectInfo->Rotation = FVector(Rotation[0].ToFloat(), Rotation[1].ToFloat(), Rotation[2].ToFloat());
+        ObjectInfo->Scale = FVector(Scale[0].ToFloat(), Scale[1].ToFloat(), Scale[2].ToFloat());
 
-        std::string type = JsonData["Primitives"][Uuid]["Type"].ToString();
-        if (type == "Sphere")
+        int ComponentCount = Json["Primitives"][Uuid]["Components"].length();
+        for (int i = 0; i < ComponentCount; i++)
         {
-            Object->ObjectType = UUObjectType::Type::Sphere;
+            ObjectInfo->Components.push_back(Json["Primitives"][Uuid]["Components"][i].ToInt());   
         }
-        else if (type == "Cube")
+        
+        
+        std::string UObjectInfoType = Json["Primitives"][Uuid]["Type"].ToString();
+        if (UObjectInfoType == "Sphere")
         {
-            Object->ObjectType = UUObjectType::Type::Cube;
+            ObjectInfo->ObjectType = UObjectTypeInfo::Type::Sphere;
         }
-        Object->UUID = i;
+        else if (UObjectInfoType == "Cube")
+        {
+            ObjectInfo->ObjectType = UObjectTypeInfo::Type::Cube;
+        }
+        // Type 추가에 따라 추가
+        
+        ObjectInfo->UUID = i;
     }
-    return Scene;
+    return WorldInfo;
 }
 
- void JsonSaveHelper::SaveScene()
+void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
 {
-    UUScene Scene;
+    JSON Json;
+    
+    Json["Version"] = WorldInfo.Version;
+    Json["NextUUID"] = WorldInfo.NextUUID;
+    Json["SceneName"] = WorldInfo.sceneName;
 
-    Scene.Objcts = new UUObject*[5];
-    Scene.sceneName = "Scene Name";
-    Scene.NextUUID = 5;
     for (int i = 0; i < 5; i++)
     {
-        Scene.Objcts[i] = new UUObject();
-        Scene.Objcts[i]->UUID = i;
-        Scene.Objcts[i]->Location = FVector(rand() % 100, rand() % 100, rand() % 100);
-        Scene.Objcts[i]->Rotation = FVector(rand() % 100, rand() % 100, rand() % 100);
-        Scene.Objcts[i]->Scale = FVector(rand() % 100, rand() % 100, rand() % 100);
-        auto random = rand() % 2;
-        if (random == 0)
-        {
-            Scene.Objcts[i]->ObjectType = UUObjectType::Type::Cube;   
-        }else
-        {
-            Scene.Objcts[i]->ObjectType = UUObjectType::Type::Sphere;
+        UObjectInfo* ObjectInfo = WorldInfo.Objcts[i];
+        std::string Uuid = std::to_string(ObjectInfo->UUID);
+        Json["Primitives"][Uuid]["Location"].append(ObjectInfo->Location.X, ObjectInfo->Location.Y, ObjectInfo->Location.Z);
+        Json["Primitives"][Uuid]["Rotation"].append(ObjectInfo->Rotation.X, ObjectInfo->Rotation.Y, ObjectInfo->Rotation.Z);
+        Json["Primitives"][Uuid]["Scale"].append(ObjectInfo->Scale.X, ObjectInfo->Scale.Y, ObjectInfo->Scale.Z);
+        Json["Primitives"][Uuid]["Type"] = UObjectInfo::GetType(ObjectInfo);
+        for (int uuid : ObjectInfo->Components)
+        { 
+            Json["Primitives"][Uuid]["Components"].append(uuid);
         }
     }
-
-    SaveScene(Scene);
-}
-
-void JsonSaveHelper::SaveScene(const UUScene& Scene)
-{
-    JSON json;
-
-    json["Version"] = Scene.Version;
-    json["NextUUID"] = Scene.NextUUID;
-    json["SceneName"] = Scene.sceneName;
-    json["A"] = "a";
-    json["B"] = "a";
-    json["C"] = "a";
-    json["D"] = "a";
-    json["E"] = "a";
-    json["F"] = "a";
-    json["G"] = "a";
      
-    for (int i = 0; i < 5; i++)
+    std::ofstream Output(WorldInfo.sceneName + ".scene");
+    
+    if (Output.is_open())
     {
-        UUObject* object = Scene.Objcts[i];
-        std::string Uuid = std::to_string(object->UUID);
-        json["Primitives"][Uuid]["Location"].append(object->Location.X, object->Location.Y, object->Location.Z);
-        json["Primitives"][Uuid]["Rotation"].append(object->Rotation.X, object->Rotation.Y, object->Rotation.Z);
-        json["Primitives"][Uuid]["Scale"].append(object->Scale.X, object->Scale.Y, object->Scale.Z);
-        json["Primitives"][Uuid]["Type"] = object->GetType();
-    }
-     
-    std::ofstream output(Scene.sceneName + ".scene");
-
-    if (output.is_open())
-    {
-        output << json;
+        Output << Json;
     }
 }
 
-const char* UUObject::GetType() const
+const char* UObjectInfo::GetType(const UObjectInfo* ObjectType)
 {
-     switch (ObjectType)
+     switch (ObjectType->ObjectType)
      {
-     case UUObjectType::Type::Sphere:
+     case UObjectTypeInfo::Type::Sphere:
          return "Sphere";
-     case UUObjectType::Type::Cube:
+     case UObjectTypeInfo::Type::Cube:
          return "Cube";
      default:
          return  "default";
      }
  }
+

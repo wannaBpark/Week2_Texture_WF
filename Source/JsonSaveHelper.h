@@ -1,11 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include "Core/Math/Vector.h"
 #include "SimpleJSON/Json.hpp"
 
-using json::JSON;
-
-namespace UUObjectType{
+// (TEMP) 각 모든 컴포넌트 타입 
+namespace UObjectTypeInfo{
     enum class Type
     {
         Sphere,
@@ -13,22 +14,21 @@ namespace UUObjectType{
     };
 }
 
-class UUObject
+struct UObjectInfo
 {
-public:
     FVector Location; 
     FVector Rotation;
     FVector Scale;
-    UUObjectType::Type ObjectType;
+    UObjectTypeInfo::Type ObjectType;
 
     int UUID;
-    const char* GetType() const;
+    std::vector<int> Components;
+    static const char* GetType(const UObjectInfo* ObjectType);
 };
 
-class UUScene
+struct UWorldInfo
 {
-public:
-    UUObject** Objcts;
+    UObjectInfo** Objcts;
     int NextUUID;
     int Version;
     std::string sceneName;
@@ -37,7 +37,7 @@ public:
 class JsonSaveHelper
 {
 public:
-    static UUScene* LoadScene(const char* SceneName);    // SceneName에 해당하는 파일을 읽어오고 Clear() 후 LoadData
-    static void SaveScene();                         // 현재 SceneName과 SceneData를 저장 후 Write
-    static void SaveScene(const UUScene& Scene);
+    // SceneName - 확장자 제외
+    static UWorldInfo* LoadScene(const char* SceneName);
+    static void SaveScene(const UWorldInfo& WorldInfo);
 };
