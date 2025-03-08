@@ -9,6 +9,10 @@ class UPrimitiveComponent : public USceneComponent
 {
 	using Super = USceneComponent;
 public:
+	UPrimitiveComponent() = default;
+	virtual ~UPrimitiveComponent() = default;
+
+public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void Render();

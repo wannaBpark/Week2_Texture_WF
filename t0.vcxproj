@@ -162,7 +162,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object\Actor\Actor.cpp" />
-    <ClCompile Include="Source\Core\Container\Set.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="Source\Object\FObjectFactory.cpp" />
     <ClCompile Include="main.cpp" />

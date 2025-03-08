@@ -1,17 +1,19 @@
 ﻿#pragma once
-#include <unordered_set>
 #include "Object/UObject.h"
-#include "Object/Actor/Actor.h"
-#include "JsonSavehelper.h"
+#include "Core/Container/Set.h"
 
 class UWorld :public UObject
 {
 public:
-	void LoadWorld(const UWorldInfo& WorldInfo);
+	UWorld() = default;
+	virtual ~UWorld() = default;
+
+public:
+	void LoadWorld(const struct UWorldInfo& WorldInfo);
 	void BeginPlay();
 	void Tick(float DeltaTime);
 
 protected:
-	std::unordered_set<AActor*> Actors;
+	TSet<class AActor*> Actors;
 };
 

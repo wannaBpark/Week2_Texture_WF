@@ -10,6 +10,7 @@
 #include "Rendering/UI.h"
 #include "AbstractClass/Singleton.h"
 #include "Object/World/World.h"
+#include "Core/Container/Array.h"
 
 enum class EScreenMode : uint8
 {
@@ -78,5 +79,8 @@ private:
 	UI ui;
 
 private:
-    std::shared_ptr<UWorld> World;
+    class UWorld* World;
+
+public:
+    TArray<std::shared_ptr<UObject>> GObjects;
 };

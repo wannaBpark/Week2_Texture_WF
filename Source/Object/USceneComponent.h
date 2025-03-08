@@ -6,6 +6,10 @@
 class USceneComponent : public UObject
 {
 public:
+	USceneComponent() = default;
+	virtual ~USceneComponent() = default;
+
+public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 

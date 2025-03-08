@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include <memory>
 #include "UObject.h"
 #include "Core/HAL/PlatformMemory.h"
+#include "Core/Engine.h"
 
 
 class FObjectFactory
@@ -9,7 +9,7 @@ class FObjectFactory
 public:
 	template<typename T>
 		requires std::derived_from<T, UObject>
-	static std::shared_ptr<T> ConstructObject()
+	static T* ConstructObject()
 	{
 		constexpr size_t ObjectSize = sizeof(T);
 		void* RawMemory = FPlatformMemory::Malloc(ObjectSize);
@@ -19,9 +19,11 @@ public:
 		{
 			Obj->~T();
 			FPlatformMemory::Free(Obj, ObjectSize);
+			UEngine::Get().GObjects.Remove(Obj->shared_from_this());
 		});
 
-		return NewObject;
+		UEngine::Get().GObjects.Add(NewObject);
+		return NewObject.get();
 	}
 };
 
