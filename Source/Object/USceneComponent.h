@@ -18,5 +18,5 @@ public:
 
 protected:
 	FTransform Transform;
-	bool bCanEverTick = false;
+	bool bCanEverTick = true;
 };

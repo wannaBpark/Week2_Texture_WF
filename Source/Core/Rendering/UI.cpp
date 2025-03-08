@@ -8,6 +8,8 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
+#include <Object/Actor/Actor.h>
+#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
@@ -179,6 +181,13 @@ void UI::Update()
         
         }
         ImGui::End();
+    }
+
+    //test
+    if (ImGui::Button("Create Sphere Actor"))
+    {
+		AActor* Actor = FObjectFactory::ConstructActor<AActor>();
+		Actor->AddComponent<USphereComp>();
     }
     
     // ImGui 렌더링

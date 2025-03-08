@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_set>
 
+class UWorld;
 class AActor : public UObject
 {
 public:
@@ -17,16 +18,18 @@ public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 
+	UWorld* GetWorld() const { return World; }
+	void SetWorld(UWorld* InWorld) { World = InWorld; }
+
 public:
 	template<typename T>
 		requires std::derived_from<T, USceneComponent>
 	T* AddComponent()
 	{
-		//T* ObjectInstance = FObjectFactory::ConstructObject<T>();
-		//Components.Add(ObjectInstance);
+		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
+		Components.Add(ObjectInstance);
 
-		//return ObjectInstance;
-		return nullptr;
+		return ObjectInstance;
 	}
 
 	// delete
@@ -41,8 +44,9 @@ public:
 	bool CanEverTick() const { return bCanEverTick; }
 
 protected:
-	bool bCanEverTick = false;
+	bool bCanEverTick = true;
 	TSet<USceneComponent*> Components;
 	FTransform Transform;
+	UWorld* World;
 };
 
