@@ -192,6 +192,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Container\Map.h" />
+    <ClInclude Include="Source\Core\Container\Pair.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Container\Set.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
