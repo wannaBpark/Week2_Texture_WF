@@ -357,9 +357,19 @@ void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
 {
     float AspectRatio = UEngine::Get().GetScreenRatio();
 
-    float FOV = Camera.FieldOfView;
-    float Near = Camera.Near;
-    float Far = Camera.Far;
+    float FOV = Camera.GetFieldOfView();
+    float Near = Camera.GetNear();
+    float Far = Camera.GetFar();
 
-	ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
+    if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+    {
+        ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
+    }
+    else if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+    {
+        ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
+
+        // TODO: 추가 필요.
+        // ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
+    }
 }

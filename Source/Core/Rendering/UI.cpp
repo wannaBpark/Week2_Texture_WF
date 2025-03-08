@@ -1,5 +1,7 @@
 ﻿#include "UI.h"
 
+#include <algorithm>
+
 #include "Camera.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "URenderer.h"
@@ -90,20 +92,41 @@ void UI::Update()
             }
         }
 
-        
-        ImGui::InputFloat("FOV", &camera.FieldOfView, 0);
+        float FOV = camera.GetFieldOfView();
+        if (ImGui::InputFloat("FOV", &FOV, 0))
+        {
+            FOV = std::clamp(FOV, 0.01f, 179.99f);
+            camera.SetFieldOfVew(FOV);
+        }
 
-        float NearFar[2] = {camera.Near, camera.Far};
+        float NearFar[2] = {camera.GetNear(), camera.GetFar()};
         if (ImGui::InputFloat2("Near, Far", NearFar))
         {
-            camera.Near = NearFar[0];
-            camera.Far = NearFar[1];
+            NearFar[0] = max(0.01f, NearFar[0]);
+            NearFar[1] = max(0.01f, NearFar[1]);
+            
+            if (NearFar[0] < NearFar[1])
+            {
+                camera.SetNear(NearFar[0]);
+                camera.SetFar(NearFar[1]);
+            }
+            else
+            {
+                if (abs(NearFar[0] - camera.GetNear()) < 0.00001f)
+                {
+                    camera.SetFar(NearFar[0] + 0.01f);
+                }
+                else if (abs(NearFar[1] - camera.GetFar()) < 0.00001f)
+                {
+                    camera.SetNear(NearFar[1] - 0.01f);
+                }
+            }
         }
         
-        float CameraLocation[] = {camera.Position.X, camera.Position.Y, camera.Position.Z};
+        float CameraLocation[] = {camera.GetPosition().X, camera.GetPosition().Y, camera.GetPosition().Z};
         if (ImGui::InputFloat3("Camera Location", CameraLocation))
         {
-            camera.Position = {CameraLocation[0], CameraLocation[1], CameraLocation[2]};
+            camera.SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
         }
 
         float CameraRotation[] = {camera.GetRotation().X, camera.GetRotation().Y, camera.GetRotation().Z};
@@ -112,9 +135,13 @@ void UI::Update()
             camera.SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
         }
 
-        ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", camera.Forward.X, camera.Forward.Y, camera.Forward.Z);
-        ImGui::Text("Camera Up: (%.2f %.2f %.2f)", camera.Up.X, camera.Up.Y, camera.Up.Z);
-        ImGui::Text("Camera Right: (%.2f %.2f %.2f)", camera.Right.X, camera.Right.Y, camera.Right.Z);
+        FVector Forward = camera.GetForward();
+        FVector Up = camera.GetUp();
+        FVector Right = camera.GetRight();
+        
+        ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
+        ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
+        ImGui::Text("Camera Right: (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
 
         ImGui::End();
     }

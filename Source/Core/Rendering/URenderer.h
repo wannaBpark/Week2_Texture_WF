@@ -76,6 +76,12 @@ public:
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
+    /** View 변환 Matrix를 업데이트 합니다. */
+    void UpdateViewMatrix(const class FCamera& Camera);
+
+    /** Projection 변환 Matrix를 업데이트 합니다. */
+    void UpdateProjectionMatrix(const class FCamera& Camera);
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -98,10 +104,6 @@ protected:
     void CreateBufferCache();
 
     void InitMatrix();
-
-    void UpdateViewMatrix(const class FCamera& Camera);
-
-    void UpdateProjectionMatrix(const class FCamera& Camera);
 
 protected:
     // Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
