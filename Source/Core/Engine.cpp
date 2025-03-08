@@ -127,6 +127,7 @@ void UEngine::Run()
     }
 }
 
+
 void UEngine::Shutdown()
 {
     ShutdownWindow();
@@ -161,6 +162,14 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
     ShowWindow(WindowHandle, SW_SHOW);
     SetForegroundWindow(WindowHandle);
     SetFocus(WindowHandle);
+
+    AllocConsole(); // 콘솔 창 생성
+
+    // 표준 출력 및 입력을 콘솔과 연결
+    freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+    freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
+
+    std::cout << "Debug Console Opened!" << '\n';
 }
 
 void UEngine::InitRenderer()

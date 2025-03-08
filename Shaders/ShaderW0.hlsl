@@ -1,9 +1,7 @@
 // ShaderW0.hlsl
 cbuffer constants : register(b0)
 {
-    matrix World;
-    matrix View;
-    matrix Projection;
+    matrix MVP;
 }
 
 struct VS_INPUT
@@ -23,9 +21,7 @@ PS_INPUT mainVS(VS_INPUT input)
     PS_INPUT output;
 
     // 3D 변환 행렬
-    float4 worldPosition = mul(input.position, World);
-    float4 viewPosition = mul(worldPosition, View);
-    output.position = mul(viewPosition, Projection);
+    output.position = mul(input.position, MVP);
 
     output.color = input.color;
     return output;
