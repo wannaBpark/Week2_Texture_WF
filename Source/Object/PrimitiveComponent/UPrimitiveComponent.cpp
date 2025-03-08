@@ -15,10 +15,10 @@ void UPrimitiveComponent::Tick(float DeltaTime)
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-	if (Renderer == nullptr || !bCanBeRendered)
+	if (Renderer == nullptr || bCanBeRendered)
 	{
 		return;
 	}
 
-	Renderer->RenderPrimitive(PrimitiveType);
+	Renderer->RenderPrimitive(this);
 }

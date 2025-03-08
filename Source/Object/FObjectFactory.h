@@ -2,8 +2,6 @@
 #include "UObject.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Core/Engine.h"
-#include "Object/Actor/Actor.h"
-
 
 class FObjectFactory
 {

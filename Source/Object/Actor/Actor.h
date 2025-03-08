@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "Object/UObject.h"
 #include "Object/USceneComponent.h"
-#include "Object/FObjectFactory.h"
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
-#include <memory>
-#include <unordered_set>
+#include "Object/FObjectFactory.h"
 
 class UWorld;
+class FObjectFactory;
+
 class AActor : public UObject
 {
 public:
