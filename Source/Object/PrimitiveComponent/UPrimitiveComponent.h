@@ -17,6 +17,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void Render();
 
+	EPrimitiveType GetType() { return PrimitiveType; }
 
 protected:
 	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_None;
@@ -26,15 +27,20 @@ protected:
 class UCubeComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+public:
+	UCubeComp()
+	{
+		PrimitiveType = EPrimitiveType::EPT_Cube;
+	}
 
-protected:
-	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_Cube;
 };
 
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
-
-protected:
-	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_Sphere;
+public:
+	USphereComp()
+	{
+		PrimitiveType = EPrimitiveType::EPT_Sphere;
+	}
 };

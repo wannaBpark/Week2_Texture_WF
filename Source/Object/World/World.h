@@ -12,6 +12,7 @@ public:
 	void LoadWorld(const struct UWorldInfo& WorldInfo);
 	void BeginPlay();
 	void Tick(float DeltaTime);
+	void AddActor(class AActor* Actor) { Actors.Add(Actor); }
 
 protected:
 	TSet<class AActor*> Actors;

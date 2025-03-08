@@ -3,6 +3,7 @@
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Transform.h"
 #include <Camera.h>
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 void URenderer::Create(HWND hWindow)
 {
@@ -143,20 +144,21 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(EPrimitiveType PrimitiveType) const
+void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp) const
 {
     if (BufferCache == nullptr)
     {
         return;
     }
 
-	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveType);
+	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
 
 	if (Info.GetBuffer() == nullptr)
 	{
 		return;
 	}
 
+    UpdateConstant(PrimitiveComp->GetTransform());
 	RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
 }
 

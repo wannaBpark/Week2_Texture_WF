@@ -48,7 +48,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
-	void RenderPrimitive(EPrimitiveType PrimitiveType) const;
+	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp) const;
 
     /**
      * Buffer에 있는 Vertex를 그립니다.

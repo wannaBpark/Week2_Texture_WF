@@ -60,6 +60,9 @@ private:
     void InitWorld();
     void ShutdownWindow();
 
+public:
+	UWorld* GetWorld() const { return World; }
+
 private:
     bool IsRunning = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;
