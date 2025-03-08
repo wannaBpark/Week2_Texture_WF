@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Object/UObject.h"
 #include "Object/USceneComponent.h"
+#include "Object/FObjectFactory.h"
 #include <memory>
 #include <unordered_set>
 
@@ -16,8 +17,10 @@ public:
 		requires std::derived_from<T, USceneComponent>
 	T* AddComponent()
 	{
-		std::shared_ptr<T> = FObjectFactory::ConstructObject<T>();
-		Components.insert(T);
+		std::shared_ptr<T> ObjectInstance = FObjectFactory::ConstructObject<T>();
+		Components.insert(ObjectInstance);
+
+		return ObjectInstance.get();
 	}
 
 	// delete

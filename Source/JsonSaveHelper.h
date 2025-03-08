@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 
@@ -22,7 +22,7 @@ struct UObjectInfo
     UObjectTypeInfo::Type ObjectType;
 
     int UUID;
-    std::vector<int>    aComponentUUIDs;
+    std::vector<int>    ComponentUUIDs;
     static const char* GetType(const UObjectInfo* ObjectType);
 };
 
