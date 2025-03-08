@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Container\Set.cpp" />
     <ClCompile Include="Source\Object\Actor\AActor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="Source\Object\FObjectFactory.cpp" />
@@ -191,6 +192,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Container\Set.h" />
     <ClInclude Include="Source\Object\Actor\AActor.h" />
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Object\FObjectFactory.h" />
@@ -217,6 +219,7 @@
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_textedit.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp" />
@@ -224,7 +227,6 @@
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
-    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
     <ClInclude Include="Source\Object\UObject.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
