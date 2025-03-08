@@ -10,8 +10,8 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "Object/Actor/Actor.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Object/FObjectFactory.h"
-#include "Debug/DebugConsole.h"
+#include "Object/ObjectFactory.h"
+
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
 {
@@ -144,14 +144,12 @@ void UI::Update()
         FVector CameraLocation = camera.GetPosition();
         if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraLocation), 0.1f))
         {
-			UE_LOG("Camera Location: (%.2f %.2f %.2f)", CameraLocation.X, CameraLocation.Y, CameraLocation.Z);
             camera.SetPosition(CameraLocation);
         }
 
         FVector CameraRotation = camera.GetRotation();
         if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
         {
-			UE_LOG("Camera Rotation: (%.2f %.2f %.2f)", CameraRotation.X, CameraRotation.Y, CameraRotation.Z);
             camera.SetRotation(CameraRotation);
         }
 
@@ -175,44 +173,33 @@ void UI::Update()
         ImGui::End();
     }
 
-    //if (ImGui::Begin("Console Window"))
-    //{
-    //    ImGui::Text("completion (TAB Key), history (Up/Down).");
-    //    if (ImGui::Button("Add Debug Text"))
-    //    {
-    //    
-    //    }
-    //    ImGui::SameLine();
-    //    if (ImGui::Button("Add Debug Error"))
-    //    {
-    //    
-    //    }
+    if (ImGui::Begin("Console Window"))
+    {
+        ImGui::Text("completion (TAB Key), history (Up/Down).");
+        if (ImGui::Button("Add Debug Text"))
+        {
+        
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Add Debug Error"))
+        {
+        
+        }
 
-    //    ImGui::SameLine();
-    //    if (ImGui::Button("Clear"))
-    //    {
-    //    
-    //    }
-    //    ImGui::SameLine();
-    //    if (ImGui::Button("Copy"))
-    //    {
-    //    
-    //    }
-    //    // ImGui 렌더링
-    //    ImGui::End();
-    //}
+        ImGui::SameLine();
+        if (ImGui::Button("Clear"))
+        {
+        
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Copy"))
+        {
+        
+        }
+        ImGui::End();
+    }
 
     //test
-  //  if (ImGui::Button("Create Sphere Actor"))
-  //  {
-		//AActor* Actor = FObjectFactory::ConstructActor<AActor>();
-		//Actor->AddComponent<USphereComp>();
-		//Actor->AddComponent<UCubeComp>();
-  //  }
-  //  
-    Debug::ShowConsole(&bIsConsoleOpen);
-
-
     if (ImGui::Button("Create Sphere Actor"))
     {
 		AActor* Actor = FObjectFactory::ConstructActor<AActor>();

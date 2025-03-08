@@ -1,8 +1,7 @@
 ﻿#include "Engine.h"
 
 #include <iostream>
-#include "Object/FObjectFactory.h"
-#include "Object/USceneComponent.h"
+#include "Object/ObjectFactory.h"
 #include "Object/World/World.h"
 #include "Debug/DebugConsole.h"
 
