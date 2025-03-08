@@ -67,6 +67,8 @@ public:
     /** Capacity */
     SizeType Len() const;
 
+    void Reserve(SizeType Number);
+
     void Sort();
     template <typename Compare>
         requires std::is_invocable_r_v<bool, Compare, const T&, const T&>
@@ -223,6 +225,12 @@ template <typename T, typename Allocator>
 typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Len() const
 {
     return PrivateVector.capacity();
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Reserve(SizeType Number)
+{
+    PrivateVector.reserve(Number);
 }
 
 template <typename T, typename Allocator>
