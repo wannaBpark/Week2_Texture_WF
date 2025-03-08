@@ -3,6 +3,7 @@
 #include "Core/HAL/PlatformMemory.h"
 #include "Core/Engine.h"
 
+
 class FObjectFactory
 {
 public:
@@ -11,13 +12,13 @@ public:
 	static T* ConstructObject()
 	{
 		constexpr size_t ObjectSize = sizeof(T);
-		void* RawMemory = FPlatformMemory::Malloc(ObjectSize);
+		void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
 
 		T* ObjectPtr = new (RawMemory) T();
 		std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
 		{
 			Obj->~T();
-			FPlatformMemory::Free(Obj, ObjectSize);
+			FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
 			UEngine::Get().GObjects.Remove(Obj->shared_from_this());
 		});
 
