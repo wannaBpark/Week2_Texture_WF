@@ -167,6 +167,7 @@
     <ClCompile Include="Source\Core\HAL\PlatfromMemory.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
+    <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Source\Core\Math\Matrix.h" />
     <ClInclude Include="Source\Core\Math\Plane.h" />
     <ClInclude Include="Source\Core\Math\Vector.h" />
+    <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
@@ -203,7 +205,6 @@
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_textedit.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.h" />
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
+    <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
