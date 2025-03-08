@@ -85,15 +85,14 @@ template <typename T, int IndexSize>
 constexpr T* TContainerAllocator<T, IndexSize>::allocate(size_type n) noexcept
 {
     const size_t AllocSize = sizeof(T) * n;
-    FPlatformMemory::IncrementStats(AllocSize);
-    return static_cast<T*>(std::malloc(AllocSize));
+    return static_cast<T*>(FPlatformMemory::Malloc(AllocSize));
 }
 
 template <typename T, int IndexSize>
 constexpr void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
 {
-    FPlatformMemory::DecrementStats(sizeof(T) * n);
-    std::free(p);
+    const size_t AllocSize = sizeof(T) * n;
+    FPlatformMemory::Free(p, AllocSize);
 }
 
 template <typename T> using FDefaultAllocator = TContainerAllocator<T, 32>;
