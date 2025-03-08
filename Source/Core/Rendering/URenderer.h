@@ -6,6 +6,7 @@
 
 #include "UI.h"
 #include "Core/Math/Vector.h"
+#include "Camera.h"
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Engine.h"
@@ -77,7 +78,7 @@ public:
     ID3D11DeviceContext* GetDeviceContext() const;
 
     /** View 변환 Matrix를 업데이트 합니다. */
-    void UpdateViewMatrix(const class FCamera& Camera);
+    void UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransform);
 
     /** Projection 변환 Matrix를 업데이트 합니다. */
     void UpdateProjectionMatrix(const class FCamera& Camera);

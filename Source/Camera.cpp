@@ -2,90 +2,107 @@
 
 #include "Core/Rendering/URenderer.h"
 
+FCamera::FCameraTransform::FCameraTransform() : FTransform()
+{
+    OnTranslate();
+    OnRotate();
+    UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
+}
+
+void FCamera::FCameraTransform::SetPosition(FVector InPosition)
+{
+    FTransform::SetPosition(InPosition);
+    OnTranslate();
+}
+
+void FCamera::FCameraTransform::SetPosition(float x, float y, float z)
+{
+    FTransform::SetPosition(x, y, z);
+    OnTranslate();
+}
+
+void FCamera::FCameraTransform::SetRotation(float x, float y, float z)
+{
+    FTransform::SetRotation(x, y, z);
+    OnRotate();
+}
+
+void FCamera::FCameraTransform::SetRotation(FVector InRotation)
+{
+    FTransform::SetRotation(InRotation);
+    OnRotate();
+}
+
+void FCamera::FCameraTransform::OnTranslate() const
+{
+    UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
+}
+
+void FCamera::FCameraTransform::OnRotate()
+{
+    float sinX = sin(Rotation.X * PI / 180.f);
+    float cosX = cos(Rotation.X * PI / 180.f);
+		
+    float sinY = sin(Rotation.Y * PI / 180.f);
+    float cosY = cos(Rotation.Y * PI / 180.f);
+		
+    float sinZ = sin(Rotation.Z * PI / 180.f);
+    float cosZ = cos(Rotation.Z * PI / 180.f);
+
+
+    Forward = FVector(
+        cosY * cosZ,                      // X
+        sinX * sinY * cosZ + cosX * sinZ, // Y
+        -cosX * sinY * cosZ + sinX * sinZ // Z
+    );
+
+    Right = FVector(
+        cosY * -sinZ,                      // X
+        sinX * sinY * -sinZ + cosX * cosZ, // Y
+        -cosX * sinY * -sinZ + sinX * cosZ // Z
+    );
+
+    Up = FVector(
+        sinY,         // X
+        -sinX * cosY, // Y
+        cosX * cosY   // Z
+    );
+
+    UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
+}
+
 FCamera::FCamera()
 {
-    Position = FVector();
-    Rotation = FVector();
+    Transform = FCamera::FCameraTransform();
     Near = 1.f;
     Far = 1000.f;
     FieldOfView = 45.f;
-		
-    OnUpdateTransform();
+    ProjectionMode = ECameraProjectionMode::Perspective;
+    
     OnUpdateProjectionChanges();
-}
-
-void FCamera::SetRotation(const float x, const float y, const float z)
-{
-    SetRotation({x, y, z});
-}
-
-void FCamera::SetRotation(const FVector& Rot)
-{
-    Rotation = Rot;
-    OnUpdateTransform();
-}
-
-void FCamera::SetPosition(const float x, const float y, const float z)
-{
-    SetPosition(FVector(x, y, z));
-}
-
-void FCamera::SetPosition(const FVector& Pos)
-{
-    Position = Pos;
-    OnUpdateTransform();
 }
 
 void FCamera::SetFieldOfVew(float Fov)
 {
     FieldOfView = Fov;
-    UEngine::Get().GetRenderer()->UpdateProjectionMatrix(*this);
-
+    OnUpdateProjectionChanges();
 }
 
 void FCamera::SetFar(float Far)
 {
     this->Far = Far;
+    OnUpdateProjectionChanges();
 }
 
 void FCamera::SetNear(float Near)
 {
     this->Near = Near;
-}
-
-FVector FCamera::GetPosition() const
-{
-    return Position;
-}
-
-FVector FCamera::GetRotation() const
-{
-    return Rotation;
-}
-
-FVector FCamera::GetForward() const
-{
-    return Forward;
-}
-
-FVector FCamera::GetRight() const
-{
-    return Right;
-}
-
-FVector FCamera::GetUp() const
-{
-    return Up;
+    OnUpdateProjectionChanges();
 }
 
 float FCamera::GetFieldOfView() const
 {
-    return FieldOfView;
-}
-
-FMatrix FCamera::GetViewMatrix() const
-{
-    return FMatrix::LookAtLH(Position, Position + Forward, Up);
+    return  FieldOfView;
 }
 
 float FCamera::GetNear() const
@@ -98,38 +115,9 @@ float FCamera::GetFar() const
     return Far;
 }
 
-void FCamera::OnUpdateTransform()
+FCamera::FCameraTransform& FCamera::GetTransform()
 {
-    float sinX = sin(Rotation.X * PI / 180.f);
-    float cosX = cos(Rotation.X * PI / 180.f);
-		
-    float sinY = sin(Rotation.Y * PI / 180.f);
-    float cosY = cos(Rotation.Y * PI / 180.f);
-		
-    float sinZ = sin(Rotation.Z * PI / 180.f);
-    float cosZ = cos(Rotation.Z * PI / 180.f);
-
-
-    Right = FVector(
-        cosY * cosZ,                      // X
-        sinX * sinY * cosZ + cosX * sinZ, // Y
-        -cosX * sinY * cosZ + sinX * sinZ // Z
-    );
-
-    Up = FVector(
-        cosY * -sinZ,                      // X
-        sinX * sinY * -sinZ + cosX * cosZ, // Y
-        -cosX * sinY * -sinZ + sinX * cosZ // Z
-    );
-
-    Forward = FVector(
-        sinY,         // X
-        -sinX * cosY, // Y
-        cosX * cosY   // Z
-    );
-
-    UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
-    OnUpdateProjectionChanges();
+    return Transform;
 }
 
 void FCamera::OnUpdateProjectionChanges() const

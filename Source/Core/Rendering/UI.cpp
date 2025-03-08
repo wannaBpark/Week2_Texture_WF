@@ -62,17 +62,30 @@ void UI::Update()
 
         ImGui::Separator();
         
-        const char* items[] = { "Sphere", "Cube"};
-        int currentItem = 1;
-        
+        const char* items[] = { "Sphere", "Cube", "Triangle"};
+
         ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
         if (ImGui::Button("Spawn"))
         {
-            
+            for (int i = 0 ;  i < NumOfSpawn; i++)
+            {
+                AActor* Actor = FObjectFactory::ConstructActor<AActor>();
+                if (strcmp(items[currentItem], "Sphere") == 0)
+                {
+                    Actor->AddComponent<USphereComp>();
+                }
+                else if (strcmp(items[currentItem], "Cube") == 0)
+                {
+                    Actor->AddComponent<UCubeComp>();   
+                }
+                else if (strcmp(items[currentItem], "Triangle") == 0)
+                {
+                    Actor->AddComponent<UTriangleComp>();   
+                }
+            }
         }
         ImGui::SameLine();
-        int NumOfSpawn;
         ImGui::InputInt("Number of spawn", &NumOfSpawn, 0);
 
 
@@ -97,66 +110,78 @@ void UI::Update()
         ImGui::Text("Camera");
         
         FCamera& camera = FCamera::Get();
-        
+
+        FCamera& Camera = FCamera::Get();
+
         bool IsOrthogonal;
+        if (Camera.ProjectionMode == ECameraProjectionMode::Orthographic)
+        {
+            IsOrthogonal = true;
+        }
+        else if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+        {
+            IsOrthogonal = false;
+        }
+        
         if (ImGui::Checkbox("Orthogonal", &IsOrthogonal))
         {
             if (IsOrthogonal)
             {
-                camera.ProjectionMode = ECameraProjectionMode::Orthographic;   
+                Camera.ProjectionMode = ECameraProjectionMode::Orthographic;   
             }
             else
             {
-                camera.ProjectionMode = ECameraProjectionMode::Perspective;
+                Camera.ProjectionMode = ECameraProjectionMode::Perspective;
             }
         }
 
-        float FOV = camera.GetFieldOfView();
-        if (ImGui::InputFloat("FOV", &FOV, 0))
+        float FOV = Camera.GetFieldOfView();
+        if (ImGui::DragFloat("FOV", &FOV, 0.1f))
         {
             FOV = std::clamp(FOV, 0.01f, 179.99f);
-            camera.SetFieldOfVew(FOV);
+            Camera.SetFieldOfVew(FOV);
         }
 
-        float NearFar[2] = {camera.GetNear(), camera.GetFar()};
-        if (ImGui::InputFloat2("Near, Far", NearFar))
+        float NearFar[2] = {Camera.GetNear(), Camera.GetFar()};
+        if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
         {
             NearFar[0] = FMath::Max(0.01f, NearFar[0]);
             NearFar[1] = FMath::Max(0.01f, NearFar[1]);
             
             if (NearFar[0] < NearFar[1])
             {
-                camera.SetNear(NearFar[0]);
-                camera.SetFar(NearFar[1]);
+                Camera.SetNear(NearFar[0]);
+                Camera.SetFar(NearFar[1]);
             }
             else
             {
-                if (abs(NearFar[0] - camera.GetNear()) < 0.00001f)
+                if (abs(NearFar[0] - Camera.GetNear()) < 0.00001f)
                 {
-                    camera.SetFar(NearFar[0] + 0.01f);
+                    Camera.SetFar(NearFar[0] + 0.01f);
                 }
-                else if (abs(NearFar[1] - camera.GetFar()) < 0.00001f)
+                else if (abs(NearFar[1] - Camera.GetFar()) < 0.00001f)
                 {
-                    camera.SetNear(NearFar[1] - 0.01f);
+                    Camera.SetNear(NearFar[1] - 0.01f);
                 }
             }
         }
         
-        FVector CameraLocation = camera.GetPosition();
-        if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraLocation), 0.1f))
+        float CameraLocation[] = {Camera.GetTransform().GetPosition().X, Camera.GetTransform().GetPosition().Y, Camera.GetTransform().GetPosition().Z};
+        if (ImGui::DragFloat3("Camera Location", CameraLocation, 0.1f))
         {
-            camera.SetPosition(CameraLocation);
+            Camera.GetTransform().SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
         }
 
-        FVector CameraRotation = camera.GetRotation();
-        if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
+        float CameraRotation[] = {Camera.GetTransform().GetRotation().X, Camera.GetTransform().GetRotation().Y, Camera.GetTransform().GetRotation().Z};
+        if (ImGui::DragFloat3("Camera Rotation", CameraRotation, 0.1f))
         {
-            camera.SetRotation(CameraRotation);
+            Camera.GetTransform().SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+            
         }
 
-        FVector Forward = camera.GetForward();
-        FVector Up = camera.GetUp();
-        FVector Right = camera.GetRight();
+        FVector Forward = Camera.GetTransform().GetForward();
+        FVector Up = Camera.GetTransform().GetUp();
+        FVector Right = Camera.GetTransform().GetRight();
         
         ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
         ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
@@ -165,13 +190,31 @@ void UI::Update()
         ImGui::End();
     }
 
-    if (ImGui::Begin("Jungle Property Window"))
+    bool IsSelectedObjectExist = true;
+    // Test -> SelectedObject를 직접 가져오면 됨.
+    if (IsSelectedObjectExist)
     {
-        float a[3];
-        ImGui::InputFloat3("Translation", a);
-        ImGui::InputFloat3("Rotation", a);
-        ImGui::InputFloat3("Scale", a);
-        ImGui::End();
+        if (ImGui::Begin("Jungle Property Window"))
+        {
+            // FTransform& selectedTransform = selectedActor->GetTransform();
+            // //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
+            // float position[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
+            //  float rotation[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
+            //  float scale[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
+            // if (ImGui::InputFloat3("Translation", position))
+            // {
+            //     selectedTransform.SetPosition(position[0], position[1], position[2]);
+            // }
+            // if (ImGui::InputFloat3("Rotation", rotation))
+            // {
+            //     selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+            // }
+            // if (ImGui::InputFloat3("Scale", scale))
+            // {
+            //     selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+            // }
+            ImGui::End();
+        }
     }
 
     //if (ImGui::Begin("Console Window"))
@@ -200,13 +243,6 @@ void UI::Update()
     //    ImGui::End();
     //}
     Debug::ShowConsole(&bIsConsoleOpen);
-    //test
-    if (ImGui::Button("Create Sphere Actor"))
-    {
-		AActor* Actor = FObjectFactory::ConstructActor<AActor>();
-		Actor->AddComponent<USphereComp>();
-		Actor->AddComponent<UCubeComp>();
-    }
     
     // ImGui 렌더링
     ImGui::Render();

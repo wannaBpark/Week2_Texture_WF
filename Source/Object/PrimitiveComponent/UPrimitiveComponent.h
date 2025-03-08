@@ -17,30 +17,38 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void Render();
 
-	EPrimitiveType GetType() { return PrimitiveType; }
+	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
 protected:
-	EPrimitiveType PrimitiveType = EPrimitiveType::EPT_None;
-	bool bCanBeRendered = PrimitiveType != EPrimitiveType::EPT_None;
+	const bool bCanBeRendered = GetType() != EPrimitiveType::EPT_None;
 };
 
 class UCubeComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
 public:
-	UCubeComp()
+	EPrimitiveType GetType() override
 	{
-		PrimitiveType = EPrimitiveType::EPT_Cube;
+		return EPrimitiveType::EPT_Cube;
 	}
-
 };
 
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
 public:
-	USphereComp()
+	EPrimitiveType GetType() override
 	{
-		PrimitiveType = EPrimitiveType::EPT_Sphere;
+		return EPrimitiveType::EPT_Sphere;
+	}
+};
+
+class UTriangleComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Triangle;
 	}
 };

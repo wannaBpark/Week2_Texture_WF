@@ -3,6 +3,7 @@
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Matrix.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Vector.h"
 
 namespace ECameraProjectionMode
@@ -16,55 +17,70 @@ namespace ECameraProjectionMode
 
 class FCamera : public TSingleton<FCamera>
 {
-private:
-    // Rotation - Quaternion vs Vector3
-    FVector Rotation;
+public:
+    struct FCameraTransform : public FTransform
+    {
+    private:
+        FVector Up;
+        FVector Right;
+        FVector Forward;
 
-    // Location - Vector3
-    FVector Position;
+    public:
+        FCameraTransform();
+    
+        inline void SetPosition(FVector InPosition) override;
+        inline void SetPosition(float x, float y, float z) override;
+        inline void SetRotation(float x, float y, float z) override;
+        inline void SetRotation(FVector InRotation) override;
+        void OnTranslate() const;
+        void OnRotate();
 
-    FVector Up;
-    FVector Right;
-    FVector Forward;
+        inline FVector GetForward() const
+        {
+            return Forward;
+        }
+    
+        inline FVector GetRight() const
+        {
+            return Right;
+        }
+    
+        inline FVector GetUp() const
+        {
+            return Up;
+        }
 
+        inline FMatrix GetViewMatrix() const
+        {
+            return FMatrix::LookAtLH(Position, Position + Forward, Up);
+        }
+    };
+private:    
+    FCameraTransform Transform;
+    
     float Near;
     float Far;
     // 화면각
     float FieldOfView;
-    
-public:	
+
+public:
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
-
 public:
     FCamera();
 
-    void SetRotation(const float x, const float y, const float z);
-    void SetRotation(const FVector& Rot);
-    void SetPosition(const float x, const float y, const float z);
-    void SetPosition(const FVector& Pos);
+    FCameraTransform& GetTransform();
 
     void SetFieldOfVew(float Fov);
     void SetFar(float Far);
     void SetNear(float Near);
     
-    
-    FMatrix GetViewMatrix() const;
-    FVector GetPosition() const;
-    FVector GetRotation() const;
-
-    FVector GetForward() const;
-    FVector GetRight() const;
-    FVector GetUp() const;
-
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;
 
-
 private:
-    void OnUpdateTransform();
     void OnUpdateProjectionChanges() const;
 };
