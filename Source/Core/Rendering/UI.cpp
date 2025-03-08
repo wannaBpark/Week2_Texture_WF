@@ -38,12 +38,27 @@ void UI::Update()
     {
         ImGui::Text("Hello, Jungle World!");
         ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
+
+        const uint64 ContainerAllocByte = FPlatformMemory::GetAllocationBytes<EAT_Container>();
+        const uint64 ContainerAllocCount = FPlatformMemory::GetAllocationCount<EAT_Container>();
+        const uint64 ObjectAllocByte = FPlatformMemory::GetAllocationBytes<EAT_Object>();
+        const uint64 ObjectAllocCount = FPlatformMemory::GetAllocationCount<EAT_Object>();
         ImGui::Text(
-            "Memory Uses: %llubyte, Count: %llu",
-            FPlatformMemory::GetTotalAllocationBytes(),
-            FPlatformMemory::GetTotalAllocationCount()
+            "Container Memory Uses: %llubyte, Count: %llu",
+            ContainerAllocByte,
+            ContainerAllocCount
         );
-        
+        ImGui::Text(
+            "Object Memory Uses: %llubyte, Count: %llu Objects",
+            ObjectAllocByte,
+            ObjectAllocCount
+        );
+        ImGui::Text(
+            "Total Memory Uses: %llubyte, Count: %llu",
+            ContainerAllocByte + ObjectAllocByte,
+            ContainerAllocCount + ObjectAllocCount
+        );
+
         ImGui::Separator();
         
         const char* items[] = { "Sphere", "Cube"};
@@ -105,8 +120,8 @@ void UI::Update()
         float NearFar[2] = {camera.GetNear(), camera.GetFar()};
         if (ImGui::InputFloat2("Near, Far", NearFar))
         {
-            NearFar[0] = max(0.01f, NearFar[0]);
-            NearFar[1] = max(0.01f, NearFar[1]);
+            NearFar[0] = FMath::Max(0.01f, NearFar[0]);
+            NearFar[1] = FMath::Max(0.01f, NearFar[1]);
             
             if (NearFar[0] < NearFar[1])
             {
@@ -126,16 +141,16 @@ void UI::Update()
             }
         }
         
-        float CameraLocation[] = {camera.GetPosition().X, camera.GetPosition().Y, camera.GetPosition().Z};
-        if (ImGui::InputFloat3("Camera Location", CameraLocation))
+        FVector CameraLocation = camera.GetPosition();
+        if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraLocation), 0.1f))
         {
-            camera.SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
+            camera.SetPosition(CameraLocation);
         }
 
-        float CameraRotation[] = {camera.GetRotation().X, camera.GetRotation().Y, camera.GetRotation().Z};
-        if (ImGui::InputFloat3("Camera Rotation", CameraRotation))
+        FVector CameraRotation = camera.GetRotation();
+        if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
         {
-            camera.SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+            camera.SetRotation(CameraRotation);
         }
 
         FVector Forward = camera.GetForward();
@@ -185,13 +200,13 @@ void UI::Update()
     }
 
     //test
-  //  if (ImGui::Button("Create Sphere Actor"))
-  //  {
-		//AActor* Actor = FObjectFactory::ConstructActor<AActor>();
-		//Actor->AddComponent<USphereComp>();
-		//Actor->AddComponent<UCubeComp>();
-  //  }
-  //  
+    if (ImGui::Button("Create Sphere Actor"))
+    {
+		AActor* Actor = FObjectFactory::ConstructActor<AActor>();
+		Actor->AddComponent<USphereComp>();
+		Actor->AddComponent<UCubeComp>();
+    }
+    
     // ImGui 렌더링
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

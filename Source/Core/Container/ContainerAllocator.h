@@ -1,12 +1,9 @@
 ﻿#pragma once
-#include <cstdlib>
 #include <iostream>
 
 #include "Core/HAL/PlatformType.h"
 #include "Core/HAL/PlatformMemory.h"
 
-
-struct FPlatformMemory;
 
 /**
  * IndexSize에 따라 적절한 정수 타입을 매핑하는 메타 프로그래밍 구조체입니다.
@@ -85,14 +82,14 @@ template <typename T, int IndexSize>
 constexpr T* TContainerAllocator<T, IndexSize>::allocate(size_type n) noexcept
 {
     const size_t AllocSize = sizeof(T) * n;
-    return static_cast<T*>(FPlatformMemory::Malloc(AllocSize));
+    return static_cast<T*>(FPlatformMemory::Malloc<EAT_Container>(AllocSize));
 }
 
 template <typename T, int IndexSize>
 constexpr void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
 {
     const size_t AllocSize = sizeof(T) * n;
-    FPlatformMemory::Free(p, AllocSize);
+    FPlatformMemory::Free<EAT_Container>(p, AllocSize);
 }
 
 template <typename T> using FDefaultAllocator = TContainerAllocator<T, 32>;
