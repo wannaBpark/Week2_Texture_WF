@@ -3,6 +3,7 @@
 #include "Object/USceneComponent.h"
 #include "Object/FObjectFactory.h"
 #include "Core/Math/Transform.h"
+#include "Core/Container/Set.h"
 #include <memory>
 #include <unordered_set>
 
@@ -12,36 +13,31 @@ public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 
-
 public:
 	template<typename T>
 		requires std::derived_from<T, USceneComponent>
 	T* AddComponent()
 	{
-		std::shared_ptr<T> ObjectInstance = FObjectFactory::ConstructObject<T>();
-		Components.insert(ObjectInstance);
+		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
+		Components.Add(ObjectInstance);
 
-		return ObjectInstance.get();
+		return ObjectInstance;
 	}
 
 	// delete
 	template<typename T>
 		requires std::derived_from<T, USceneComponent>
-	void RemoveComponent()
+	void RemoveComponent(T* Object)
 	{
-		auto it = std::remove_if(Components.begin(), Components.end(),
-			[](USceneComponent* comp) { return dynamic_cast<T*>(comp) != nullptr; });
-
-		Components.erase(it, Components.end());
+		Components.Remove(Object);
 	}
-
 
 	FTransform& GetTransform() { return Transform; }
 	bool CanEverTick() const { return bCanEverTick; }
 
 protected:
 	bool bCanEverTick = false;
-	std::unordered_set<std::shared_ptr<USceneComponent>> Components;
+	TSet<USceneComponent*> Components;
 	FTransform Transform;
 };
 

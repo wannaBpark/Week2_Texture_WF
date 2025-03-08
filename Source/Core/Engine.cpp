@@ -66,10 +66,6 @@ void UEngine::Run()
     LARGE_INTEGER StartTime;
     QueryPerformanceCounter(&StartTime);
 
-    // TEST
-	std::shared_ptr<USceneComponent> component = FObjectFactory::ConstructObject<USceneComponent>();
-    component.reset();
-
 
     IsRunning = true;
     while (IsRunning)

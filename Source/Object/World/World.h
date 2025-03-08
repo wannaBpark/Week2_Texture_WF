@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include <unordered_set>
 #include "Object/UObject.h"
 #include "Object/Actor/Actor.h"
+#include "Core/Container/Set.h"
 #include "JsonSavehelper.h"
 
 class UWorld :public UObject
@@ -12,6 +12,6 @@ public:
 	void Tick(float DeltaTime);
 
 protected:
-	std::unordered_set<AActor*> Actors;
+	TSet<AActor*> Actors;
 };
 
