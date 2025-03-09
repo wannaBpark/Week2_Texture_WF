@@ -8,10 +8,11 @@ class UObject : public std::enable_shared_from_this<UObject>
 {
 	friend class FObjectFactory;
 
-	uint32 UUID;
+	uint32 UUID = 0;
 	uint32 InternalIndex; // Index of GUObjectArray
 
 public:
 	UObject();
 	virtual ~UObject();
+	uint32 GetUUID() const { return UUID; }
 };

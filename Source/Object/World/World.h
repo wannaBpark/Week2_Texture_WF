@@ -10,16 +10,20 @@ public:
 	virtual ~UWorld() = default;
 
 public:
-	void LoadWorld(const char* Name);
-	void ClearWorld();
-	UWorldInfo& GetWorldInfo();
-	void SaveWorld();
 	void BeginPlay();
 	void Tick(float DeltaTime);
 	void AddActor(class AActor* Actor) { Actors.Add(Actor); }
 
+	void ClearWorld();
+	void LoadWorld(const char* SceneName);
+	void SaveWorld();
+
+private:
+	UWorldInfo GetWorldInfo() const;
+
 public:
 	std::string SceneName = "";
+	uint32 Version = 1;
 	
 protected:
 	TSet<class AActor*> Actors;

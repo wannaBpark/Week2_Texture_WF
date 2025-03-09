@@ -29,6 +29,14 @@ void AActor::Pick()
 	}
 }
 
+void AActor::UnPick()
+{
+	if (RootComponent)
+	{
+		RootComponent->Pick(false);
+	}	
+}
+
 const FTransform& AActor::GetActorTransform()
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
@@ -44,6 +52,11 @@ void AActor::SetTransform(const FTransform& InTransform)
 	{
 		UE_LOG("RootComponent is nullptr");
 	}
+}
+
+const char* AActor::GetTypeName()
+{
+	return "Actor";
 }
 
 USceneComponent* AActor::GetRootComponent()

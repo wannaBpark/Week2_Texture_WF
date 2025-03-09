@@ -14,6 +14,8 @@
 #include <Object/Actor/Sphere.h>
 #include <Object/Actor/Cube.h>
 
+#include "Static/FEditorManager.h"
+
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
@@ -251,9 +253,8 @@ void UI::RenderPropertyWindow()
 
     if (bIsSelectedObjectExist)
     {
-        if (ImGui::Begin("Jungle Property Window"))
+        if (selectedActor != nullptr)
         {
-            //FTransform selectedTransform = FTransform();
             FTransform selectedTransform = selectedActor->GetActorTransform();
             //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
             float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
@@ -275,6 +276,5 @@ void UI::RenderPropertyWindow()
                 selectedActor->SetTransform(selectedTransform);
             }
         }
-        ImGui::End();
     }
 }
