@@ -46,9 +46,10 @@ public:
     TArray& operator=(TArray&& Other) noexcept;
 
     void Init(const T& Element, SizeType Number);
-    void Add(const T& Item);
-    void AddUnique(const T& Item);
-    void Emplace(T&& Item);
+    SizeType Add(const T& Item);
+    SizeType Add(T&& Item);
+    SizeType AddUnique(const T& Item);
+    SizeType Emplace(T&& Item);
     void Empty();
     SizeType Remove(const T& Item);
     bool RemoveSingle(const T& Item);
@@ -130,24 +131,32 @@ void TArray<T, Allocator>::Init(const T& Element, SizeType Number)
 }
 
 template <typename T, typename Allocator>
-void TArray<T, Allocator>::Add(const T& Item)
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Add(const T& Item)
 {
-    PrivateVector.push_back(Item);
+    return Emplace(Item);
 }
 
 template <typename T, typename Allocator>
-void TArray<T, Allocator>::AddUnique(const T& Item)
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Add(T&& Item)
 {
-    if (Find(Item) == -1)
+    return Emplace(std::move(Item));
+}
+
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::AddUnique(const T& Item)
+{
+    if (SizeType Index; Find(Item, Index))
     {
-        PrivateVector.push_back(Item);
+        return Index;
     }
+    return Add(Item);
 }
 
 template <typename T, typename Allocator>
-void TArray<T, Allocator>::Emplace(T&& Item)
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Emplace(T&& Item)
 {
     PrivateVector.emplace_back(std::move(Item));
+    return Num();
 }
 
 template <typename T, typename Allocator>
