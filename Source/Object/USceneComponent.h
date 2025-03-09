@@ -29,6 +29,7 @@ protected:
 	void UpdateChildrenTransform();
 
 protected:
+	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
 	FTransform Transform;
 	bool bCanEverTick = true;
