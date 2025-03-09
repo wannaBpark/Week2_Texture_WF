@@ -10,6 +10,7 @@ class UWorld;
 
 class AActor : public UObject
 {
+	friend class FEditorManager;
 public:
 	AActor() = default;
 	virtual ~AActor() = default;
@@ -21,8 +22,9 @@ public:
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
-public:
+private:
 	virtual void Pick();
+	virtual void UnPick();
 
 public:
 	template<typename T>
@@ -46,7 +48,8 @@ public:
 	const FTransform& GetActorTransform();
 	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
-
+	virtual const char* GetTypeName();
+	
 public:
 	class USceneComponent* GetRootComponent();
 

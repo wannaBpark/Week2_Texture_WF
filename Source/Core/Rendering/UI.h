@@ -10,7 +10,6 @@ class UI
 public:
     int currentItem = 0;
     int NumOfSpawn = 0;
-    AActor* selectedActor = nullptr;
     
     void Initialize(HWND hWnd, const class URenderer& Renderer);
     void Update();

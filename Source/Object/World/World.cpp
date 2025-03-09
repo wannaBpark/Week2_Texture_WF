@@ -1,61 +1,17 @@
 ﻿#include "World.h"
 #include "Object/Actor/Actor.h"
 #include "JsonSavehelper.h"
-#include <Object/Actor/Sphere.h>
-#include <Object/Actor/Cube.h>
 #include <Object/Gizmo/Axis.h>
 #include <Object/Actor/Arrow.h>
 
-void UWorld::ClearWorld()
-{
-	//Actors.Empty();
-}
-
-UWorldInfo& UWorld::GetWorldInfo()
-{
-	UWorldInfo WorldInfo;
-	// WorldInfo.Objcts = new UObjectInfo*[10];
-	// WorldInfo.sceneName = SceneName;
-	// WorldInfo.Version = 1;
-	// WorldInfo.NextUUID = UEngineStatics::GetNextUUID();
-	// for (auto& actor : Actors)
-	// {
-	// 	FTransform& Transform = actor->GetTransform();
-	// 	WorldInfo.Objcts[i]->Location =Transform.GetPosition();
-	// 	WorldInfo.Objcts[i]->Rotation =Transform.GetRotation();
-	// 	WorldInfo.Objcts[i]->Scale =Transform.GetScale();
-	// 	WorldInfo.Objcts[i]->ObjectType = ObjectType;
-	// 	WorldInfo.Objcts[i]->UUID = 1;
-	// 	for (auto component : actor->Components)
-	// 	{
-	// 		WorldInfo.Objcts[i]->ComponentUUIDs.push_back(component->uuid);
-	// 	} 
-	//	}
-	return WorldInfo;
-}
-
-void UWorld::SaveWorld()
-{
-	//UWorldInfo& WorldInfo = GetWorldInfo();
-	//JsonSaveHelper::SaveScene(WorldInfo);
-}
-
-void UWorld::LoadWorld(const char* Name)
-{
-	ClearWorld();
-	// !TODO : WorldInfo에 맞게 오브젝트들 Instantiate
-	//UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(Name);
-}
+#include "Core/EngineStatics.h"
+#include "Core/Container/Map.h"
+#include "Object/Actor/Cube.h"
+#include "Object/Actor/Sphere.h"
 
 void UWorld::BeginPlay()
 {
 	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
-
-	//ACube* TestCube1 = FObjectFactory::ConstructActor<ACube>();
-	//TestCube1->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
-
-	//ACube* TestCube2 = FObjectFactory::ConstructActor<ACube>();
-	//TestCube2->SetTransform(FTransform(FVector(.5f, .5f, .5f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
 	FTransform tr = TestArrow->GetActorTransform();
@@ -77,4 +33,81 @@ void UWorld::Tick(float DeltaTime)
 			Actor->Tick(DeltaTime);
 		}
 	}
+}
+
+void UWorld::ClearWorld()
+{
+	
+}
+
+void UWorld::SaveWorld()
+{
+	const UWorldInfo& WorldInfo = GetWorldInfo();
+	JsonSaveHelper::SaveScene(WorldInfo);
+}
+
+void UWorld::LoadWorld(const char* SceneName)
+{
+	ClearWorld();
+	
+	UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(SceneName);
+
+	Version = WorldInfo->Version;
+	this->SceneName = WorldInfo->SceneName;
+	uint32 ActorCount = WorldInfo->ActorCount;
+
+	// Type 확인
+	for (uint32 i = 0; i < ActorCount; i++)
+	{
+		UObjectInfo* ObjectInfo = WorldInfo->ObjctInfos[i];
+		FTransform Transform = FTransform(ObjectInfo->Location, ObjectInfo->Rotation, ObjectInfo->Scale);
+
+		AActor* Actor = nullptr;
+		
+		if (ObjectInfo->ObjectType == "Actor")
+		{
+			Actor = FObjectFactory::ConstructActor<AActor>();
+		}
+		else if (ObjectInfo->ObjectType == "Sphere")
+		{
+			Actor = FObjectFactory::ConstructActor<ASphere>();
+		}
+		else if (ObjectInfo->ObjectType == "Cube")
+		{
+			Actor = FObjectFactory::ConstructActor<ACube>();
+		}
+		else if (ObjectInfo->ObjectType == "Arrow")
+		{
+			Actor = FObjectFactory::ConstructActor<AArrow>();
+		}
+		else if (ObjectInfo->ObjectType == "Axis")
+		{
+			Actor = FObjectFactory::ConstructActor<AAxis>();
+		}
+			
+		Actor->SetTransform(Transform);
+	}
+}
+
+UWorldInfo UWorld::GetWorldInfo() const
+{
+	UWorldInfo WorldInfo;
+	WorldInfo.ActorCount = Actors.Num();
+	WorldInfo.ObjctInfos = new UObjectInfo*[WorldInfo.ActorCount];
+	WorldInfo.SceneName = SceneName;
+	WorldInfo.Version = 1;
+	uint32 i = 0;
+	for (auto& actor : Actors)
+	{
+		WorldInfo.ObjctInfos[i] = new UObjectInfo();
+		const FTransform& Transform = actor->GetActorTransform();
+		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
+		WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
+		WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
+		WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();
+
+		WorldInfo.ObjctInfos[i]->UUID = actor->GetUUID();
+		i++;
+	}
+	return WorldInfo;
 }
