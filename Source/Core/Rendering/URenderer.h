@@ -102,6 +102,12 @@ protected:
     /** 프레임 버퍼를 생성합니다. */
     void CreateFrameBuffer();
 
+    /** 뎁스 스텐실 버퍼를 생성합니다. */
+	void CreateDepthStencilBuffer();
+
+    /** 뎁스 스텐실 상태를 생성합니다. */
+	void CreateDepthStencilState();
+
     /** 프레임 버퍼를 해제합니다. */
     void ReleaseFrameBuffer();
 
@@ -135,6 +141,14 @@ protected:
     ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
+
+    // Depth Stenil Buffer
+	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
+	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
+	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
+
+    
+	// Buffer Cache
 
 	std::unique_ptr<FBufferCache> BufferCache;
 
