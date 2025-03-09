@@ -13,9 +13,8 @@ enum class EPrimitiveType : uint8
 	EPT_Cube,
 	EPT_Sphere,
 	EPT_Line,
-
-	// Primitive는 아니지만, 일단..
-	EPT_Arrow,
+	EPT_Cylinder,
+	EPT_Cone,
 	EPT_Max,
 };
 

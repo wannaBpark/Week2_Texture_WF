@@ -3,10 +3,17 @@
 
 AArrow::AArrow()
 {
-	UArrowComp* ArrowComp = AddComponent<UArrowComp>();
-	RootComponent = ArrowComp;
+	bCanEverTick = true;
 
-	ArrowComp->SetTransform(FTransform());
+	UCylinderComp* CylinderComp = AddComponent<UCylinderComp>();
+	RootComponent = CylinderComp;
+
+	UConeComp* ConeComp = AddComponent<UConeComp>();
+	ConeComp->SetTransform(FTransform(FVector(0.0f, 0.0f, 2.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.2f, 1.2f, 0.5f)));
+
+	ConeComp->SetupAttachment(RootComponent);
+
+	SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.5f, 0.5f, 2.f)));
 }
 
 void AArrow::BeginPlay()
