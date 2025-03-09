@@ -410,5 +410,24 @@ struct alignas(16) FMatrix
 		Result.M[3][3] = 0.0f;
 		return Result.GetTransposed();
 	}
+
+	FVector GetTranslation() const
+	{
+		return FVector(M[0][3], M[1][3], M[2][3]);
+	}
+
+	FVector GetScale() const 
+	{
+		return FVector(M[0][0], M[1][1], M[2][2]);
+	}
+
+	FVector GetRotation() const 
+	{
+		FVector Result;
+		Result.X = atan2(M[2][1], M[2][2]);
+		Result.Y = atan2(-M[2][0], sqrt(M[2][1] * M[2][1] + M[2][2] * M[2][2]));
+		Result.Z = atan2(M[1][0], M[0][0]);
+		return Result;
+	}
 };
 
