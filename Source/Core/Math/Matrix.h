@@ -418,7 +418,12 @@ struct alignas(16) FMatrix
 
 	FVector GetScale() const 
 	{
-		return FVector(M[0][0], M[1][1], M[2][2]);
+		float X = FVector(M[0][0], M[1][0], M[2][0]).Length();
+		float Y = FVector(M[0][1], M[1][1], M[2][1]).Length();
+		float Z = FVector(M[0][2], M[1][2], M[2][2]).Length();
+		return {X, Y, Z};
+		
+		//return FVector(M[0][0], M[1][1], M[2][2]);
 	}
 
 	FVector GetRotation() const 

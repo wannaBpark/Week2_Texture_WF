@@ -58,9 +58,16 @@ void FCamera::FCameraTransform::OnRotate()
         -cosX * sinY * cosZ + sinX * sinZ // Z
     );
 
-    Right = FVector::CrossProduct(Forward, FVector(0, 1, 0));
+    // 이렇게 사용 x, 동일할 경우 0 나옴.
+    // Up = FVector::CrossProduct(Forward, FVector(0, 1, 0));
 
-    Up = FVector::CrossProduct(Right, Forward);
+    Up = FVector(
+        sinY,               // X
+        -sinX * cosY,       // Y
+        cosX * cosY         // Z
+    );
+
+    Right = FVector::CrossProduct(Up, Forward);
 
     UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
 }

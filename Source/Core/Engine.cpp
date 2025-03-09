@@ -68,7 +68,8 @@ void UEngine::Initialize(
     InitRenderer();
 
     InitWorld();
-
+    ui.Initialize(WindowHandle, *Renderer);
+    
 	UE_LOG("Engine Initialized!");
 }
 
@@ -201,8 +202,6 @@ void UEngine::InitRenderer()
 	Renderer->Create(WindowHandle);
 	Renderer->CreateShader();
 	Renderer->CreateConstantBuffer();
-
-	ui.Initialize(WindowHandle, *Renderer);
 }
 
 void UEngine::InitWorld()

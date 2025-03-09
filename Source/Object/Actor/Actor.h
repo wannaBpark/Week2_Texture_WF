@@ -4,6 +4,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
+#include "Object/USceneComponent.h"
 
 class UWorld;
 
@@ -53,7 +54,6 @@ protected:
 	bool bCanEverTick = true;
 	TSet<UActorComponent*> Components;
 	USceneComponent* RootComponent = nullptr;
-	//FTransform Transform;
 	UWorld* World = nullptr;
 };
 
