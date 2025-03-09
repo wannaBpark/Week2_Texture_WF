@@ -52,8 +52,9 @@ void UEngine::Initialize(
     ScreenHeight = InScreenHeight;
 
     InitWindow(InScreenWidth, InScreenWidth);
-    InitWorld();
     InitRenderer();
+
+    InitWorld();
 
 	UE_LOG("Engine Initialized!");
 }
@@ -189,7 +190,7 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
 	// !TODO : Load World
-	auto Axis = FObjectFactory::ConstructActor<AAxis>();
+	//auto Axis = FObjectFactory::ConstructActor<AAxis>();
 	World->BeginPlay();
 }
 

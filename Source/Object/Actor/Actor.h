@@ -39,13 +39,18 @@ public:
 		Components.Remove(Object);
 	}
 
-	FTransform& GetTransform() { return Transform; }
+	const FTransform& GetActorTransform();
+	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
+
+public:
+	class USceneComponent* GetRootComponent();
 
 protected:
 	bool bCanEverTick = true;
 	TSet<UActorComponent*> Components;
-	FTransform Transform;
+	USceneComponent* RootComponent = nullptr;
+	//FTransform Transform;
 	UWorld* World = nullptr;
 };
 
