@@ -72,6 +72,8 @@ FCamera::FCamera()
     Far = 1000.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
+
+    Transform.SetPosition(FVector(-5, 0, 0));
     
     OnUpdateProjectionChanges();
 }
