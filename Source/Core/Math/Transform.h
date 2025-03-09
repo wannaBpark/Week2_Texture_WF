@@ -19,6 +19,13 @@ public:
 	{
 	}
 
+	FTransform(FVector InPosition, FVector InRotation, FVector InScale)
+		: Position(InPosition)
+		, Rotation(InRotation)
+		, Scale(InScale)
+	{
+	}
+
 	virtual ~FTransform() = default;
 	
 	inline virtual void SetPosition(FVector InPosition)
@@ -63,6 +70,20 @@ public:
 		return FMatrix::Translate(Position.X, Position.Y, Position.Z) 
 			* FMatrix::Rotate(Rotation.X, Rotation.Y, Rotation.Z) 
 			* FMatrix::Scale(Scale.X, Scale.Y, Scale.Z);
+	}
+
+	FTransform operator*(const FTransform& Other) const
+	{
+		FMatrix ParentMatrix = GetWorldMatrix();
+		FMatrix ChildMatrix = Other.GetWorldMatrix();
+
+		FMatrix Result = ParentMatrix * ChildMatrix;
+
+		FVector ResultPosition = Result.GetTranslation();
+		FVector ResultRotation = Result.GetRotation();
+		FVector ResultScale = Result.GetScale();
+
+		return FTransform(ResultPosition, ResultRotation, ResultScale);
 	}
 
 	// FVector GetForward() const

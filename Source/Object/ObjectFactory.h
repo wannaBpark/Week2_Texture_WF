@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UObject.h"
 #include "Core/HAL/PlatformMemory.h"
+#include "Debug/DebugConsole.h"
 #include "Core/Engine.h"
 #include "Debug/DebugConsole.h"
 
@@ -39,12 +40,15 @@ public:
 
         if (World == nullptr)
         {
+            UE_LOG("Actor Construction Failed. World is nullptr");
             return nullptr;
         }
 
         Actor->SetWorld(UEngine::Get().GetWorld());
 
         World->AddActor(Actor);
+
+        UE_LOG("Actor Construction.");
         return Actor;
     }
 };

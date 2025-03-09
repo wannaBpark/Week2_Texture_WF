@@ -2,6 +2,8 @@
 cbuffer constants : register(b0)
 {
     matrix MVP;
+    float4 CustomColor;
+    uint bUseVertexColor;
 }
 
 struct VS_INPUT
@@ -20,10 +22,9 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
 
-    // 3D 변환 행렬
     output.position = mul(input.position, MVP);
 
-    output.color = input.color;
+    output.color = bUseVertexColor == 1 ? input.color : CustomColor;
     return output;
 }
 

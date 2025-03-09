@@ -1,4 +1,6 @@
 ﻿#include "Actor.h"
+#include "Object/USceneComponent.h"
+#include <Debug/DebugConsole.h>
 
 void AActor::BeginPlay()
 {
@@ -17,4 +19,26 @@ void AActor::Tick(float DeltaTime)
 			Component->Tick(DeltaTime);
 		}
 	}
+}
+
+const FTransform& AActor::GetActorTransform()
+{
+	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
+}
+
+void AActor::SetTransform(const FTransform& InTransform)
+{
+	if (RootComponent)
+	{
+		RootComponent->SetTransform(InTransform);
+	}
+	else
+	{
+		UE_LOG("RootComponent is nullptr");
+	}
+}
+
+USceneComponent* AActor::GetRootComponent()
+{
+	return RootComponent;
 }

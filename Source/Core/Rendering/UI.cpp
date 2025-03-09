@@ -12,6 +12,8 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/ObjectFactory.h"
 #include "Debug/DebugConsole.h"
+#include <Object/Actor/Sphere.h>
+#include <Object/Actor/Cube.h>
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
@@ -74,19 +76,19 @@ void UI::Update()
         {
             for (int i = 0 ;  i < NumOfSpawn; i++)
             {
-                AActor* Actor = FObjectFactory::ConstructActor<AActor>();
                 if (strcmp(items[currentItem], "Sphere") == 0)
                 {
-                    Actor->AddComponent<USphereComp>();
+                    auto Sphere = FObjectFactory::ConstructActor<ASphere>();
+
                 }
                 else if (strcmp(items[currentItem], "Cube") == 0)
                 {
-                    Actor->AddComponent<UCubeComp>();   
+					auto Cube = FObjectFactory::ConstructActor<ACube>();
                 }
-                else if (strcmp(items[currentItem], "Triangle") == 0)
-                {
-                    Actor->AddComponent<UTriangleComp>();   
-                }
+                //else if (strcmp(items[currentItem], "Triangle") == 0)
+                //{
+                //    Actor->AddComponent<UTriangleComp>();   
+                //}
             }
         }
         ImGui::SameLine();

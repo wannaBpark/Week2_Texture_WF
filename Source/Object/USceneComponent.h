@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UObject.h"
 #include "Core/Math/Vector.h"
+#include "Core/Container/Set.h"
 #include "Core/Math/Transform.h"
 #include "Object/ActorComponent/ActorComponent.h"
 
@@ -16,10 +17,21 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	FTransform& GetTransform();
-	FTransform& GetLocalTransform() { return Transform; }
+
+	const FTransform& GetComponentTransform() { return Transform; }
+
+	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
+
+public:
+	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
+
 protected:
+	void UpdateChildrenTransform();
+
+protected:
+	USceneComponent* Parent = nullptr;
+	TSet<USceneComponent*> Children;
 	FTransform Transform;
 	FTransform* Parent = nullptr;
 	bool bCanEverTick = true;
