@@ -1,4 +1,4 @@
-﻿#include "World.h"
+#include "World.h"
 #include "Object/Actor/Actor.h"
 #include "JsonSavehelper.h"
 #include <Object/Actor/Sphere.h>
@@ -10,9 +10,9 @@ void UWorld::ClearWorld()
 	//Actors.Empty();
 }
 
-UWorldInfo& UWorld::GetWorldInfo()
+UWorldInfo UWorld::GetWorldInfo()
 {
-	UWorldInfo WorldInfo;
+	UWorldInfo WorldInfo{};
 	// WorldInfo.Objcts = new UObjectInfo*[10];
 	// WorldInfo.sceneName = SceneName;
 	// WorldInfo.Version = 1;

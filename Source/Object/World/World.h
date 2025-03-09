@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "JsonSavehelper.h"
 #include "Object/UObject.h"
 #include "Core/Container/Set.h"
@@ -12,7 +12,7 @@ public:
 public:
 	void LoadWorld(const char* Name);
 	void ClearWorld();
-	UWorldInfo& GetWorldInfo();
+	UWorldInfo GetWorldInfo();
 	void SaveWorld();
 	void BeginPlay();
 	void Tick(float DeltaTime);
