@@ -21,6 +21,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 {
 	if (InParent)
 	{
+		Parent = InParent;
 		InParent->Children.Add(this);
 		if (bUpdateChildTransform)
 		{
