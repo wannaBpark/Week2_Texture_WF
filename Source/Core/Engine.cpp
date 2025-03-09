@@ -5,6 +5,8 @@
 #include "Object/World/World.h"
 #include "Debug/DebugConsole.h"
 #include "Object/Gizmo/Axis.h"
+#include "Core/Input/PlayerInput.h"
+#include "Core/Input/PlayerController.h"
 
 // ImGui WndProc 정의
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -17,20 +19,31 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         return true;
     }
-
+    
     switch (uMsg)
     {
         // 창이 제거될 때 (창 닫기, Alt+F4 등)
     case WM_DESTROY:
         PostQuitMessage(0); // 프로그램 종료
         break;
-
     case WM_KEYDOWN:
+        APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
         break;
-
     case WM_KEYUP:
+        APlayerInput::Get().KeyUp(static_cast<EKeyCode>( wParam ));
         break;
-
+    case WM_LBUTTONDOWN:
+        APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, false);
+        break;
+    case WM_LBUTTONUP:
+        APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, false);
+        break;
+    case WM_RBUTTONDOWN:
+        APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, true);
+        break;
+    case WM_RBUTTONUP:
+        APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
+        break;
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -83,7 +96,8 @@ void UEngine::Run()
         const float DeltaTime =
             static_cast<float>(StartTime.QuadPart - EndTime.QuadPart) / static_cast<float>(Frequency.QuadPart);
 
-
+        APlayerInput::Get().PreProcessInput();
+        
         // 메시지(이벤트) 처리
         MSG Msg;
         while (PeekMessage(&Msg, nullptr, 0, 0, PM_REMOVE))
@@ -110,6 +124,12 @@ void UEngine::Run()
 			World->Tick(DeltaTime);
 		}
 
+        //각 Actor에서 TickActor() -> PlayerTick() -> TickPlayerInput() 호출하는데 지금은 Message에서 처리하고 있다.
+        APlayerInput::Get().TickPlayerInput(); //잘못된 위치. 위에 달린 주석대로 처리해야 정상 플레이어 액터 내에서만 처리해야할것같다.
+        
+        // TickPlayerInput
+        APlayerController::Get().ProcessPlayerInput(DeltaTime);
+        
 		// ui Update
         ui.Update();
 
