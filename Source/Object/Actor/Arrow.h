@@ -1,11 +1,13 @@
 ﻿#pragma once
-#include "Actor.h"
-class ACube : public AActor
+#include "Object/Actor/Actor.h"
+
+class AArrow : public AActor
 {
 	using Super = AActor;
+
 public:
-	ACube();
-	virtual ~ACube() = default;
+	AArrow();
+	virtual ~AArrow() = default;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 };

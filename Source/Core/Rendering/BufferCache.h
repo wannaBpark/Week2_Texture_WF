@@ -22,6 +22,8 @@ public:
 	int GetSize() const { return Size; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 
+
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> Buffer;
 	D3D_PRIMITIVE_TOPOLOGY Topology;
@@ -39,6 +41,9 @@ public:
 
 	void Init();
 	BufferInfo GetBufferInfo(EPrimitiveType Type);
+
+public:
+	TArray<FVertexSimple> CreateArrowVertices();
 
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);

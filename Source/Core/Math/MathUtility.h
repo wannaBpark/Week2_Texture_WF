@@ -104,4 +104,62 @@ struct FMath
     {
         return DegVal * (PI_DOUBLE / 180.0);
     }
+
+    [[nodiscard]] static FORCEINLINE constexpr double Cos(double RadVal)
+    {
+		return cos(RadVal);
+    }
+
+	[[nodiscard]] static FORCEINLINE constexpr float Cos(float RadVal)
+	{
+		return cosf(RadVal);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Sin(double RadVal)
+	{
+		return sin(RadVal);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Sin(float RadVal)
+	{
+		return sinf(RadVal);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Tan(double RadVal)
+	{
+		return tan(RadVal);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Tan(float RadVal)
+	{
+		return tanf(RadVal);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Acos(double Value)
+	{
+		return acos(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Acos(float Value)
+	{
+		return acosf(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Asin(double Value)
+	{
+		return asin(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Asin(float Value)
+	{
+		return asinf(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Atan(double Value)
+	{
+		return atan(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Atan(float Value)
+	{
+		return atanf(Value);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr double Atan2(double Y, double X)
+	{
+		return atan2(Y, X);
+	}
+	[[nodiscard]] static FORCEINLINE constexpr float Atan2(float Y, float X)
+	{
+		return atan2f(Y, X);
+	}
 };

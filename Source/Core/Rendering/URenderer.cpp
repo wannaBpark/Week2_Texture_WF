@@ -21,7 +21,7 @@ void URenderer::Release()
     ReleaseRasterizerState();
 
     // 렌더 타겟을 초기화
-    DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+    DeviceContext->OMSetRenderTargets(0, nullptr, DepthStencilView);
 
     ReleaseFrameBuffer();
     ReleaseDeviceAndSwapChain();
@@ -49,11 +49,17 @@ void URenderer::CreateShader()
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
 
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "outlinePS", "ps_5_0", 0, 0, &OutlineShaderCSO, nullptr);
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "outlinePS", "ps_5_0", 0, 0, &OutlineShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(OutlineShaderCSO->GetBufferPointer(), OutlineShaderCSO->GetBufferSize(), nullptr, &OutlinePixelShader);
+
+	if (ErrorMsg)
+	{
+		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+		ErrorMsg->Release();
+	}
 
     // 입력 레이아웃 정의 및 생성
     D3D11_INPUT_ELEMENT_DESC Layout[] =
@@ -130,7 +136,6 @@ void URenderer::Prepare() const
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-
     // InputAssembler의 Vertex 해석 방식을 설정
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -188,7 +193,6 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRender
     };
 
     UpdateConstant(UpdateInfo);
-	RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
 
 
     if (bRenderOutline)
@@ -199,6 +203,10 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRender
 
 		// 기본 셰이더로 변경
 		DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    }
+    else
+    {
+	    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
     }
 }
 
@@ -349,43 +357,43 @@ void URenderer::CreateFrameBuffer()
 
 void URenderer::CreateDepthStencilBuffer()
 {
-    D3D11_TEXTURE2D_DESC depthStencilDesc = {};
-    depthStencilDesc.Width = static_cast<UINT>(ViewportInfo.Width);
-    depthStencilDesc.Height = static_cast<UINT>(ViewportInfo.Height);
-    depthStencilDesc.MipLevels = 1;
-    depthStencilDesc.ArraySize = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
-    depthStencilDesc.SampleDesc.Count = 1;
-    depthStencilDesc.SampleDesc.Quality = 0;
-    depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
-    depthStencilDesc.CPUAccessFlags = 0;
-    depthStencilDesc.MiscFlags = 0;
+    D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
+    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
+    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
+    DepthBufferDesc.MipLevels = 1;
+    DepthBufferDesc.ArraySize = 1;
+	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
+    DepthBufferDesc.SampleDesc.Count = 1;
+    DepthBufferDesc.SampleDesc.Quality = 0;
+    DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+    DepthBufferDesc.CPUAccessFlags = 0;
+    DepthBufferDesc.MiscFlags = 0;
 
-    HRESULT result = Device->CreateTexture2D(&depthStencilDesc, nullptr, &DepthStencilBuffer);
+    HRESULT result = Device->CreateTexture2D(&DepthBufferDesc, nullptr, &DepthStencilBuffer);
 
     result = Device->CreateDepthStencilView(DepthStencilBuffer, nullptr, &DepthStencilView);
 }
 
 void URenderer::CreateDepthStencilState()
 {
-    D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-    depthStencilDesc.DepthEnable = TRUE;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
-    depthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
-    //depthStencilDesc.StencilReadMask = 0xFF;
-    //depthStencilDesc.StencilWriteMask = 0xFF;
-    //depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    //depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    //depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    //depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-    //depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    //depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    //depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    //depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
+    DepthStencilDesc.DepthEnable = TRUE;
+    DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
+    DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
+    DepthStencilDesc.StencilReadMask = 0xFF;
+    DepthStencilDesc.StencilWriteMask = 0xFF;
+    DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-    HRESULT result = Device->CreateDepthStencilState(&depthStencilDesc, &DepthStencilState);
+    HRESULT result = Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
 }
 
 void URenderer::ReleaseFrameBuffer()

@@ -15,12 +15,11 @@ void UWorld::BeginPlay()
 {
 	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
 
-	ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
-	TestSphere->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
-	TestSphere->Pick();
+	ACube* TestCube1 = FObjectFactory::ConstructActor<ACube>();
+	TestCube1->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
-	ACube* TestCube = FObjectFactory::ConstructActor<ACube>();
-	TestCube->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
+	ACube* TestCube2 = FObjectFactory::ConstructActor<ACube>();
+	TestCube2->SetTransform(FTransform(FVector(.5f, .5f, .5f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	for (auto& Actor : Actors)
 	{

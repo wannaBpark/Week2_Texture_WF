@@ -74,3 +74,13 @@ public:
 		return EPrimitiveType::EPT_Line;
 	}
 };
+
+class UArrowComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Arrow;
+	}
+};
