@@ -48,11 +48,9 @@ void UWorld::LoadWorld(const char* Name)
 
 void UWorld::BeginPlay()
 {
-	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
-
-	ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
-
-	ACube* TestCube = FObjectFactory::ConstructActor<ACube>();
+	AAxis* Axis = SpawnActor<AAxis>();
+	ASphere* TestSphere = SpawnActor<ASphere>();
+	ACube* TestCube = SpawnActor<ACube>();
 
 	for (auto& Actor : Actors)
 	{

@@ -15,6 +15,8 @@
 #include <Object/Actor/Sphere.h>
 #include <Object/Actor/Cube.h>
 
+#include "Object/World/World.h"
+
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
 {
@@ -29,7 +31,7 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer)
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX11_Init(Renderer.GetDevice(), Renderer.GetDeviceContext());
 
-    ASphere* sphere = FObjectFactory::ConstructActor<ASphere>();
+    ASphere* sphere = UEngine::Get().GetWorld()->SpawnActor<ASphere>();
     selectedActor = sphere;
 }
 
@@ -73,16 +75,16 @@ void UI::Update()
 
         if (ImGui::Button("Spawn"))
         {
+            UWorld* World = UEngine::Get().GetWorld();
             for (int i = 0 ;  i < NumOfSpawn; i++)
             {
                 if (strcmp(items[currentItem], "Sphere") == 0)
                 {
-                    FObjectFactory::ConstructActor<ASphere>();
-
+                    World->SpawnActor<ASphere>();
                 }
                 else if (strcmp(items[currentItem], "Cube") == 0)
                 {
-					FObjectFactory::ConstructActor<ACube>();
+					World->SpawnActor<ACube>();
                 }
                 //else if (strcmp(items[currentItem], "Triangle") == 0)
                 //{
