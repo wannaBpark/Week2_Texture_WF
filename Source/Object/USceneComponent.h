@@ -32,10 +32,6 @@ protected:
 protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
-	FTransform Transform;
-	FTransform* Parent = nullptr;
+	FTransform Transform = FTransform();
 	bool bCanEverTick = true;
-
-private:
-	void SetParent(FTransform* NewParent) { Parent = NewParent; }
 };

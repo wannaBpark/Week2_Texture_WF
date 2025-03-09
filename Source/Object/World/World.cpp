@@ -5,10 +5,45 @@
 #include <Object/Actor/Cube.h>
 #include <Object/Gizmo/Axis.h>
 
-
-void UWorld::LoadWorld(const UWorldInfo& WorldInfo)
+void UWorld::ClearWorld()
 {
+	//Actors.Empty();
+}
+
+UWorldInfo& UWorld::GetWorldInfo()
+{
+	UWorldInfo WorldInfo;
+	// WorldInfo.Objcts = new UObjectInfo*[10];
+	// WorldInfo.sceneName = SceneName;
+	// WorldInfo.Version = 1;
+	// WorldInfo.NextUUID = UEngineStatics::GetNextUUID();
+	// for (auto& actor : Actors)
+	// {
+	// 	FTransform& Transform = actor->GetTransform();
+	// 	WorldInfo.Objcts[i]->Location =Transform.GetPosition();
+	// 	WorldInfo.Objcts[i]->Rotation =Transform.GetRotation();
+	// 	WorldInfo.Objcts[i]->Scale =Transform.GetScale();
+	// 	WorldInfo.Objcts[i]->ObjectType = ObjectType;
+	// 	WorldInfo.Objcts[i]->UUID = 1;
+	// 	for (auto component : actor->Components)
+	// 	{
+	// 		WorldInfo.Objcts[i]->ComponentUUIDs.push_back(component->uuid);
+	// 	} 
+	//	}
+	return WorldInfo;
+}
+
+void UWorld::SaveWorld()
+{
+	//UWorldInfo& WorldInfo = GetWorldInfo();
+	//JsonSaveHelper::SaveScene(WorldInfo);
+}
+
+void UWorld::LoadWorld(const char* Name)
+{
+	ClearWorld();
 	// !TODO : WorldInfo에 맞게 오브젝트들 Instantiate
+	//UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(Name);
 }
 
 void UWorld::BeginPlay()
@@ -16,10 +51,8 @@ void UWorld::BeginPlay()
 	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
 
 	ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
-	TestSphere->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	ACube* TestCube = FObjectFactory::ConstructActor<ACube>();
-	TestCube->SetTransform(FTransform(FVector(0.0f, 1.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	for (auto& Actor : Actors)
 	{

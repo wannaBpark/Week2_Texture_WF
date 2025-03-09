@@ -27,10 +27,6 @@ public:
 	T* AddComponent()
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
-		if (auto* comp = dynamic_cast<USceneComponent*>(ObjectInstance))
-		{
-			ObjectInstance->SetParent(&Transform);
-		}
 		Components.Add(ObjectInstance);
 
 		return ObjectInstance;
@@ -55,7 +51,6 @@ protected:
 	bool bCanEverTick = true;
 	TSet<UActorComponent*> Components;
 	USceneComponent* RootComponent = nullptr;
-	//FTransform Transform;
 	UWorld* World = nullptr;
 };
 
