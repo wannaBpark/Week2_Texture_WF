@@ -37,8 +37,3 @@ void AActor::SetTransform(const FTransform& InTransform)
 		UE_LOG("RootComponent is nullptr");
 	}
 }
-
-USceneComponent* AActor::GetRootComponent()
-{
-	return RootComponent;
-}

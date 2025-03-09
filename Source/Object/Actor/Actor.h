@@ -12,7 +12,7 @@ class AActor : public UObject
 {
 public:
 	AActor() = default;
-	virtual ~AActor() = default;
+	virtual ~AActor() override = default;
 
 public:
 	virtual void BeginPlay();
@@ -45,12 +45,15 @@ public:
 	bool CanEverTick() const { return bCanEverTick; }
 
 public:
-	class USceneComponent* GetRootComponent();
+	USceneComponent* GetRootComponent() const { return RootComponent; }
+	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 
 protected:
 	bool bCanEverTick = true;
-	TSet<UActorComponent*> Components;
 	USceneComponent* RootComponent = nullptr;
+
+private:
 	UWorld* World = nullptr;
+	TSet<UActorComponent*> Components;
 };
 
