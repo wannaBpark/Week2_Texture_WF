@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include "SimpleJSON/Json.hpp"
+
 using json::JSON;
 
 // SceneName - 확장자 제외
@@ -25,7 +27,7 @@ UWorldInfo* JsonSaveHelper::LoadScene(const char* SceneName)
     UWorldInfo* WorldInfo = new UWorldInfo();
      
     WorldInfo->Version = Json["Version"].ToInt();
-    WorldInfo->sceneName = Json["SceneName"].ToString();
+    WorldInfo->SceneName = Json["SceneName"].ToString();
     WorldInfo->NextUUID = Json["NextUUID"].ToInt();
     WorldInfo->Objcts = new UObjectInfo*[WorldInfo->NextUUID];
     for (int i = 0; i < WorldInfo->NextUUID; i++)
@@ -69,7 +71,7 @@ void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
     
     Json["Version"] = WorldInfo.Version;
     Json["NextUUID"] = WorldInfo.NextUUID;
-    Json["SceneName"] = WorldInfo.sceneName;
+    Json["SceneName"] = WorldInfo.SceneName;
 
     for (int i = 0; i < 5; i++)
     {
@@ -85,7 +87,7 @@ void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
         }
     }
      
-    std::ofstream Output(WorldInfo.sceneName + ".scene");
+    std::ofstream Output(WorldInfo.SceneName + ".scene");
     
     if (Output.is_open())
     {

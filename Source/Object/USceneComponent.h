@@ -7,12 +7,13 @@
 
 class USceneComponent : public UActorComponent
 {
+	friend class AActor;
 	using Super = UActorComponent;
 public:
 	USceneComponent() = default;
 	virtual ~USceneComponent() = default;
 
-public:	
+public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
@@ -31,6 +32,6 @@ protected:
 protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
-	FTransform Transform;
+	FTransform Transform = FTransform();
 	bool bCanEverTick = true;
 };

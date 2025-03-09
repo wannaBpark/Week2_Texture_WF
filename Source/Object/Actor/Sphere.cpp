@@ -6,12 +6,9 @@ ASphere::ASphere()
 	bCanEverTick = true;
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
-	FTransform SphereTransform;
-	SphereTransform.SetScale(FVector(1.0f, 1.0f, 1.0f));
-	SphereTransform.SetRotation(FVector(0.0f, 0.0f, 0.0f));
-	SphereComponent->SetTransform(SphereTransform);
-
 	RootComponent = SphereComponent;
+	
+	SetTransform(FTransform());
 }
 
 void ASphere::BeginPlay()

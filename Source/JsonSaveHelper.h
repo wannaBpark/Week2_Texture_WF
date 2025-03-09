@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include <string>
 #include <vector>
 
 #include "Core/Math/Vector.h"
-#include "SimpleJSON/Json.hpp"
 
 // (TEMP) 각 모든 컴포넌트 타입 
 namespace UObjectTypeInfo{
@@ -22,7 +22,7 @@ struct UObjectInfo
     UObjectTypeInfo::Type ObjectType;
 
     int UUID;
-    std::vector<int>    ComponentUUIDs;
+    std::vector<int> ComponentUUIDs;
     static const char* GetType(const UObjectInfo* ObjectType);
 };
 
@@ -31,7 +31,7 @@ struct UWorldInfo
     UObjectInfo** Objcts;
     int NextUUID;
     int Version;
-    std::string sceneName;
+    std::string SceneName;
 };
 
 class JsonSaveHelper

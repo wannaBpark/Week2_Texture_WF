@@ -233,10 +233,14 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
+    <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
+    <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp" />
     <ClInclude Include="Source\Core\Engine.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
+    <ClCompile Include="Source\Core\Input\PlayerController.h" />
+    <ClCompile Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
     <ClInclude Include="Source\Object\UObject.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />

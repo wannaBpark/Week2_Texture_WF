@@ -17,6 +17,7 @@ void USceneComponent::SetTransform(const FTransform& InTransform)
 	UpdateChildrenTransform();
 }
 
+// Use RootComponent.OnAddChild
 void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform)
 {
 	if (InParent)
