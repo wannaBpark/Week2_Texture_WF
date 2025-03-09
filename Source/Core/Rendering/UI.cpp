@@ -181,9 +181,9 @@ void UI::Update()
             
         }
 
-        FVector Forward = Camera.GetTransform().GetForward();
-        FVector Up = Camera.GetTransform().GetUp();
-        FVector Right = Camera.GetTransform().GetRight();
+        FVector Forward = Camera.GetForward();
+        FVector Up = Camera.GetUp();
+        FVector Right = Camera.GetRight();
         
         ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
         ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
