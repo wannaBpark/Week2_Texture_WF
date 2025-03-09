@@ -27,7 +27,6 @@ BufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
 	return Cache[Type];
 }
 
-
 BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 {
 	ID3D11Buffer* Buffer = nullptr;
@@ -71,8 +70,8 @@ TArray<FVertexSimple> FBufferCache::CreateArrowVertices()
 	for (float Angle = 0; Angle < 360; Angle += 10)
 	{
 		float Rad = FMath::DegreesToRadians(Angle);
-		float X = FMath::Cos(Rad) * 0.8f;
-		float Y = FMath::Sin(Rad) * 0.8f;
+		float X = cos(Rad) * 0.8f;
+		float Y = sin(Rad) * 0.8f;
 
 		Vertices.Add({ X, Y, 0, 1, 1, 1, 1 });
 		Vertices.Add({ X, Y, 1, 1, 1, 1, 1 });
@@ -82,8 +81,8 @@ TArray<FVertexSimple> FBufferCache::CreateArrowVertices()
 	for (float angle = 0; angle < 360; angle += 10)
 	{
 		float Rad = FMath::DegreesToRadians(angle);
-		float X = 0.2f * FMath::Cos(Rad);
-		float Y = 0.2f * FMath::Sin(Rad);
+		float X = 0.2f * cos(Rad);
+		float Y = 0.2f * sin(Rad);
 
 		// 원뿔의 버텍스들 (길이 0.2로 설정)
 		Vertices.Add({ X, Y, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f });

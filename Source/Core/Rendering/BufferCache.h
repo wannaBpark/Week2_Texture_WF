@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 #include <unordered_map>
 #include "Primitive/PrimitiveVertices.h"
+#include "Core/Container/Array.h"
 
 struct BufferInfo
 {
@@ -21,8 +22,6 @@ public:
 	ID3D11Buffer* GetBuffer() const { return Buffer.Get(); }
 	int GetSize() const { return Size; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
-
-
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> Buffer;
