@@ -12,8 +12,6 @@ AArrow::AArrow()
 	ConeComp->SetTransform(FTransform(FVector(0.0f, 0.0f, 2.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.2f, 1.2f, 0.5f)));
 
 	ConeComp->SetupAttachment(RootComponent);
-
-	SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.5f, 0.5f, 2.f)));
 }
 
 void AArrow::BeginPlay()
