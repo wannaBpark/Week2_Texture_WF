@@ -10,12 +10,12 @@ public:
     // if (SelectedActor == Delete Target)
     //      SelectedActor = nullptr;
     //      Gizmos.SelectedActor = nullptr;
-
     
-    AActor* SelectedActor = nullptr;
-    // Gizmos* Gizmos = nullptr;
-
     inline AActor* GetSelectedActor() const {return SelectedActor;}
     
     void SelectActor(AActor* NewActor);
+
+private:
+    AActor* SelectedActor = nullptr;
+    // Gizmos* Gizmos = nullptr;
 };

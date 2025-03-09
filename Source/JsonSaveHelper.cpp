@@ -31,9 +31,10 @@ UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
     WorldInfo->SceneName = Json["SceneName"].ToString();
     WorldInfo->ActorCount = Json["ActorCount"].ToInt();
     WorldInfo->ObjctInfos = new UObjectInfo*[WorldInfo->ActorCount];
-    int NextUUID = Json["NextUUID"].ToInt();
+    uint32 NextUUID = Json["NextUUID"].ToInt();
+    NextUUID = std::max(NextUUID, WorldInfo->ActorCount);
     int index = 0;
-    for (int i = 0; i < 1000 ; i++){
+    for (int i = 0; i < NextUUID ; i++){
         if (!Json["Actors"].hasKey(std::to_string(i)))
         {
             continue;
