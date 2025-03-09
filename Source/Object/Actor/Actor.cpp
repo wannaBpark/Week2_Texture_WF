@@ -1,5 +1,6 @@
 ﻿#include "Actor.h"
 #include "Object/USceneComponent.h"
+#include <Debug/DebugConsole.h>
 
 void AActor::BeginPlay()
 {
@@ -20,10 +21,21 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
-FTransform AActor::GetActorTransform()
+const FTransform& AActor::GetActorTransform()
 {
-	// TODO: 여기에 return 문을 삽입합니다.
-	return RootComponent ? RootComponent->GetTransform() : FTransform();
+	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
+}
+
+void AActor::SetTransform(const FTransform& InTransform)
+{
+	if (RootComponent)
+	{
+		RootComponent->SetTransform(InTransform);
+	}
+	else
+	{
+		UE_LOG("RootComponent is nullptr");
+	}
 }
 
 USceneComponent* AActor::GetRootComponent()

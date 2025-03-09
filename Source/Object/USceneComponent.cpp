@@ -24,7 +24,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 		InParent->Children.Add(this);
 		if (bUpdateChildTransform)
 		{
-			Transform = InParent->GetTransform() * Transform;
+			Transform = InParent->GetComponentTransform() * Transform;
 		}
 	}
 	else
@@ -37,7 +37,7 @@ void USceneComponent::UpdateChildrenTransform()
 {
 	for (auto& Child : Children)
 	{
-		FTransform NewTransform = Transform * Child->GetTransform();
+		FTransform NewTransform = Transform * Child->GetComponentTransform();
 		Child->SetTransform(NewTransform);
 	}
 }

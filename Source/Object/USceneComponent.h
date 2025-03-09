@@ -17,7 +17,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	const FTransform& GetTransform() { return Transform; }
+	const FTransform& GetComponentTransform() { return Transform; }
 
 	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }

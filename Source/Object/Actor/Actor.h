@@ -39,7 +39,8 @@ public:
 		Components.Remove(Object);
 	}
 
-	FTransform GetActorTransform();
+	const FTransform& GetActorTransform();
+	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 
 public:
