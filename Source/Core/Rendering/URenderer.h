@@ -58,7 +58,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
-	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
+	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp, bool bRenderOutline = false);
 
     /**
      * Buffer에 있는 Vertex를 그립니다.
@@ -139,6 +139,9 @@ protected:
     // Shader를 렌더링할 때 사용되는 변수들
     ID3D11VertexShader* SimpleVertexShader = nullptr;       // Vertex 데이터를 처리하는 Vertex 셰이더
     ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
+
+	ID3D11PixelShader* OutlinePixelShader = nullptr;        // 외곽선을 그리는 Pixel 셰이더
+
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 

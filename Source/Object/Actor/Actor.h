@@ -21,6 +21,9 @@ public:
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
 public:
+	virtual void Pick();
+
+public:
 	template<typename T>
 		requires std::derived_from<T, UActorComponent>
 	T* AddComponent()

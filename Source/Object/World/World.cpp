@@ -17,9 +17,10 @@ void UWorld::BeginPlay()
 
 	ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
 	TestSphere->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
+	TestSphere->Pick();
 
 	ACube* TestCube = FObjectFactory::ConstructActor<ACube>();
-	TestCube->SetTransform(FTransform(FVector(0.0f, 1.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
+	TestCube->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	for (auto& Actor : Actors)
 	{

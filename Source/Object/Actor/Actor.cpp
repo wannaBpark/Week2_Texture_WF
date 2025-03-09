@@ -21,6 +21,14 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
+void AActor::Pick()
+{
+	if (RootComponent)
+	{
+		RootComponent->Pick(true);
+	}
+}
+
 const FTransform& AActor::GetActorTransform()
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();

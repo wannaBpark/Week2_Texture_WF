@@ -17,6 +17,11 @@ void USceneComponent::SetTransform(const FTransform& InTransform)
 	UpdateChildrenTransform();
 }
 
+void USceneComponent::Pick(bool bPicked)
+{
+	bIsPicked = bPicked;
+}
+
 void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform)
 {
 	if (InParent)
