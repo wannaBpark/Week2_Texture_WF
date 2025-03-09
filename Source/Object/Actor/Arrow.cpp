@@ -6,6 +6,7 @@ AArrow::AArrow()
 	UArrowComp* ArrowComp = AddComponent<UArrowComp>();
 	RootComponent = ArrowComp;
 
+	ArrowComp->SetTransform(FTransform());
 }
 
 void AArrow::BeginPlay()

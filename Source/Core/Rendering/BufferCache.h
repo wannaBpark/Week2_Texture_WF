@@ -43,6 +43,8 @@ public:
 
 public:
 	TArray<FVertexSimple> CreateArrowVertices();
+	TArray<FVertexSimple> CreateConeVertices();
+	TArray<FVertexSimple> CreateCylinderVertices();
 
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);

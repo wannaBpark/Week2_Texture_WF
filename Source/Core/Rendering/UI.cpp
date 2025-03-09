@@ -29,8 +29,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer)
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX11_Init(Renderer.GetDevice(), Renderer.GetDeviceContext());
 
-    ASphere* sphere = FObjectFactory::ConstructActor<ASphere>();
-    selectedActor = sphere;
+    //ASphere* sphere = FObjectFactory::ConstructActor<ASphere>();
+    //selectedActor = sphere;
 }
 
 void UI::Update()
@@ -196,7 +196,7 @@ void UI::Update()
         ImGui::End();
 
     // bool bIsSelectedObjectExist = (UEngine::Get().World.GetSelected() != nullptr);
-    bool bIsSelectedObjectExist = true;
+    bool bIsSelectedObjectExist = false;
     
     if (bIsSelectedObjectExist)
     {
