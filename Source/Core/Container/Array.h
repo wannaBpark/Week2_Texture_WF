@@ -59,6 +59,11 @@ public:
     SizeType RemoveAll(const Predicate& Pred);
     T* GetData();
 
+    /**
+     * Array에서 Item을 찾습니다.
+     * @param Item 찾으려는 Item
+     * @return Item의 인덱스, 찾을 수 없다면 -1
+     */
     SizeType Find(const T& Item);
     bool Find(const T& Item, SizeType& Index);
 
@@ -133,7 +138,7 @@ void TArray<T, Allocator>::Init(const T& Element, SizeType Number)
 template <typename T, typename Allocator>
 typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Add(const T& Item)
 {
-    return Emplace(Item);
+    return Emplace(T(Item));
 }
 
 template <typename T, typename Allocator>
@@ -156,7 +161,7 @@ template <typename T, typename Allocator>
 typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Emplace(T&& Item)
 {
     PrivateVector.emplace_back(std::move(Item));
-    return Num();
+    return Num()-1;
 }
 
 template <typename T, typename Allocator>
