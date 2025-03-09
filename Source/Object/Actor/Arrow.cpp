@@ -23,3 +23,8 @@ void AArrow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+const char* AArrow::GetTypeName()
+{
+	return "Arrow";
+}

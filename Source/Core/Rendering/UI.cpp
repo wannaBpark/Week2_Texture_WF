@@ -15,6 +15,8 @@
 #include <Object/Actor/Sphere.h>
 #include <Object/Actor/Cube.h>
 
+#include "Static/FEditorManager.h"
+
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer)
 {
@@ -28,9 +30,6 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer)
     // ImGui Backend 초기화
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX11_Init(Renderer.GetDevice(), Renderer.GetDeviceContext());
-
-    //ASphere* sphere = FObjectFactory::ConstructActor<ASphere>();
-    //selectedActor = sphere;
 }
 
 void UI::Update()
@@ -67,7 +66,7 @@ void UI::Update()
 
         ImGui::Separator();
         
-        const char* items[] = { "Sphere", "Cube", "Triangle"};
+        const char* items[] = { "Sphere", "Cube"};
 
         ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -77,8 +76,7 @@ void UI::Update()
             {
                 if (strcmp(items[currentItem], "Sphere") == 0)
                 {
-                    FObjectFactory::ConstructActor<ASphere>();
-
+                    FObjectFactory::ConstructActor<ASphere>()->SetTransform(FTransform(FVector(rand() % 10, rand() % 10, rand() % 10), FVector(0, 0, 0), FVector(1, 1, 1)));
                 }
                 else if (strcmp(items[currentItem], "Cube") == 0)
                 {
@@ -97,19 +95,21 @@ void UI::Update()
         ImGui::Separator();
 
         UWorld* World = UEngine::Get().GetWorld();
-        // char* SceneNameInput = new char[100];
+        uint32 bufferSize = 100;
+        char* SceneNameInput = new char[bufferSize];
+        strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_str());
         // std::copy(World->SceneName.begin(), World->SceneName.end(), SceneNameInput);
-        // if (ImGui::InputText("Scene Name", SceneNameInput, 100))
-        // {
-        //     World->SceneName = SceneNameInput;
-        // }
+        if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
+        {
+             World->SceneName = SceneNameInput;
+        }
         if (ImGui::Button("Save Scene"))
         {
-            // World.SaveWorld();   
+            World->SaveWorld();   
         }
         if (ImGui::Button("Load Scene"))
         {
-            // World.LoadWorld(SceneName);
+            World->LoadWorld(SceneNameInput);
         }
         ImGui::Separator();
 
@@ -171,15 +171,15 @@ void UI::Update()
         }
         
         float CameraLocation[] = {Camera.GetTransform().GetPosition().X, Camera.GetTransform().GetPosition().Y, Camera.GetTransform().GetPosition().Z};
-        if (ImGui::DragFloat3("Camera Location", CameraLocation, 0.1f))
+        if (ImGui::InputFloat3("Camera Location", CameraLocation))
         {
             Camera.GetTransform().SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
         }
 
-        float CameraRotation[] = {Camera.GetTransform().GetRotation().X, Camera.GetTransform().GetRotation().Y, Camera.GetTransform().GetRotation().Z};
-        if (ImGui::DragFloat3("Camera Rotation", CameraRotation, 0.1f))
+        float CameraRotation[] = {Camera.GetTransform().GetRotation().Y, Camera.GetTransform().GetRotation().Z};
+        if (ImGui::InputFloat2("Camera Rotation (y, z) axis (degree)", CameraRotation))
         {
-            Camera.GetTransform().SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+            Camera.GetTransform().SetRotation(Camera.GetTransform().GetRotation().X, CameraRotation[0], CameraRotation[1]);
             
         }
         ImGui::DragFloat("Camera Speed", &Camera.CameraSpeed, 0.1f);
@@ -193,18 +193,15 @@ void UI::Update()
         ImGui::Text("Camera Right: (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
     
     }
-        ImGui::End();
+    ImGui::End();
 
-    // bool bIsSelectedObjectExist = (UEngine::Get().World.GetSelected() != nullptr);
-    bool bIsSelectedObjectExist = false;
+    AActor* selectedActor = nullptr;
     
-    if (bIsSelectedObjectExist)
+    if (ImGui::Begin("Jungle Property Window"))
     {
-        if (ImGui::Begin("Jungle Property Window"))
+        if (selectedActor != nullptr)
         {
-            //FTransform selectedTransform = FTransform();
             FTransform selectedTransform = selectedActor->GetActorTransform();
-            //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
             float position[] = {selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z};
             float rotation[] = {selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z};
             float scale[] = {selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z};
@@ -224,8 +221,8 @@ void UI::Update()
                 selectedActor->SetTransform(selectedTransform);
             }
         }
-        ImGui::End();
     }
+    ImGui::End();
 
     //if (ImGui::Begin("Console Window"))
     //{

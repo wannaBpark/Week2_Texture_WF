@@ -9,5 +9,6 @@ public:
 	virtual ~ASphere() = default;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual const char* GetTypeName() override;
 };
 
