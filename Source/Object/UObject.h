@@ -14,4 +14,8 @@ class UObject : public std::enable_shared_from_this<UObject>
 public:
 	UObject();
 	virtual ~UObject();
+
+public:
+	uint32 GetUUID() const { return UUID; }
+	uint32 GetInternalIndex() const { return InternalIndex; }
 };
