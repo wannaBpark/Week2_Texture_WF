@@ -26,15 +26,15 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
     FVector CameraRot = FCamera::Get().GetTransform().GetRotation();
-    FCamera::Get().SetRotation(FVector(CameraRot.X, CameraRot.Y + DeltaPos.X, CameraRot.Z - DeltaPos.Y));
+    FCamera::Get().SetRotation(FVector(CameraRot.X, CameraRot.Y + DeltaPos.Y, CameraRot.Z + DeltaPos.X));
 
     float CamSpeed = FCamera::Get().CameraSpeed;
 
     if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
-        NewVelocity += FCamera::Get().GetRight();
+        NewVelocity -= FCamera::Get().GetRight();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::D)) {
-        NewVelocity -= FCamera::Get().GetRight();
+        NewVelocity += FCamera::Get().GetRight();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::W)) {
         NewVelocity += FCamera::Get().GetForward();
