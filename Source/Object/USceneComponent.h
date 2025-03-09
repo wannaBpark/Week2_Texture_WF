@@ -11,7 +11,6 @@ class USceneComponent : public UActorComponent
 	using Super = UActorComponent;
 public:
 	USceneComponent() = default;
-	virtual ~USceneComponent() = default;
 
 public:
 	virtual void BeginPlay() override;
@@ -21,7 +20,6 @@ public:
 	const FTransform& GetComponentTransform() { return Transform; }
 
 	void SetTransform(const FTransform& InTransform);
-	bool CanEverTick() const { return bCanEverTick; }
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
@@ -33,5 +31,4 @@ protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
 	FTransform Transform = FTransform();
-	bool bCanEverTick = true;
 };
