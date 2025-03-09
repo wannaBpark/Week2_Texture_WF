@@ -1,4 +1,5 @@
-#pragma once
+﻿#pragma once
+#include "Core/EngineTypes.h"
 #include "Object/UObject.h"
 #include "Object/ActorComponent/ActorComponent.h"
 #include "Core/Math/Transform.h"
@@ -42,7 +43,7 @@ public:
 		Components.Remove(Object);
 	}
 
-	const FTransform& GetActorTransform();
+	const FTransform& GetActorTransform() const;
 	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 

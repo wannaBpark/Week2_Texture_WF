@@ -1,4 +1,4 @@
-#include "Actor.h"
+﻿#include "Actor.h"
 #include "Object/USceneComponent.h"
 #include "Debug/DebugConsole.h"
 #include "Object/World/World.h"
@@ -36,6 +36,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
+const FTransform& AActor::GetActorTransform() const
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
 }
