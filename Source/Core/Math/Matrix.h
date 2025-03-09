@@ -287,7 +287,6 @@ struct alignas(16) FMatrix
 
 	static FMatrix Translate(float X, float Y, float Z)
 	{
-		// based on row major
 		FMatrix Result;
 		Result.M[0][3] = X; 
 		Result.M[1][3] = Y; 
@@ -302,7 +301,6 @@ struct alignas(16) FMatrix
 
 	static FMatrix Scale(float X, float Y, float Z)
 	{
-		// based on row major
 		FMatrix Result;
 		Result.M[0][0] = X; 
 		Result.M[1][1] = Y; 
@@ -405,10 +403,10 @@ struct alignas(16) FMatrix
 		Result.M[0][0] = XScale;
 		Result.M[1][1] = YScale;
 		Result.M[2][2] = FarPlane / (FarPlane - NearPlane);
-		Result.M[2][3] = -NearPlane * FarPlane / (FarPlane - NearPlane);
-		Result.M[3][2] = 1.0f;
+		Result.M[2][3] = 1.0f;
+		Result.M[3][2] = -NearPlane * FarPlane / (FarPlane - NearPlane);
 		Result.M[3][3] = 0.0f;
-		return Result.GetTransposed();
+		return Result;
 	}
 
 	FVector GetTranslation() const

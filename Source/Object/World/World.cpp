@@ -58,9 +58,10 @@ void UWorld::BeginPlay()
 	//TestCube2->SetTransform(FTransform(FVector(.5f, .5f, .5f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
 	AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
-	FTransform tr = TestArrow->GetActorTransform();
-	tr.SetScale(FVector(3, 1, 1));
-	TestArrow->SetTransform(tr);
+	TestArrow->SetTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
+	//ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
+	//FTransform tr = TestArrow->GetActorTransform();
+	//TestArrow->SetTransform(tr);
 
 	for (auto& Actor : Actors)
 	{
