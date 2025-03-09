@@ -2,7 +2,9 @@
 
 #include "Core/Rendering/URenderer.h"
 
-FCamera::FCameraTransform::FCameraTransform() : FTransform()
+FCamera::FCameraTransform::FCameraTransform() : Velocity{
+    FVector(0, 0, 0)
+}
 {
     OnTranslate();
     OnRotate();
@@ -40,14 +42,14 @@ void FCamera::FCameraTransform::OnTranslate() const
 
 void FCamera::FCameraTransform::OnRotate()
 {
-    float sinX = sin(Rotation.X * PI / 180.f);
-    float cosX = cos(Rotation.X * PI / 180.f);
+    float sinX = sin(Rotation.X * (PI / 180.f));
+    float cosX = cos(Rotation.X * (PI / 180.f));
 		
-    float sinY = sin(Rotation.Y * PI / 180.f);
-    float cosY = cos(Rotation.Y * PI / 180.f);
+    float sinY = sin(Rotation.Y * (PI / 180.f));
+    float cosY = cos(Rotation.Y * (PI / 180.f));
 		
-    float sinZ = sin(Rotation.Z * PI / 180.f);
-    float cosZ = cos(Rotation.Z * PI / 180.f);
+    float sinZ = sin(Rotation.Z * (PI / 180.f));
+    float cosZ = cos(Rotation.Z * (PI / 180.f));
 
 
     Forward = FVector(
@@ -56,17 +58,9 @@ void FCamera::FCameraTransform::OnRotate()
         -cosX * sinY * cosZ + sinX * sinZ // Z
     );
 
-    Right = FVector(
-        cosY * -sinZ,                      // X
-        sinX * sinY * -sinZ + cosX * cosZ, // Y
-        -cosX * sinY * -sinZ + sinX * cosZ // Z
-    );
+    Right = FVector::CrossProduct(Forward, FVector(0, 1, 0));
 
-    Up = FVector(
-        sinY,         // X
-        -sinX * cosY, // Y
-        cosX * cosY   // Z
-    );
+    Up = FVector::CrossProduct(Right, Forward);
 
     UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
 }
@@ -78,6 +72,8 @@ FCamera::FCamera()
     Far = 1000.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
+
+    Transform.SetPosition(FVector(-5, 0, 0));
     
     OnUpdateProjectionChanges();
 }

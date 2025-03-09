@@ -114,7 +114,7 @@ void UI::Update()
         ImGui::Separator();
 
         ImGui::Text("Camera");
-    
+        
         FCamera& Camera = FCamera::Get();
 
         bool IsOrthogonal;
@@ -182,10 +182,11 @@ void UI::Update()
             Camera.GetTransform().SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
             
         }
+        ImGui::DragFloat("Camera Speed", &Camera.CameraSpeed, 0.1f);
 
-        FVector Forward = Camera.GetTransform().GetForward();
-        FVector Up = Camera.GetTransform().GetUp();
-        FVector Right = Camera.GetTransform().GetRight();
+        FVector Forward = Camera.GetForward();
+        FVector Up = Camera.GetUp();
+        FVector Right = Camera.GetRight();
         
         ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
         ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
