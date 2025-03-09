@@ -188,7 +188,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRender
 	}
 
     ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetComponentTransform(), 
+        PrimitiveComp->GetWorldTransform(), 
         PrimitiveComp->GetCustomColor(), 
         PrimitiveComp->IsUseVertexColor()
     };
@@ -248,9 +248,6 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-
-    //input  * (Pt * Vt * W)
-    // input * (Wt * V * P)t
 
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 

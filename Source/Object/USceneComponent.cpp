@@ -1,5 +1,6 @@
 ﻿#include "USceneComponent.h"
 #include "Debug/DebugConsole.h"
+#include "PrimitiveComponent/UPrimitiveComponent.h"
 
 void USceneComponent::BeginPlay()
 {
@@ -11,25 +12,26 @@ void USceneComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-const FTransform& USceneComponent::GetWorldTransform()
+// 내 월드 트랜스폼 반환
+const FTransform USceneComponent::GetWorldTransform()
 {
 	if (Parent)
 	{
-		// 내 기준
-		FTransform ParentWorldTransform = Parent->GetWorldTransform();
-		// 현재 컴포넌트의 상대 Transform을 부모의 월드 Transform과 결합
-		FTransform WorldTransform = RelativeTransform.ApplyParentTransform(ParentWorldTransform);
+		// 부모가 있을 경우 부모 월드 * 내 로컬
+		FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+		FMatrix MyLocal = RelativeTransform.GetMatrix();
 
-		return WorldTransform;
+		FMatrix NewMatrix = MyLocal * ParentWorld;
+		return NewMatrix.GetTransform();
 	}
 
 	return RelativeTransform;
 }
 
-void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
+void USceneComponent::SetRelativeTransform(const FTransform& InParentTransform)
 {
-	RelativeTransform = InTransform;
-	UpdateChildrenTransform();
+	// 내 로컬 트랜스폼 갱신
+	RelativeTransform = InParentTransform;
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -45,8 +47,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 		InParent->Children.Add(this);
 		if (bUpdateChildTransform)
 		{
-			FTransform NewRelativeTransform = RelativeTransform.ApplyParentTransform(Parent->GetWorldTransform());
-			SetRelativeTransform(NewRelativeTransform);
+			ApplyParentWorldTransform(InParent->GetWorldTransform());
 		}
 	}
 	else
@@ -55,12 +56,11 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	}
 }
 
-void USceneComponent::UpdateChildrenTransform()
+void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
 {
-	for (auto& Child : Children)
-	{
-		// 부모의 월드, 자식의 로컬
-		FTransform NewChildTransform = Child->RelativeTransform.ApplyParentTransform(GetWorldTransform());
-		Child->SetRelativeTransform(NewChildTransform);
-	}
+	FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
+	FMatrix MyLocal = RelativeTransform.GetMatrix();
+
+	FMatrix NewMatrix = MyLocal * ParentWorld;
+	SetRelativeTransform(NewMatrix.GetTransform());
 }

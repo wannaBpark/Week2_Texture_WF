@@ -8,10 +8,12 @@ AArrow::AArrow()
 	UCylinderComp* CylinderComp = AddComponent<UCylinderComp>();
 	RootComponent = CylinderComp;
 
+	RootComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FVector(0.0f, 0.0f, 0.0f), FVector(1.f, 1.f, 1.f)));
+
 	UConeComp* ConeComp = AddComponent<UConeComp>();
 	ConeComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.2f, 1.2f, 0.5f)));
 
-	ConeComp->SetupAttachment(RootComponent, true);
+	ConeComp->SetupAttachment(RootComponent);
 }
 
 void AArrow::BeginPlay()

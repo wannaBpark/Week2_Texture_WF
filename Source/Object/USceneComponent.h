@@ -3,6 +3,7 @@
 #include "Core/Math/Vector.h"
 #include "Core/Container/Set.h"
 #include "Core/Math/Transform.h"
+#include "Core/Math/Matrix.h"
 #include "Object/ActorComponent/ActorComponent.h"
 
 class USceneComponent : public UActorComponent
@@ -19,9 +20,9 @@ public:
 
 
 	/* 로컬 트랜스폼을 반환*/
-	const FTransform& GetComponentTransform() { return RelativeTransform; }
-	/* 월드 트랜스폼을 반환*/
-	const FTransform& GetWorldTransform();
+	const FTransform GetComponentTransform() { return RelativeTransform; }
+	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
+	const FTransform GetWorldTransform();
 
 	void SetRelativeTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
@@ -30,13 +31,13 @@ public:
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
-
-protected:
-	void UpdateChildrenTransform();
+	// 부모의 월드 트랜스폼을 받아서 자신의 로컬 트랜스폼을 갱신
+	void ApplyParentWorldTransform(const FTransform& InTransform);
 
 protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
+	// 이건 내 로컬 트랜스폼
 	FTransform RelativeTransform = FTransform();
 	bool bCanEverTick = true;
 

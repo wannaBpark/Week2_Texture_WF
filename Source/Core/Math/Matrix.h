@@ -428,17 +428,20 @@ struct alignas(16) FMatrix
 	{
 		FVector Result;
 		Result.Y = asinf(-M[2][0]); // pitch
-		if (cos(Result.Y) > 0.0001) // not at gimbal lock
+		if (cos(Result.Y) > 0.0001f) // not at gimbal lock
 		{
-			Result.X = atan2(M[2][1], M[2][2]); // roll
-			Result.Z = atan2(M[1][0], M[0][0]); // yaw
+			Result.X = atan2f(M[2][1], M[2][2]); // roll
+			Result.Z = atan2f(M[1][0], M[0][0]); // yaw
 		}
 		else
 		{
-			Result.X = atan2(-M[1][2], M[1][1]); // roll
+			Result.X = atan2f(-M[1][2], M[1][1]); // roll
 			Result.Z = 0; // yaw
 		}
 		return Result;
 	}
+
+	class FTransform GetTransform() const;
+	
 };
 
