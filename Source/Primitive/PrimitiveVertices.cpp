@@ -1,5 +1,10 @@
-#include "PrimitiveVertices.h"
+﻿#include "PrimitiveVertices.h"
 
+FVertexSimple LineVertices[2] =
+{
+	{ -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }, // 시작점 (흰색)
+	{ 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }  // 끝점 (흰색)
+};
 
 FVertexSimple TriangleVertices[] =
 {

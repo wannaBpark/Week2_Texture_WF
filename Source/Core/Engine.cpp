@@ -4,6 +4,7 @@
 #include "Object/ObjectFactory.h"
 #include "Object/World/World.h"
 #include "Debug/DebugConsole.h"
+#include "Object/Gizmo/Axis.h"
 
 // ImGui WndProc 정의
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -188,7 +189,7 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
 	// !TODO : Load World
-
+	auto Axis = FObjectFactory::ConstructActor<AAxis>();
 	World->BeginPlay();
 }
 

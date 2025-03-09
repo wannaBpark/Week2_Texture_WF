@@ -146,7 +146,7 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp) const
+void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp) 
 {
     if (BufferCache == nullptr)
     {
@@ -160,7 +160,19 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp) const
 		return;
 	}
 
-    UpdateConstant(PrimitiveComp->GetTransform());
+	if (CurrentTopology != Info.GetTopology())
+	{
+		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
+		CurrentTopology = Info.GetTopology();
+	}
+
+    ConstantUpdateInfo UpdateInfo{ 
+        PrimitiveComp->GetTransform(), 
+        PrimitiveComp->GetCustomColor(), 
+        PrimitiveComp->IsUseVertexColor()
+    };
+
+    UpdateConstant(UpdateInfo);
 	RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
 }
 
@@ -196,13 +208,13 @@ void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
     pBuffer->Release();
 }
 
-void URenderer::UpdateConstant(const FTransform& Transform) const
+void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 {
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix MVP = FMatrix::Transpose(ProjectionMatrix) * FMatrix::Transpose(ViewMatrix) * Transform.GetWorldMatrix();
+    FMatrix MVP = FMatrix::Transpose(ProjectionMatrix) * FMatrix::Transpose(ViewMatrix) * UpdateInfo.Transform.GetWorldMatrix();
     // 상수 버퍼를 CPU 메모리에 매핑
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
@@ -210,9 +222,12 @@ void URenderer::UpdateConstant(const FTransform& Transform) const
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
         Constants->MVP = MVP;
+		Constants->Color = UpdateInfo.Color;
+		Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
+
 
 ID3D11Device* URenderer::GetDevice() const
 { return Device; }
