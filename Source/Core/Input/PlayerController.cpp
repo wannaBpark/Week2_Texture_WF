@@ -28,6 +28,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FVector CameraRot = FCamera::Get().GetTransform().GetRotation();
     FCamera::Get().SetRotation(FVector(CameraRot.X, CameraRot.Y + DeltaPos.X, CameraRot.Z - DeltaPos.Y));
 
+    float CamSpeed = FCamera::Get().CameraSpeed;
 
     if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
         NewVelocity += FCamera::Get().GetRight();
@@ -56,7 +57,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
 #pragma region TempMovement
     //회전이랑 마우스클릭 구현 카메라로 해야할듯?
-    FVector NewPos = FCamera::Get().GetTransform().GetPosition() + (NewVelocity * DeltaTime);
+    FVector NewPos = FCamera::Get().GetTransform().GetPosition() + (NewVelocity * DeltaTime * CamSpeed);
     FCamera::Get().GetTransform().SetPosition(NewPos); //임시용
 #pragma endregion TempMovement
     // FCamera::Get().SetVelocity(NewVelocity);
