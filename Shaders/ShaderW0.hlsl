@@ -33,3 +33,9 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
     // Output the color directly
     return input.color;
 }
+
+float4 outlinePS(PS_INPUT input) : SV_TARGET
+{
+    // Output the color directly
+    return float4(1.0f, 1.0f, 1.0f, 0.1f);
+}

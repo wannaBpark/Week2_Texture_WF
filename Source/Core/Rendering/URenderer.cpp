@@ -11,6 +11,8 @@ void URenderer::Create(HWND hWindow)
     CreateFrameBuffer();
     CreateRasterizerState();
     CreateBufferCache();
+    CreateDepthStencilBuffer();
+    CreateDepthStencilState();
     InitMatrix();
 }
 
@@ -19,7 +21,7 @@ void URenderer::Release()
     ReleaseRasterizerState();
 
     // 렌더 타겟을 초기화
-    DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+    DeviceContext->OMSetRenderTargets(0, nullptr, DepthStencilView);
 
     ReleaseFrameBuffer();
     ReleaseDeviceAndSwapChain();
@@ -40,15 +42,24 @@ void URenderer::CreateShader()
          */
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
+    ID3DBlob* OutlineShaderCSO;
 
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
-	//std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
+
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "outlinePS", "ps_5_0", 0, 0, &OutlineShaderCSO, &ErrorMsg);
+    Device->CreatePixelShader(OutlineShaderCSO->GetBufferPointer(), OutlineShaderCSO->GetBufferSize(), nullptr, &OutlinePixelShader);
+
+	if (ErrorMsg)
+	{
+		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+		ErrorMsg->Release();
+	}
 
     // 입력 레이아웃 정의 및 생성
     D3D11_INPUT_ELEMENT_DESC Layout[] =
@@ -61,6 +72,7 @@ void URenderer::CreateShader()
 
     VertexShaderCSO->Release();
     PixelShaderCSO->Release();
+	OutlineShaderCSO->Release();
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
@@ -85,6 +97,12 @@ void URenderer::ReleaseShader()
         SimpleVertexShader->Release();
         SimpleVertexShader = nullptr;
     }
+
+	if (OutlinePixelShader)
+	{
+		OutlinePixelShader->Release();
+		OutlinePixelShader = nullptr;
+	}
 }
 
 void URenderer::CreateConstantBuffer()
@@ -116,6 +134,7 @@ void URenderer::Prepare() const
 {
     // 화면 지우기
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // InputAssembler의 Vertex 해석 방식을 설정
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -128,7 +147,8 @@ void URenderer::Prepare() const
          * OutputMerger 설정
          * 렌더링 파이프라인의 최종 단계로써, 어디에 그릴지(렌더 타겟)와 어떻게 그릴지(블렌딩)를 지정
          */
-    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, nullptr);
+	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);    // DepthStencil 뷰 설정
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 }
 
@@ -146,7 +166,7 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp) 
+void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRenderOutline)
 {
     if (BufferCache == nullptr)
     {
@@ -173,7 +193,21 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
     };
 
     UpdateConstant(UpdateInfo);
-	RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+
+
+    if (bRenderOutline)
+    {
+        // 윤곽선 셰이더 설정
+        DeviceContext->PSSetShader(OutlinePixelShader, nullptr, 0);
+        RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+
+		// 기본 셰이더로 변경
+		DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    }
+    else
+    {
+	    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+    }
 }
 
 void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const
@@ -321,6 +355,47 @@ void URenderer::CreateFrameBuffer()
     Device->CreateRenderTargetView(FrameBuffer, &FrameBufferRTVDesc, &FrameBufferRTV);
 }
 
+void URenderer::CreateDepthStencilBuffer()
+{
+    D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
+    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
+    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
+    DepthBufferDesc.MipLevels = 1;
+    DepthBufferDesc.ArraySize = 1;
+	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
+    DepthBufferDesc.SampleDesc.Count = 1;
+    DepthBufferDesc.SampleDesc.Quality = 0;
+    DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+    DepthBufferDesc.CPUAccessFlags = 0;
+    DepthBufferDesc.MiscFlags = 0;
+
+    HRESULT result = Device->CreateTexture2D(&DepthBufferDesc, nullptr, &DepthStencilBuffer);
+
+    result = Device->CreateDepthStencilView(DepthStencilBuffer, nullptr, &DepthStencilView);
+}
+
+void URenderer::CreateDepthStencilState()
+{
+    D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
+    DepthStencilDesc.DepthEnable = TRUE;
+    DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
+    DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
+    DepthStencilDesc.StencilReadMask = 0xFF;
+    DepthStencilDesc.StencilWriteMask = 0xFF;
+    DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+    HRESULT result = Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
+}
+
 void URenderer::ReleaseFrameBuffer()
 {
     if (FrameBuffer)
@@ -341,6 +416,7 @@ void URenderer::CreateRasterizerState()
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
+    RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
 }

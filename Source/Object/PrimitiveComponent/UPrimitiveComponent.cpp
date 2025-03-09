@@ -20,5 +20,5 @@ void UPrimitiveComponent::Render()
 		return;
 	}
 
-	Renderer->RenderPrimitive(this);
+	Renderer->RenderPrimitive(this, bIsPicked);
 }

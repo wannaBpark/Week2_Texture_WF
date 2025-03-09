@@ -74,3 +74,24 @@ public:
 		return EPrimitiveType::EPT_Line;
 	}
 };
+
+class UCylinderComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+
+public:
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Cylinder;
+	}
+};
+
+class UConeComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Cone;
+	}
+};

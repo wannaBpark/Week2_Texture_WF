@@ -23,6 +23,8 @@ public:
 	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 
+	void Pick(bool bPicked);
+
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
 
@@ -34,4 +36,8 @@ protected:
 	TSet<USceneComponent*> Children;
 	FTransform Transform = FTransform();
 	bool bCanEverTick = true;
+
+	// debug
+protected:
+	bool bIsPicked = false;
 };

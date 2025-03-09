@@ -4,6 +4,7 @@
 #include <Object/Actor/Sphere.h>
 #include <Object/Actor/Cube.h>
 #include <Object/Gizmo/Axis.h>
+#include <Object/Actor/Arrow.h>
 
 void UWorld::ClearWorld()
 {
@@ -50,9 +51,16 @@ void UWorld::BeginPlay()
 {
 	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
 
-	ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
+	//ACube* TestCube1 = FObjectFactory::ConstructActor<ACube>();
+	//TestCube1->SetTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
 
-	ACube* TestCube = FObjectFactory::ConstructActor<ACube>();
+	//ACube* TestCube2 = FObjectFactory::ConstructActor<ACube>();
+	//TestCube2->SetTransform(FTransform(FVector(.5f, .5f, .5f), FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f)));
+
+	AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
+	FTransform tr = TestArrow->GetActorTransform();
+	tr.SetScale(FVector(3, 1, 1));
+	TestArrow->SetTransform(tr);
 
 	for (auto& Actor : Actors)
 	{

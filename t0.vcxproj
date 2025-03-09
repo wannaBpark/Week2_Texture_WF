@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -161,6 +161,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
+    <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
+    <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
@@ -197,6 +200,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Actor\Arrow.h" />
+    <ClInclude Include="Source\Core\Input\PlayerController.h" />
+    <ClInclude Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
     <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
@@ -233,14 +239,10 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
-    <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
-    <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp" />
     <ClInclude Include="Source\Core\Engine.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
-    <ClCompile Include="Source\Core\Input\PlayerController.h" />
-    <ClCompile Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
     <ClInclude Include="Source\Object\UObject.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
