@@ -449,7 +449,7 @@ void URenderer::UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransfor
 
 void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
 {
-    float AspectRatio = 1.f;
+    float AspectRatio = UEngine::Get().GetScreenRatio();
 
     float FOV = FMath::DegreesToRadians(Camera.GetFieldOfView());
     float Near = Camera.GetNear();
