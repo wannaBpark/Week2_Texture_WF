@@ -11,9 +11,24 @@ void USceneComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void USceneComponent::SetTransform(const FTransform& InTransform)
+const FTransform& USceneComponent::GetWorldTransform()
 {
-	Transform = InTransform;
+	if (Parent)
+	{
+		// 내 기준
+		FTransform ParentWorldTransform = Parent->GetWorldTransform();
+		// 현재 컴포넌트의 상대 Transform을 부모의 월드 Transform과 결합
+		FTransform WorldTransform = RelativeTransform.ApplyParentTransform(ParentWorldTransform);
+
+		return WorldTransform;
+	}
+
+	return RelativeTransform;
+}
+
+void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
+{
+	RelativeTransform = InTransform;
 	UpdateChildrenTransform();
 }
 
@@ -30,7 +45,8 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 		InParent->Children.Add(this);
 		if (bUpdateChildTransform)
 		{
-			Transform = InParent->GetComponentTransform() * Transform;
+			FTransform NewRelativeTransform = RelativeTransform.ApplyParentTransform(Parent->GetWorldTransform());
+			SetRelativeTransform(NewRelativeTransform);
 		}
 	}
 	else
@@ -43,7 +59,8 @@ void USceneComponent::UpdateChildrenTransform()
 {
 	for (auto& Child : Children)
 	{
-		FTransform NewTransform = Transform * Child->GetComponentTransform();
-		Child->SetTransform(NewTransform);
+		// 부모의 월드, 자식의 로컬
+		FTransform NewChildTransform = Child->RelativeTransform.ApplyParentTransform(GetWorldTransform());
+		Child->SetRelativeTransform(NewChildTransform);
 	}
 }

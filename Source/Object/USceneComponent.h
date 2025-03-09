@@ -18,9 +18,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	const FTransform& GetComponentTransform() { return Transform; }
+	/* 로컬 트랜스폼을 반환*/
+	const FTransform& GetComponentTransform() { return RelativeTransform; }
+	/* 월드 트랜스폼을 반환*/
+	const FTransform& GetWorldTransform();
 
-	void SetTransform(const FTransform& InTransform);
+	void SetRelativeTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 
 	void Pick(bool bPicked);
@@ -34,7 +37,7 @@ protected:
 protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
-	FTransform Transform = FTransform();
+	FTransform RelativeTransform = FTransform();
 	bool bCanEverTick = true;
 
 	// debug

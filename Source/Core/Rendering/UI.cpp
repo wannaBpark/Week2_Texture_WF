@@ -15,6 +15,7 @@
 #include <Object/Actor/Cube.h>
 
 #include "Static/FEditorManager.h"
+#include <Object/Actor/Arrow.h>
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
@@ -37,8 +38,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
     bIsInitialized = true;
 
 
-    //ASphere* sphere = FObjectFactory::ConstructActor<ASphere>();
-    //selectedActor = sphere;
+    AArrow* Arrow = FObjectFactory::ConstructActor<AArrow>();
+    selectedActor = Arrow;
 }
 
 void UI::Update()
@@ -249,7 +250,7 @@ void UI::RenderCameraSettings()
 void UI::RenderPropertyWindow()
 {
     // bool bIsSelectedObjectExist = (UEngine::Get().World.GetSelected() != nullptr);
-    bool bIsSelectedObjectExist = false;
+    bool bIsSelectedObjectExist = true;
 
     if (bIsSelectedObjectExist)
     {
