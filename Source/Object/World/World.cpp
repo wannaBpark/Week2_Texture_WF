@@ -1,9 +1,10 @@
-#include "World.h"
+﻿#include "World.h"
+#include <cassert>
 #include "Object/Actor/Actor.h"
 #include "JsonSavehelper.h"
-#include <Object/Actor/Sphere.h>
-#include <Object/Actor/Cube.h>
-#include <Object/Gizmo/Axis.h>
+#include "Object/Actor/Sphere.h"
+#include "Object/Actor/Cube.h"
+#include "Object/Gizmo/Axis.h"
 
 void UWorld::ClearWorld()
 {
@@ -52,7 +53,7 @@ void UWorld::BeginPlay()
 	ASphere* TestSphere = SpawnActor<ASphere>();
 	ACube* TestCube = SpawnActor<ACube>();
 
-	for (auto& Actor : Actors)
+	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
 	}
@@ -60,11 +61,39 @@ void UWorld::BeginPlay()
 
 void UWorld::Tick(float DeltaTime)
 {
-	for (auto& Actor : Actors)
+	for (const auto& Actor : Actors)
 	{
 		if (Actor->CanEverTick())
 		{
 			Actor->Tick(DeltaTime);
 		}
 	}
+
+	for (const auto& PendingActor : PendingDestroyActors)
+	{
+		// Engine에서 제거
+		UEngine::Get().GObjects.Remove(PendingActor->shared_from_this());
+	}
+	PendingDestroyActors.Empty();
+}
+
+bool UWorld::DestroyActor(AActor* InActor)
+{
+	// 나중에 Destroy가 실패할 일이 있다면 return false; 하기
+	assert(InActor);
+
+	if (PendingDestroyActors.Find(InActor) != -1)
+	{
+		return true;
+	}
+
+	// 삭제될 때 Destroyed 호출
+	InActor->Destroyed();
+
+	// World에서 제거
+	Actors.Remove(InActor);
+
+	// 제거 대기열에 추가
+	PendingDestroyActors.Add(InActor);
+	return true;
 }

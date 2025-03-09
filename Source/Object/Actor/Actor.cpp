@@ -1,6 +1,7 @@
-﻿#include "Actor.h"
+#include "Actor.h"
 #include "Object/USceneComponent.h"
-#include <Debug/DebugConsole.h>
+#include "Debug/DebugConsole.h"
+#include "Object/World/World.h"
 
 void AActor::BeginPlay()
 {
@@ -21,7 +22,20 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
-const FTransform& AActor::GetActorTransform()
+void AActor::Destroyed()
+{
+	EndPlay(EEndPlayReason::Destroyed);
+}
+
+void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (auto& Component : Components)
+	{
+		Component->EndPlay(EndPlayReason);
+		UEngine::Get().GObjects.Remove(Component->shared_from_this());
+	}
+}
+
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
 }
@@ -36,4 +50,9 @@ void AActor::SetTransform(const FTransform& InTransform)
 	{
 		UE_LOG("RootComponent is nullptr");
 	}
+}
+
+bool AActor::Destroy()
+{
+	return GetWorld()->DestroyActor(this);
 }

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object/UObject.h"
 #include "Object/ActorComponent/ActorComponent.h"
 #include "Core/Math/Transform.h"
@@ -17,6 +17,8 @@ public:
 public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
+	virtual void Destroyed();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
@@ -43,6 +45,8 @@ public:
 	const FTransform& GetActorTransform();
 	void SetTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
+
+	bool Destroy();
 
 public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }

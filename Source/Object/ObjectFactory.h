@@ -28,7 +28,6 @@ public:
         {
             Obj->~T();
             FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
-            UEngine::Get().GObjects.Remove(Obj->shared_from_this());
         });
         NewObject->UUID = UEngineStatics::GenUUID();
 

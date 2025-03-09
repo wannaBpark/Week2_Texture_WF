@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "JsonSavehelper.h"
 #include "Core/Engine.h"
 #include "Core/Container/Array.h"
@@ -26,12 +26,14 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
+	bool DestroyActor(AActor* InActor);
 
 public:
 	std::string SceneName;
 	
 protected:
 	TArray<AActor*> Actors;
+	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 };
 
 template <typename T>
