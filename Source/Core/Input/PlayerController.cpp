@@ -28,15 +28,15 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
 
     ACamera* cam = FEditorManager::Get().GetCamera();
+    FTransform camTransform = cam->GetActorTransform();
+    camTransform.Rotate(FVector(0, cam->CameraSpeed * DeltaPos.Y * DeltaTime, cam->CameraSpeed * DeltaPos.X * DeltaTime));
 
 
-    FQuat xDelta = FQuat(FVector(0, 0, 1), DeltaPos.X * DeltaTime);
+    /*FQuat xDelta = FQuat(FVector(0, 0, 1), DeltaPos.X * DeltaTime);
 	FQuat yDelta = FQuat(FVector(0, 1, 0), DeltaPos.Y * DeltaTime);
 	FQuat newRot = FQuat::MultiplyQuaternions(CameraRot, xDelta);
-	newRot = FQuat::MultiplyQuaternions(newRot, yDelta);
+	newRot = FQuat::MultiplyQuaternions(newRot, yDelta);*/
 
-    FTransform camTransform = cam->GetActorTransform();
-	camTransform.SetRotation(newRot);
 
     float CamSpeed = FEditorManager::Get().GetCamera()->CameraSpeed;
 
