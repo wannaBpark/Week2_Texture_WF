@@ -26,8 +26,8 @@ AAxis::AAxis()
 	LineZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	RootComponent = LineX;
-	//LineY->SetupAttachment(LineX, true);
-	//LineZ->SetupAttachment(LineX, true);
+	LineY->SetupAttachment(LineX, true);
+	LineZ->SetupAttachment(LineX, true);
 } 
 
 void AAxis::BeginPlay()

@@ -1,4 +1,4 @@
-#include "PlayerController.h"
+﻿#include "PlayerController.h"
 
 #include <unordered_map>
 #include "Object//Actor/Camera.h"
@@ -25,9 +25,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
-    FQuaternion CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
-    FQuaternion DeltaQuaternion = FQuaternion(0.0f, DeltaPos.Y, DeltaPos.X, 0.0f);
-    FEditorManager::Get().GetCamera()->GetActorTransform().SetRotation(FQuaternion::AddQuaternions(CameraRot, DeltaQuaternion));
+    FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
+    FQuat DeltaQuaternion = FQuat(0.0f, DeltaPos.Y, DeltaPos.X, 0.0f);
+    FEditorManager::Get().GetCamera()->GetActorTransform().SetRotation(FQuat::AddQuaternions(CameraRot, DeltaQuaternion));
 
     float CamSpeed = FEditorManager::Get().GetCamera()->CameraSpeed;
 

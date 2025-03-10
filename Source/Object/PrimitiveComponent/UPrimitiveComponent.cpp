@@ -28,8 +28,8 @@ void UPrimitiveComponent::Render()
 
 	if (bIsPicked && GetOwner()->IsGizmoActor() == false)
 	{
-		bUseVertexColor = false;
-		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));
+		/*bUseVertexColor = false;
+		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
 	}
 	else
 	{
