@@ -158,4 +158,10 @@ struct FMath
 	{
 		return atan2f(Y, X);
 	}
+
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE T Square(T Value)
+    {
+	    return Value*Value;
+    }
 };
