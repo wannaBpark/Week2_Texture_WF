@@ -212,7 +212,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
 		return;
 	}
 
-	if (CurrentTopology != Info.GetTopology())
+	//if (CurrentTopology != Info.GetTopology())
 	{
 		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
 		CurrentTopology = Info.GetTopology();

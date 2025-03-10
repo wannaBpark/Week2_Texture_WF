@@ -163,6 +163,8 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
+    <ClCompile Include="Source\Object\Actor\Cone.cpp" />
+    <ClCompile Include="Source\Object\Actor\Cylinder.cpp" />
     <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
@@ -203,6 +205,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\Actor\Camera.h" />
+    <ClInclude Include="Source\Object\Actor\Cone.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
@@ -224,6 +227,7 @@
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
+    <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
