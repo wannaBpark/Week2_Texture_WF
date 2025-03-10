@@ -79,28 +79,43 @@ void UWorld::Render()
 		return;
 	}
 
-	// if (APlayerInput::Get().GetMouseDown(false))
-	// {
-		Renderer->PreparePicking();
-		Renderer->PreparePickingShader();
+	if (APlayerInput::Get().GetMouseDown(false))
+	{
+		RenderPickingTexture(*Renderer);
+	}
+	
+	RenderMainTexture(*Renderer);
 
-		for (auto& RenderComponent : RenderComponents)
-		{
-			uint32 UUID = RenderComponent->GetUUID();
-			RenderComponent->UpdateConstantPicking(*Renderer, APicker::EncodeUUID(UUID));
-			RenderComponent->Render();
-		}
-	// }
+	// DisplayPickingTexture(*Renderer);
 
-	Renderer->PrepareMain();
-	Renderer->PrepareMainShader();
+}
+
+void UWorld::RenderPickingTexture(URenderer& Renderer)
+{
+	Renderer.PreparePicking();
+	Renderer.PreparePickingShader();
+
+	for (auto& RenderComponent : RenderComponents)
+	{
+		uint32 UUID = RenderComponent->GetUUID();
+		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+		RenderComponent->Render();
+	}
+}
+
+void UWorld::RenderMainTexture(URenderer& Renderer)
+{
+	Renderer.PrepareMain();
+	Renderer.PrepareMainShader();
 	for (auto& RenderComponent : RenderComponents)
 	{
 		RenderComponent->Render();
 	}
+}
 
-	// Renderer->RenderPickingTexture();
-
+void UWorld::DisplayPickingTexture(URenderer& Renderer)
+{
+	Renderer.RenderPickingTexture();
 }
 
 void UWorld::ClearWorld()

@@ -558,41 +558,60 @@ void URenderer::PrepareMainShader()
 
 FVector4 URenderer::GetPixel(FVector MPos)
 {
+    // 1. Staging 텍스처 생성 (1x1 픽셀)
     D3D11_TEXTURE2D_DESC stagingDesc = {};
-    PickingFrameBuffer->GetDesc(&stagingDesc);
+    stagingDesc.Width = 1; // 픽셀 1개만 복사
+    stagingDesc.Height = 1;
+    stagingDesc.MipLevels = 1;
+    stagingDesc.ArraySize = 1;
+    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 원본 텍스처 포맷과 동일
+    stagingDesc.SampleDesc.Count = 1;
     stagingDesc.Usage = D3D11_USAGE_STAGING;
     stagingDesc.BindFlags = 0;
     stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
     ID3D11Texture2D* stagingTexture = nullptr;
     Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
-    DeviceContext->CopyResource(stagingTexture, PickingFrameBuffer);
 
-    // 6. 데이터 매핑
+    // 2. 복사할 영역 정의 (D3D11_BOX)
+    D3D11_BOX srcBox = {};
+    srcBox.left = static_cast<UINT>(MPos.X);
+    srcBox.right = srcBox.left + 1; // 1픽셀 너비
+    srcBox.top = static_cast<UINT>(MPos.Y);
+    srcBox.bottom = srcBox.top + 1; // 1픽셀 높이
+    srcBox.front = 0;
+    srcBox.back = 1;
+
+    // 3. 특정 좌표만 복사
+    DeviceContext->CopySubresourceRegion(
+        stagingTexture, // 대상 텍스처
+        0,              // 대상 서브리소스
+        0, 0, 0,        // 대상 좌표 (x, y, z)
+        PickingFrameBuffer, // 원본 텍스처
+        0,              // 원본 서브리소스
+        &srcBox         // 복사 영역
+    );
+
+    // 4. 데이터 매핑
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     DeviceContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mapped);
 
-    // 7. 픽셀 좌표 계산
-    const UINT x = static_cast<UINT>(MPos.X);
-    const UINT y = static_cast<UINT>(MPos.Y);
-    const UINT byteOffset = y * mapped.RowPitch + x * 4; // 정확한 바이트 오프셋 계산
-
-    // 8. RGBA 값 추출 (정수 값 그대로 읽기)
+    // 5. 픽셀 데이터 추출 (1x1 텍스처이므로 offset = 0)
     const BYTE* pixelData = static_cast<const BYTE*>(mapped.pData);
     FVector4 color;
-    color.X = static_cast<float>(pixelData[byteOffset + 0]); // R 값을 그대로 읽음
-    color.Y = static_cast<float>(pixelData[byteOffset + 1]); // G 값을 그대로 읽음
-    color.Z = static_cast<float>(pixelData[byteOffset + 2]); // B 값을 그대로 읽음
-    color.W = static_cast<float>(pixelData[byteOffset + 3]); // A 값을 그대로 읽음
+    color.X = static_cast<float>(pixelData[0]); // R
+    color.Y = static_cast<float>(pixelData[1]); // G
+    color.Z = static_cast<float>(pixelData[2]); // B
+    color.W = static_cast<float>(pixelData[3]); // A
 
-    std::cout << "X: "<<(int)color.X << " Y: "<<(int)color.Y << " Z: "<<color.Z << " A: "<<color.W << "\n" ;
+    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
+              << " Z: " << color.Z << " A: " << color.W << "\n";
 
-    // 9. 매핑 해제 및 리소스 정리
+    // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(stagingTexture, 0);
-
     stagingTexture->Release();
-    
-    return color; // RGBA 값 반환
+
+    return color;
 }
 
 void URenderer::UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransform)
