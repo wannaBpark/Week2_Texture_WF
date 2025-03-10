@@ -1,10 +1,8 @@
-#define _TCHAR_DEFINED
+#include "PlayerController.h"
 
 #include <unordered_map>
-
 #include "Camera.h"
 #include "PlayerInput.h"
-#include "PlayerController.h"
 
 APlayerController::APlayerController() {
 

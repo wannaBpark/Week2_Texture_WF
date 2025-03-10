@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Core/EngineTypes.h"
 #include "Object/UObject.h"
 #include "Object/ActorComponent/ActorComponent.h"
 #include "Core/Math/Transform.h"
@@ -13,18 +14,29 @@ class AActor : public UObject
 	friend class FEditorManager;
 public:
 	AActor() = default;
-	virtual ~AActor() = default;
+	virtual ~AActor() override = default;
 
 public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
+	virtual void LateTick (float DeltaTime); // 렌더 후 호출
+	
+	virtual void Destroyed();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+	TSet<UActorComponent*>& GetComponents() { return Components; }
 
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
+	bool IsGizmoActor() const { return bIsGizmo; }
+
 private:
 	virtual void Pick();
 	virtual void UnPick();
+
+	bool bIsPicked = false;
+public:
+	bool IsPicked() const { return bIsPicked; }
 
 public:
 	template<typename T>
@@ -33,6 +45,20 @@ public:
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
 		Components.Add(ObjectInstance);
+		ObjectInstance->SetOwner(this);
+
+		// 만약 SceneComponent를 상속 받았다면
+		if constexpr (std::is_base_of_v<USceneComponent, T>)
+		{
+			if (RootComponent == nullptr)
+			{
+				RootComponent = ObjectInstance;
+			}
+			else
+			{
+				ObjectInstance->SetupAttachment(RootComponent);
+			}
+		}
 
 		return ObjectInstance;
 	}
@@ -45,18 +71,28 @@ public:
 		Components.Remove(Object);
 	}
 
-	const FTransform& GetActorTransform();
-	void SetTransform(const FTransform& InTransform);
+	const FTransform& GetActorTransform() const;
+	void SetActorTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	virtual const char* GetTypeName();
-	
+
+	bool Destroy();
+
 public:
-	class USceneComponent* GetRootComponent();
+	USceneComponent* GetRootComponent() const { return RootComponent; }
+	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
+
+public:
+	void SetColor(FVector4 InColor);
+	void SetUseVertexColor(bool bUseVertexColor);
 
 protected:
 	bool bCanEverTick = true;
-	TSet<UActorComponent*> Components;
 	USceneComponent* RootComponent = nullptr;
+	bool bIsGizmo = false;
+
+private:
 	UWorld* World = nullptr;
+	TSet<UActorComponent*> Components;
 };
 

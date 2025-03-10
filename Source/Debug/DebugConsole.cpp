@@ -2,66 +2,73 @@
 #include "Debug/DebugConsole.h"
 #include <cstdarg>
 #include <algorithm>
-
 #include "Core/Container/String.h"
+
+#include "ImGui/imgui_internal.h"
 
 std::vector<FString> Debug::items;
 
-void Debug::ShowConsole(bool* bOpen)
-{
+
+void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurRatio)
+{    
     static char inputBuf[256] = "";
     static std::vector<FString> history;
     static int historyPos = -1;
     bool reclaimFocus = false;
 
-    ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Console", bOpen))
+    ImGui::Begin("Console");
+    if (bWasWindowSizeUpdated)
     {
-        ImGui::End();
-        return;
+        auto* Window = ImGui::GetCurrentWindow();
+        ImGui::SetWindowPos(ResizeToScreen(Window->Pos, PreRatio, CurRatio));
+        ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
     }
 
-    if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar))
-    {
-        for (const auto& Item : items)
-            ImGui::TextUnformatted(*Item);
+    // if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar))
+    // {
+    //     auto* Window = ImGui::GetCurrentWindow();
+    //     ImGui::SetWindowPos(ResizeToScreen(Window->Pos, PreRatio, CurRatio));
+    //     ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
+    //     
+    //     for (const auto& Item : items)
+    //         ImGui::TextUnformatted(Item.c_str());
+    //
+    //     if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+    //         ImGui::SetScrollHereY(1.0f);
+    // }
+    // ImGui::EndChild();
 
-        if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-            ImGui::SetScrollHereY(1.0f);
-    }
-    ImGui::EndChild();
+    // if (ImGui::InputText("Input", inputBuf, IM_ARRAYSIZE(inputBuf),
+    //     ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory,
+    //     [](ImGuiInputTextCallbackData* data) -> int
+    //     {
+    //         if (data->EventFlag == ImGuiInputTextFlags_CallbackHistory)
+    //         {
+    //             if (history.empty()) return 0;
+    //             historyPos += (data->EventKey == ImGuiKey_UpArrow) ? -1 : 1;
+    //             historyPos = std::clamp(historyPos, 0, (int)history.size() - 1);
+    //
+    //             std::string& historyCommand = history[historyPos];
+    //             data->DeleteChars(0, data->BufTextLen);
+    //             data->InsertChars(0, historyCommand.c_str());
+    //         }
+    //         return 0;
+    //     }))
+    // {
+    //     std::string inputStr = inputBuf;
+    //     if (!inputStr.empty())
+    //     {
+    //         items.push_back("> " + inputStr);
+    //         history.push_back(inputStr);
+    //         historyPos = (int)history.size();
+    //         ProcessCommand(inputStr, items);
+    //     }
+    //     inputBuf[0] = '\0';
+    //     reclaimFocus = true;
+    // }
 
-    if (ImGui::InputText("Input", inputBuf, IM_ARRAYSIZE(inputBuf),
-        ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory,
-        [](ImGuiInputTextCallbackData* data) -> int
-        {
-            if (data->EventFlag == ImGuiInputTextFlags_CallbackHistory)
-            {
-                if (history.empty()) return 0;
-                historyPos += (data->EventKey == ImGuiKey_UpArrow) ? -1 : 1;
-                historyPos = std::clamp(historyPos, 0, (int)history.size() - 1);
-
-                FString& historyCommand = history[historyPos];
-                data->DeleteChars(0, data->BufTextLen);
-                data->InsertChars(0, *historyCommand);
-            }
-            return 0;
-        }))
-    {
-        FString inputStr = inputBuf;
-        if (!inputStr.IsEmpty())
-        {
-            items.push_back("> " + inputStr);
-            history.push_back(inputStr);
-            historyPos = static_cast<int>(history.size());
-            ProcessCommand(inputStr, items);
-        }
-        inputBuf[0] = '\0';
-        reclaimFocus = true;
-    }
-
-    if (reclaimFocus)
-        ImGui::SetKeyboardFocusHere(-1);
+    // if (reclaimFocus)
+    //     ImGui::SetKeyboardFocusHere(-1);
     ImGui::End();
 }
 
@@ -94,4 +101,29 @@ void Debug::Log(const char* format, ...)
     va_end(args);
 
     items.emplace_back(buffer);
+}
+
+ImVec2 Debug::ResizeToScreen(const ImVec2& vec2, ImVec2 PreRatio, ImVec2 CurRatio)
+{
+    float min;
+    if (CurRatio.x < CurRatio.y)
+    {
+        min = CurRatio.x;
+    }
+    else
+    {
+        min = CurRatio.y;
+    }
+
+    float preMin;
+    if (PreRatio.x < PreRatio.y)
+    {
+        preMin = PreRatio.x;
+    }
+    else
+    {
+        preMin = PreRatio.y;
+    }
+    
+    return {vec2.x * PreRatio.x / CurRatio.x * min / preMin, vec2.y * PreRatio.y / CurRatio.y * min / preMin};
 }

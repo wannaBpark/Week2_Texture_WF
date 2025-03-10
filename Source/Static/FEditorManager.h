@@ -17,5 +17,5 @@ public:
 
 private:
     AActor* SelectedActor = nullptr;
-    // Gizmos* Gizmos = nullptr;
+    class AGizmoHandle* GizmoHandle = nullptr;
 };

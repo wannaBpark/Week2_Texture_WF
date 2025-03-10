@@ -44,6 +44,9 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
         break;
+    case WM_SIZE:
+		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
+		break;
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -68,7 +71,7 @@ void UEngine::Initialize(
     InitRenderer();
 
     InitWorld();
-    ui.Initialize(WindowHandle, *Renderer);
+    ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
 	UE_LOG("Engine Initialized!");
 }
@@ -114,6 +117,7 @@ void UEngine::Run()
                 IsRunning = false;
                 break;
             }
+
         }
 		// Renderer Update
         Renderer->Prepare();
@@ -123,6 +127,8 @@ void UEngine::Run()
 		if (World)
 		{
 			World->Tick(DeltaTime);
+			World->Render();
+		    World->LateTick(DeltaTime);
 		}
 
         //각 Actor에서 TickActor() -> PlayerTick() -> TickPlayerInput() 호출하는데 지금은 Message에서 처리하고 있다.
@@ -222,4 +228,29 @@ void UEngine::ShutdownWindow()
     WindowInstance = nullptr;
 
 	ui.Shutdown();
+}
+
+void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
+{
+	ScreenWidth = InScreenWidth;
+	ScreenHeight = InScreenHeight;
+
+    if(Renderer)
+    {
+        Renderer->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+    }
+
+	if (ui.bIsInitialized)
+	{
+		ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+	}
+}
+
+UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
+{
+    if (const auto Obj = GObjects.Find(InUUID))
+    {
+        return Obj->get();
+    }
+    return nullptr;
 }

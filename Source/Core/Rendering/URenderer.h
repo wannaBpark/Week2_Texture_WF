@@ -26,7 +26,12 @@ private:
         uint32 bUseVertexColor;
         FVector Padding;
     };
-
+	
+	struct alignas(16) FPickingConstants
+	{
+		FVector4 UUIDColor;
+	};
+	
     struct ConstantUpdateInfo
     {
         const FTransform& Transform;
@@ -58,7 +63,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
-	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp, bool bRenderOutline = false);
+	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
 
     /**
      * Buffer에 있는 Vertex를 그립니다.
@@ -92,6 +97,8 @@ public:
     /** Projection 변환 Matrix를 업데이트 합니다. */
     void UpdateProjectionMatrix(const class FCamera& Camera);
 
+	void OnUpdateWindowSize(int Width, int Height);
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -107,10 +114,13 @@ protected:
 
     /** 뎁스 스텐실 상태를 생성합니다. */
 	void CreateDepthStencilState();
-
+	
     /** 프레임 버퍼를 해제합니다. */
     void ReleaseFrameBuffer();
 
+	/** 뎁스 스텐실 버퍼를 해제합니다. */
+	void ReleaseDepthStencilBuffer();
+	
     /** 레스터라이즈 상태를 생성합니다. */
     void CreateRasterizerState();
 
@@ -140,8 +150,6 @@ protected:
     ID3D11VertexShader* SimpleVertexShader = nullptr;       // Vertex 데이터를 처리하는 Vertex 셰이더
     ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
 
-	ID3D11PixelShader* OutlinePixelShader = nullptr;        // 외곽선을 그리는 Pixel 셰이더
-
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
@@ -149,8 +157,8 @@ protected:
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
 	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
-
-    
+    ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
+	
 	// Buffer Cache
 
 	std::unique_ptr<FBufferCache> BufferCache;
@@ -160,4 +168,28 @@ protected:
 	FMatrix ProjectionMatrix;
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+
+	
+#pragma region picking
+protected:
+	// 피킹용 버퍼들
+	ID3D11Texture2D* PickingFrameBuffer = nullptr;                 // 화면 출력용 텍스처
+	ID3D11RenderTargetView* PickingFrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
+	ID3D11Buffer* ConstantPickingBuffer = nullptr;                 // 뷰 상수 버퍼
+	FLOAT PickingClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f }; //
+	ID3D11PixelShader* PickingPixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
+public:
+	//피킹용 함수들	
+    void CreatePickingTexture(HWND hWnd);
+	void PreparePicking();
+	void PreparePickingShader() const;
+	void UpdateConstantPicking(FVector4 UUIDColor) const;
+	
+	void PrepareMain();
+	void PrepareMainShader();
+
+	FVector4 GetPixel(FVector MPos);
+
+	void RenderPickingTexture();
+#pragma endregion picking
 };

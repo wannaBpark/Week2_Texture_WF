@@ -56,12 +56,12 @@ void FCamera::FCameraTransform::OnRotate()
         cosY * cosZ,                      // X
         sinX * sinY * cosZ + cosX * sinZ, // Y
         -cosX * sinY * cosZ + sinX * sinZ // Z
-    );
+    ).GetSafeNormal();
 
-    Right = FVector::CrossProduct(FVector(0, 0, 1), Forward);
+    Right = FVector::CrossProduct(FVector(0, 0, 1), Forward).GetSafeNormal();
     // Right = FVector::CrossProduct(Up, Forward);
     // 이렇게 사용 x, 동일할 경우 0 나옴.
-    Up = FVector::CrossProduct(Forward, Right);
+    Up = FVector::CrossProduct(Forward, Right).GetSafeNormal();
 
     // Up = FVector(
     //     sinY,               // X

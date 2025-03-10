@@ -1,24 +1,27 @@
 ﻿#include "World.h"
-#include "Object/Actor/Actor.h"
+#include <cassert>
 #include "JsonSavehelper.h"
-#include <Object/Gizmo/Axis.h>
-#include <Object/Actor/Arrow.h>
+
+#include "Object/Actor/Arrow.h"
+#include "Object/Actor/Cube.h"
+#include "Object/Actor/Picker.h"
+#include "Object/Actor/Sphere.h"
+#include "Object/Gizmo/Axis.h"
 
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
-#include "Object/Actor/Cube.h"
-#include "Object/Actor/Sphere.h"
+#include "Core/Input/PlayerInput.h"
+#include <Object/Gizmo/GizmoHandle.h>
+
+
 
 void UWorld::BeginPlay()
 {
-	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
+	AAxis* Axis = SpawnActor<AAxis>();
 
-	AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
-	FTransform tr = TestArrow->GetActorTransform();
-	tr.SetScale(FVector(3, 1, 1));
-	TestArrow->SetTransform(tr);
-
-	for (auto& Actor : Actors)
+	APicker* Picker = SpawnActor<APicker>();
+	
+	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
 	}
@@ -26,7 +29,14 @@ void UWorld::BeginPlay()
 
 void UWorld::Tick(float DeltaTime)
 {
-	for (auto& Actor : Actors)
+	for (const auto& Actor : ActorsToSpawn)
+	{
+		Actor->BeginPlay();
+	}
+	ActorsToSpawn.Empty();
+
+	const auto CopyActors = Actors;
+	for (const auto& Actor : CopyActors)
 	{
 		if (Actor->CanEverTick())
 		{
@@ -35,9 +45,108 @@ void UWorld::Tick(float DeltaTime)
 	}
 }
 
+void UWorld::LateTick(float DeltaTime)
+{
+	const auto CopyActors = Actors;
+	for (const auto& Actor : CopyActors)
+	{
+		if (Actor->CanEverTick())
+		{
+			Actor->LateTick(DeltaTime);
+		}
+	}
+
+
+	for (const auto& PendingActor : PendingDestroyActors)
+	{
+		// Engine에서 제거
+		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
+	}
+	PendingDestroyActors.Empty();
+}
+
+void UWorld::Render()
+{
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+
+	if (Renderer == nullptr)
+	{
+		return;
+	}
+
+	if (APlayerInput::Get().GetMouseDown(false))
+	{
+		RenderPickingTexture(*Renderer);
+	}
+	
+	RenderMainTexture(*Renderer);
+
+	// DisplayPickingTexture(*Renderer);
+
+}
+
+void UWorld::RenderPickingTexture(URenderer& Renderer)
+{
+	Renderer.PreparePicking();
+	Renderer.PreparePickingShader();
+
+	for (auto& RenderComponent : RenderComponents)
+	{
+		uint32 UUID = RenderComponent->GetUUID();
+		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+		RenderComponent->Render();
+	}
+}
+
+void UWorld::RenderMainTexture(URenderer& Renderer)
+{
+	Renderer.PrepareMain();
+	Renderer.PrepareMainShader();
+	for (auto& RenderComponent : RenderComponents)
+	{
+		RenderComponent->Render();
+	}
+}
+
+void UWorld::DisplayPickingTexture(URenderer& Renderer)
+{
+	Renderer.RenderPickingTexture();
+}
+
 void UWorld::ClearWorld()
 {
-	
+	TArray CopyActors = Actors;
+	for (AActor* Actor : CopyActors)
+	{
+		DestroyActor(Actor);
+	}
+	Actors.Empty();
+	UE_LOG("Clear World");
+
+	AAxis* Axis = SpawnActor<AAxis>();
+	APicker* Picker = SpawnActor<APicker>();
+}
+
+
+bool UWorld::DestroyActor(AActor* InActor)
+{
+	// 나중에 Destroy가 실패할 일이 있다면 return false; 하기
+	assert(InActor);
+
+	if (PendingDestroyActors.Find(InActor) != -1)
+	{
+		return true;
+	}
+
+	// 삭제될 때 Destroyed 호출
+	InActor->Destroyed();
+
+	// World에서 제거
+	Actors.Remove(InActor);
+
+	// 제거 대기열에 추가
+	PendingDestroyActors.Add(InActor);
+	return true;
 }
 
 void UWorld::SaveWorld()
@@ -66,27 +175,32 @@ void UWorld::LoadWorld(const char* SceneName)
 		
 		if (ObjectInfo->ObjectType == "Actor")
 		{
-			Actor = FObjectFactory::ConstructActor<AActor>();
+			Actor = SpawnActor<AActor>();
 		}
 		else if (ObjectInfo->ObjectType == "Sphere")
 		{
-			Actor = FObjectFactory::ConstructActor<ASphere>();
+			Actor = SpawnActor<ASphere>();
 		}
 		else if (ObjectInfo->ObjectType == "Cube")
 		{
-			Actor = FObjectFactory::ConstructActor<ACube>();
+			Actor = SpawnActor<ACube>();
 		}
 		else if (ObjectInfo->ObjectType == "Arrow")
 		{
-			Actor = FObjectFactory::ConstructActor<AArrow>();
+			Actor = SpawnActor<AArrow>();
 		}
 		else if (ObjectInfo->ObjectType == "Axis")
 		{
-			Actor = FObjectFactory::ConstructActor<AAxis>();
+			Actor = SpawnActor<AAxis>();
 		}
 			
-		Actor->SetTransform(Transform);
+		Actor->SetActorTransform(Transform);
 	}
+}
+
+void UWorld::RemoveRenderComponent(UPrimitiveComponent* Component)
+{
+	RenderComponents.Remove(Component); 
 }
 
 UWorldInfo UWorld::GetWorldInfo() const

@@ -1,14 +1,16 @@
 ﻿#pragma once
 
-
 #include <memory>
 
 #include "HAL/PlatformType.h"
 #include "Rendering/URenderer.h"
 #include "Rendering/UI.h"
 #include "AbstractClass/Singleton.h"
-#include "Object/World/World.h"
+#include "Container/Map.h"
 #include "Core/Container/Array.h"
+
+class UObject;
+class UWorld;
 
 enum class EScreenMode : uint8
 {
@@ -52,9 +54,17 @@ private:
     void InitRenderer();
     void InitWorld();
     void ShutdownWindow();
+    void UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:
 	UWorld* GetWorld() const { return World; }
+
+    HWND GetWindowHandle() const { return WindowHandle; }
+
+    template <typename ObjectType>
+        requires std::derived_from<ObjectType, UObject>
+    ObjectType* GetObjectByUUID(uint32 InUUID) const;
+    UObject* GetObjectByUUID(uint32 InUUID) const;
 
 private:
     bool IsRunning = false;
@@ -78,5 +88,19 @@ private:
     class UWorld* World;
 
 public:
-    TArray<std::shared_ptr<UObject>> GObjects;
+    // TArray<std::shared_ptr<UObject>> GObjects;
+    TMap<uint32, std::shared_ptr<UObject>> GObjects;
 };
+
+template <typename ObjectType> requires std::derived_from<ObjectType, UObject>
+ObjectType* UEngine::GetObjectByUUID(uint32 InUUID) const
+{
+    if (const std::shared_ptr<UObject>* Obj = GObjects.Find(InUUID))
+    {
+        if (const auto PriComp = std::dynamic_pointer_cast<ObjectType, UObject>(*Obj))
+        {
+            return PriComp.get();
+        }
+    }
+    return nullptr;
+}

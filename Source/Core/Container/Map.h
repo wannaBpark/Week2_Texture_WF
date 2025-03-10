@@ -6,7 +6,7 @@
 #include "Pair.h"
 
 
-template <typename KeyType, typename ValueType, typename Allocator = FDefaultAllocator<TPair<const KeyType, ValueType>>>
+template <typename KeyType, typename ValueType, typename Allocator = FDefaultAllocator<std::pair<const KeyType, ValueType>>>
 class TMap
 {
 public:

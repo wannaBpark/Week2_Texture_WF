@@ -161,10 +161,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
+    <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
+    <ClCompile Include="Source\Object\Actor\Picker.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
     <ClCompile Include="Source\Debug\DebugConsole.cpp" />
@@ -180,7 +183,6 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
-    <ClCompile Include="Source\Static\FEditorManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -201,12 +203,15 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="Source\Core\Container\CString.h" />
     <ClInclude Include="Source\Object\Actor\Arrow.h" />
     <ClInclude Include="Source\Core\Input\PlayerController.h" />
     <ClInclude Include="Source\Core\Input\PlayerInput.h" />
+=======
+    <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
+>>>>>>> origin/main
     <ClInclude Include="Source\Object\Actor\Cube.h" />
-    <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Container\Map.h" />
@@ -219,7 +224,6 @@
     <ClInclude Include="Source\Core\Container\Array.h" />
     <ClInclude Include="Source\Core\Container\ContainerAllocator.h" />
     <ClInclude Include="Source\Core\Container\String.h" />
-    <ClInclude Include="Source\Core\CoreTypes.h" />
     <ClInclude Include="Source\Core\EngineStatics.h" />
     <ClInclude Include="Source\Core\HAL\PlatformMemory.h" />
     <ClInclude Include="Source\Core\HAL\PlatformType.h" />
@@ -229,8 +233,8 @@
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
+    <ClInclude Include="Source\Object\Actor\Picker.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
-    <ClInclude Include="Source\Static\FEditorManager.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
@@ -246,6 +250,25 @@
     <ClInclude Include="Source\Core\Engine.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
+    <ClCompile Include="Source\Static\FEditorManager.cpp" />
+    <ClInclude Include="Source\Object\Actor\Arrow.h" />
+    <ClInclude Include="Source\Core\Input\PlayerController.h" />
+    <ClInclude Include="Source\Core\Input\PlayerInput.h" />
+    <ClInclude Include="Source\Core\EngineTypes.h" />
+    <ClInclude Include="Source\Static\FEditorManager.h" />
+    <ClCompile Include="Source\Object\Actor\Picker.cpp" />
+    <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
+    <ClInclude Include="Source\Core\Container\CString.h" />
+    <ClInclude Include="Source\Object\Actor\Arrow.h" />
+    <ClInclude Include="Source\Core\Input\PlayerController.h" />
+    <ClInclude Include="Source\Core\Input\PlayerInput.h" />
+    <ClInclude Include="Source\Object\Actor\Picker.h" />
+    <ClCompile Include="Source\Static\FEditorManager.cpp" />
+    <ClInclude Include="Source\Object\Actor\Arrow.h" />
+    <ClInclude Include="Source\Core\Input\PlayerController.h" />
+    <ClInclude Include="Source\Core\Input\PlayerInput.h" />
+    <ClInclude Include="Source\Core\EngineTypes.h" />
+    <ClInclude Include="Source\Static\FEditorManager.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
     <ClInclude Include="Source\Object\UObject.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
