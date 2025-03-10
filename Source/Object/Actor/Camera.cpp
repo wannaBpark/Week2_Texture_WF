@@ -1,4 +1,4 @@
-﻿#include "Object/Actor/Camera.h"
+﻿#include "Camera.h"
 
 #include "Core/Rendering/URenderer.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
@@ -11,7 +11,7 @@ ACamera::ACamera()
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
-    RootComponent = AddComponent<USphereComp>();
+    RootComponent = AddComponent<USceneComponent>();
     
     FTransform StartPos = GetActorTransform();
     StartPos.SetPosition(FVector(-5, 0, 0));
