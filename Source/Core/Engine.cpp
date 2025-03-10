@@ -235,8 +235,12 @@ void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 	ScreenHeight = InScreenHeight;
 
     if(Renderer)
+    {
         Renderer->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+    }
 
 	if (ui.bIsInitialized)
+	{
 		ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+	}
 }
