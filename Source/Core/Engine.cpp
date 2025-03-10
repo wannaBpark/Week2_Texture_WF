@@ -76,6 +76,10 @@ void UEngine::Initialize(
     InitRenderer();
 
     InitWorld();
+
+    InitializedScreenWidth = ScreenWidth;
+    InitializedScreenHeight = ScreenHeight;
+    
     ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
 	UE_LOG("Engine Initialized!");
