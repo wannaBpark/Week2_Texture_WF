@@ -80,6 +80,16 @@ bool UWorld::DestroyActor(AActor* InActor)
 	// World에서 제거
 	Actors.Remove(InActor);
 
+	// RenderComponent 제거
+	auto Components = InActor->GetComponents();
+	for (auto& Component : Components)
+	{
+		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		{
+			RemoveRenderComponent(PrimitiveComponent);
+		}
+	}
+
 	// 제거 대기열에 추가
 	PendingDestroyActors.Add(InActor);
 	return true;
@@ -132,6 +142,11 @@ void UWorld::LoadWorld(const char* SceneName)
 			
 		Actor->SetActorTransform(Transform);
 	}
+}
+
+void UWorld::RemoveRenderComponent(UPrimitiveComponent* Component)
+{
+	RenderComponents.Remove(Component); 
 }
 
 UWorldInfo UWorld::GetWorldInfo() const

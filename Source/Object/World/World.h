@@ -33,7 +33,7 @@ public:
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
-	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
+	void RemoveRenderComponent(class UPrimitiveComponent* Component);
 
 private:
 	UWorldInfo GetWorldInfo() const;

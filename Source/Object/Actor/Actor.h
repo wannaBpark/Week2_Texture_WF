@@ -21,6 +21,7 @@ public:
 	virtual void Tick(float DeltaTime);
 	virtual void Destroyed();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+	TSet<UActorComponent*>& GetComponents() { return Components; }
 
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
