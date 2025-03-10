@@ -9,4 +9,5 @@ class APlayerController : public TSingleton<APlayerController> {
     void ProcessPlayerInput(float DeltaTime);
 
     void HandleCameraMovement(float DeltaTime);
+    void HandleGizmoMovement(float DeltaTime);
 };

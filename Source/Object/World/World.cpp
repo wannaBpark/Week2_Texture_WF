@@ -11,8 +11,10 @@
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
+#include "Object/Actor/Camera.h"
 #include <Object/Gizmo/GizmoHandle.h>
 
+#include "Static/FEditorManager.h"
 
 
 void UWorld::BeginPlay()
@@ -20,6 +22,8 @@ void UWorld::BeginPlay()
 	AAxis* Axis = SpawnActor<AAxis>();
 
 	APicker* Picker = SpawnActor<APicker>();
+
+	ACamera* Camera = SpawnActor<ACamera>();
 	
 	for (const auto& Actor : Actors)
 	{
@@ -74,6 +78,10 @@ void UWorld::Render()
 		return;
 	}
 
+	ACamera* cam = FEditorManager::Get().GetCamera();
+	Renderer->UpdateViewMatrix(cam->GetActorTransform());
+	Renderer->UpdateProjectionMatrix(cam);
+	
 	if (APlayerInput::Get().GetMouseDown(false))
 	{
 		RenderPickingTexture(*Renderer);
