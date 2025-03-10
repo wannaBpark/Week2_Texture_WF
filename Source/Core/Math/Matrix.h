@@ -364,7 +364,12 @@ struct alignas(16) FMatrix
 
 	static FMatrix Rotate(float X, float Y, float Z)
 	{
-		return  RotateYaw(Z) * RotatePitch(Y) * RotateRoll(X);
+		if (abs(Y) == 90)
+		{
+			return RotateRoll(X) * RotatePitch(Y) * RotateYaw(Z);		
+		}
+		return  RotateRoll(X) * RotateYaw(Z) * RotatePitch(Y);
+		
 	}
 
 	static FMatrix Rotate(FVector Rotation)
