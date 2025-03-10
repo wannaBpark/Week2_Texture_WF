@@ -14,6 +14,8 @@ public:
     inline ACamera* GetCamera() const {return Camera;}
 
     void SetCamera(ACamera* NewCamera);
+
+    AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
     
 private:
     ACamera* Camera = nullptr;
