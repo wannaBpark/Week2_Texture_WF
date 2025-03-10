@@ -39,6 +39,11 @@ public:
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
 	void SaveWorld();
+
+	void AddZIgnoreComponent(UPrimitiveComponent* InComponent)
+	{
+		ZIgnoreRenderComoponents.Add(InComponent);
+	}
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
@@ -53,6 +58,7 @@ public:
 	
 protected:
 	TArray<AActor*> Actors;
+	TArray<UPrimitiveComponent*> ZIgnoreRenderComoponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;

@@ -11,7 +11,8 @@ protected:
 	FVector Position;
 	FQuat Rotation;
 	FVector Scale;
-
+	int Depth;
+	
 public:
 	FTransform()
 		: Position(FVector(0, 0, 0))
@@ -137,4 +138,5 @@ public:
 	{
 		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(sin(Angle * TORAD / 2), 0, 0, cos(Angle * TORAD / 2)));
 	}
+
 };

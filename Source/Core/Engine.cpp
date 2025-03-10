@@ -221,7 +221,7 @@ void UEngine::InitWorld()
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
 
     // Test
-    World->SpawnActor<AArrow>();
+    AArrow* Arrow = World->SpawnActor<AArrow>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
