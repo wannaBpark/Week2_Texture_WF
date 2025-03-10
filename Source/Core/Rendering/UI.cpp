@@ -43,6 +43,9 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
     UEngine::Get().GetWorld()->SpawnActor<AArrow>();
     
     io.DisplaySize = ScreenSize;
+
+    PreRatio = GetRatio();
+    CurRatio = GetRatio();
 }
 
 void UI::Update()
@@ -52,7 +55,7 @@ void UI::Update()
         HWND hwnd = GetActiveWindow();
         ScreenToClient(hwnd, &mousePos);
 
-        ImVec2 CalculatedMousePos = ResizeToScreen(ImVec2(mousePos.x, mousePos.y));
+        ImVec2 CalculatedMousePos = ResizeToScreenByCurrentRatio(ImVec2(mousePos.x, mousePos.y));
         ImGui::GetIO().MousePos = CalculatedMousePos;
         //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
     }
@@ -63,14 +66,23 @@ void UI::Update()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    if (bWasWindowSizeUpdated)
+    {
+        PreRatio = CurRatio;
+        CurRatio = GetRatio();
+        UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
+    }
+    
     RenderControlPanel();
     RenderPropertyWindow();
 
-    Debug::ShowConsole(&bIsConsoleOpen);
+    Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
     // ImGui 렌더링
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    bWasWindowSizeUpdated = false;
 }
 
 
@@ -88,11 +100,22 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
     ImGui_ImplDX11_CreateDeviceObjects();
    // ImGui 창 크기 업데이트
 	ScreenSize = ImVec2(static_cast<float>(InScreenWidth), static_cast<float>(InScreenHeight));
+
+    bWasWindowSizeUpdated = true;
 }
 
 void UI::RenderControlPanel()
 {
     ImGui::Begin("Jungle Control Panel");
+
+    if (bWasWindowSizeUpdated)
+    {
+        auto* Window = ImGui::GetCurrentWindow();
+
+        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
+        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
+    }
+    
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
 
@@ -270,6 +293,14 @@ void UI::RenderPropertyWindow()
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
 
     ImGui::Begin("Properties");
+
+    if (bWasWindowSizeUpdated)
+    {
+        auto* Window = ImGui::GetCurrentWindow();
+
+        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
+        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
+    }
     
     if (selectedActor != nullptr)
     {
@@ -295,15 +326,5 @@ void UI::RenderPropertyWindow()
         }
     }
     ImGui::End();
-}
-
-ImVec2 UI::ResizeToScreen(const ImVec2& vec2) const
-{
-    return {vec2.x / GetRatio().x, vec2.y / GetRatio().y };
-}
-
-ImVec2 UI::GetRatio() const
-{
-    return {ScreenSize.x / InitialScreenSize.x, ScreenSize.y / InitialScreenSize.y};
 }
 
