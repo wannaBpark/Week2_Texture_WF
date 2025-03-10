@@ -40,10 +40,8 @@ public:
 	void LoadWorld(const char* SceneName);
 	void SaveWorld();
 
-	void AddZIgnoreComponent(UPrimitiveComponent* InComponent)
-	{
-		ZIgnoreRenderComoponents.Add(InComponent);
-	}
+	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
+	
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
