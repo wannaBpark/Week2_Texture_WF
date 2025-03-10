@@ -52,7 +52,7 @@ void AActor::UnPick()
 	}	
 }
 
-const FTransform& AActor::GetActorTransform()
+const FTransform& AActor::GetActorTransform() const
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
 }
@@ -73,11 +73,6 @@ void AActor::SetActorTransform(const FTransform& InTransform)
 const char* AActor::GetTypeName()
 {
 	return "Actor";
-}
-
-USceneComponent* AActor::GetRootComponent()
-{
-	return RootComponent;
 }
 
 bool AActor::Destroy()

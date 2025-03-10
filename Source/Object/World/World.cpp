@@ -20,9 +20,9 @@ void UWorld::BeginPlay()
 {
 	AAxis* Axis = SpawnActor<AAxis>();
 
-	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
+	//AArrow* TestArrow = SpawnActor<AArrow>();
 	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
-	//ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
+	//ASphere* TestSphere = SpawnActor<ASphere>();
 	//FTransform tr = TestArrow->GetActorTransform();
 	//TestArrow->SetTransform(tr);
 	//TestArrow->SetTransform(FTransform(FVector(0.0f, 0.0f, 2.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.1f, 0.1f, 0.5f)));
@@ -79,11 +79,6 @@ bool UWorld::DestroyActor(AActor* InActor)
 	return true;
 }
 
-void UWorld::ClearWorld()
-{
-	
-}
-
 void UWorld::SaveWorld()
 {
 	const UWorldInfo& WorldInfo = GetWorldInfo();
@@ -110,26 +105,26 @@ void UWorld::LoadWorld(const char* SceneName)
 		
 		if (ObjectInfo->ObjectType == "Actor")
 		{
-			Actor = FObjectFactory::ConstructActor<AActor>();
+			Actor = SpawnActor<AActor>();
 		}
 		else if (ObjectInfo->ObjectType == "Sphere")
 		{
-			Actor = FObjectFactory::ConstructActor<ASphere>();
+			Actor = SpawnActor<ASphere>();
 		}
 		else if (ObjectInfo->ObjectType == "Cube")
 		{
-			Actor = FObjectFactory::ConstructActor<ACube>();
+			Actor = SpawnActor<ACube>();
 		}
 		else if (ObjectInfo->ObjectType == "Arrow")
 		{
-			Actor = FObjectFactory::ConstructActor<AArrow>();
+			Actor = SpawnActor<AArrow>();
 		}
 		else if (ObjectInfo->ObjectType == "Axis")
 		{
-			Actor = FObjectFactory::ConstructActor<AAxis>();
+			Actor = SpawnActor<AAxis>();
 		}
 			
-		Actor->SetTransform(Transform);
+		Actor->SetActorTransform(Transform);
 	}
 }
 

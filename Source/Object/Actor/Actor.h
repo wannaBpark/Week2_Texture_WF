@@ -49,7 +49,7 @@ public:
 	}
 
 	const FTransform& GetActorTransform() const;
-	void SetTransform(const FTransform& InTransform);
+	void SetActorTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	virtual const char* GetTypeName();
 

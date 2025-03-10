@@ -265,17 +265,17 @@ void UI::RenderPropertyWindow()
             if (ImGui::DragFloat3("Translation", position, 0.1f))
             {
                 selectedTransform.SetPosition(position[0], position[1], position[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
             if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
             {
                 selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
             if (ImGui::DragFloat3("Scale", scale, 0.1f))
             {
                 selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
         }
     }
