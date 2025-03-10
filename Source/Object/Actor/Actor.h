@@ -23,6 +23,7 @@ public:
 	
 	virtual void Destroyed();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+	TSet<UActorComponent*>& GetComponents() { return Components; }
 
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
@@ -38,6 +39,7 @@ public:
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
 		Components.Add(ObjectInstance);
+		ObjectInstance->SetOwner(this);
 
 		return ObjectInstance;
 	}
