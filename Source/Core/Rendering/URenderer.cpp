@@ -224,7 +224,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
         PrimitiveComp->IsUseVertexColor()
     };
 
-    UpdateConstant(UpdateInfo, PrimitiveComp->GetIsOrthoGraphic());
+    UpdateConstant(UpdateInfo);
     
     RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
 
@@ -262,7 +262,7 @@ void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
     pBuffer->Release();
 }
 
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo, bool IsOrthoGraphic) const
+void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 {
     if (!ConstantBuffer) return;
 
@@ -270,12 +270,8 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo, bool IsOrth
 
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 
-        FMatrix::Transpose(ViewMatrix);
-
-    if (!IsOrthoGraphic)
-    {
-        MVP *= FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
-    }
+        FMatrix::Transpose(ViewMatrix) * 
+        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
