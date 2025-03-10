@@ -651,6 +651,10 @@ FVector4 URenderer::GetPixel(FVector MPos)
     srcBox.bottom = srcBox.top + 1; // 1픽셀 높이
     srcBox.front = 0;
     srcBox.back = 1;
+    FVector4 color {1, 1, 1, 1};
+
+    if (stagingTexture == nullptr)
+        return color;
 
     // 3. 특정 좌표만 복사
     DeviceContext->CopySubresourceRegion(
@@ -669,7 +673,6 @@ FVector4 URenderer::GetPixel(FVector MPos)
     // 5. 픽셀 데이터 추출 (1x1 텍스처이므로 offset = 0)
     const BYTE* pixelData = static_cast<const BYTE*>(mapped.pData);
 
-    FVector4 color {1, 1, 1, 1};
     if (pixelData)
     {
         color.X = static_cast<float>(pixelData[0]); // R
