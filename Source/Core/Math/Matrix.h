@@ -313,66 +313,6 @@ struct alignas(16) FMatrix
 		return Scale(InScale.X, InScale.Y, InScale.Z);
 	}
 
-	static FMatrix RotateRoll(float Angle) //x�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[1][1] = C; 
-		Result.M[1][2] = -S;  
-		Result.M[2][1] = S; 
-		Result.M[2][2] = C;  
-
-		return Result;
-	}
-
-	static FMatrix RotatePitch(float Angle) // y�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[0][0] = C;  
-		Result.M[0][2] = -S;  
-		Result.M[2][0] = S; 
-		Result.M[2][2] = C;  
-		return Result;
-	}
-
-	static FMatrix RotateYaw(float Angle) // z�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[0][0] = C;  // ù ��° ���� ù ��° ��
-		Result.M[0][1] = -S;  // ù ��° ���� �� ��° ��
-		Result.M[1][0] = S; // �� ��° ���� ù ��° ��
-		Result.M[1][1] = C;  // �� ��° ���� �� ��° ��
-
-		return Result;
-	}
-
-	static FMatrix Rotate(float X, float Y, float Z)
-	{
-		return  RotateYaw(Z) * RotatePitch(Y) * RotateRoll(X);
-	}
-
-	static FMatrix Rotate(const FVector& Rotation)
-	{
-		return Rotate(Rotation.X, Rotation.Y, Rotation.Z);
-	}
-
-
 	static FMatrix Rotate(const FQuat& Q) 
 	{
 		FMatrix Result;

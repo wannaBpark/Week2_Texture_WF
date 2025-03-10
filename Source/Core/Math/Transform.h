@@ -49,8 +49,7 @@ public:
 	}
 	inline virtual void SetRotation(const FVector& InRotation)
 	{
-		FQuat RotationQuat = FQuat::EulerToQuaternion(InRotation);
-		Rotation = FQuat::MultiplyQuaternions(Rotation, RotationQuat);
+		Rotation = FQuat::EulerToQuaternion(InRotation);
 	}
 	inline virtual void SetRotation(float x, float y, float z)
 	{
