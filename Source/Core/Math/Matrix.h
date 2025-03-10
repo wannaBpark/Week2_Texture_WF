@@ -287,11 +287,10 @@ struct alignas(16) FMatrix
 
 	static FMatrix Translate(float X, float Y, float Z)
 	{
-		// based on row major
 		FMatrix Result;
-		Result.M[0][3] = X; 
-		Result.M[1][3] = Y; 
-		Result.M[2][3] = Z; 
+		Result.M[3][0] = X; 
+		Result.M[3][1] = Y; 
+		Result.M[3][2] = Z; 
 		return Result;
 	}
 
@@ -302,7 +301,6 @@ struct alignas(16) FMatrix
 
 	static FMatrix Scale(float X, float Y, float Z)
 	{
-		// based on row major
 		FMatrix Result;
 		Result.M[0][0] = X; 
 		Result.M[1][1] = Y; 
@@ -405,22 +403,22 @@ struct alignas(16) FMatrix
 		Result.M[0][0] = XScale;
 		Result.M[1][1] = YScale;
 		Result.M[2][2] = FarPlane / (FarPlane - NearPlane);
-		Result.M[2][3] = -NearPlane * FarPlane / (FarPlane - NearPlane);
-		Result.M[3][2] = 1.0f;
+		Result.M[2][3] = 1.0f;
+		Result.M[3][2] = -NearPlane * FarPlane / (FarPlane - NearPlane);
 		Result.M[3][3] = 0.0f;
-		return Result.GetTransposed();
+		return Result;
 	}
 
 	FVector GetTranslation() const
 	{
-		return FVector(M[0][3], M[1][3], M[2][3]);
+		return FVector(M[3][0], M[3][1], M[3][2]);
 	}
 
 	FVector GetScale() const 
 	{
-		float X = FVector(M[0][0], M[1][0], M[2][0]).Length();
-		float Y = FVector(M[0][1], M[1][1], M[2][1]).Length();
-		float Z = FVector(M[0][2], M[1][2], M[2][2]).Length();
+		float X = FVector(M[0][0], M[0][1], M[0][2]).Length();
+		float Y = FVector(M[1][0], M[1][1], M[1][2]).Length();
+		float Z = FVector(M[2][0], M[2][1], M[2][2]).Length();
 		return {X, Y, Z};
 		
 		//return FVector(M[0][0], M[1][1], M[2][2]);
@@ -429,10 +427,21 @@ struct alignas(16) FMatrix
 	FVector GetRotation() const 
 	{
 		FVector Result;
-		Result.X = atan2(M[2][1], M[2][2]);
-		Result.Y = atan2(-M[2][0], sqrt(M[2][1] * M[2][1] + M[2][2] * M[2][2]));
-		Result.Z = atan2(M[1][0], M[0][0]);
+		Result.Y = asinf(-M[2][0]); // pitch
+		if (cos(Result.Y) > 0.0001f) // not at gimbal lock
+		{
+			Result.X = atan2f(M[2][1], M[2][2]); // roll
+			Result.Z = atan2f(M[1][0], M[0][0]); // yaw
+		}
+		else
+		{
+			Result.X = atan2f(-M[1][2], M[1][1]); // roll
+			Result.Z = 0; // yaw
+		}
 		return Result;
 	}
+
+	class FTransform GetTransform() const;
+	
 };
 

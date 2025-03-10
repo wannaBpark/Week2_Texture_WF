@@ -78,7 +78,7 @@ TArray<FVertexSimple> FBufferCache::CreateConeVertices()
 
 	int segments = 36;
 	float radius = 1.f;
-	float height = 2.f;
+	float height = 1.f;
 
 
 	// 원뿔의 바닥
@@ -112,7 +112,7 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 	
 	int segments = 36;
 	float radius = 1.f;
-	float height = 2.f;
+	float height = 1.f;
 
 
 	// 원기둥의 바닥과 윗면

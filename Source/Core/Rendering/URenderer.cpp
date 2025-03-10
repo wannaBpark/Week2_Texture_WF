@@ -24,6 +24,7 @@ void URenderer::Release()
     DeviceContext->OMSetRenderTargets(0, nullptr, DepthStencilView);
 
     ReleaseFrameBuffer();
+    ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
 }
 
@@ -187,7 +188,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRender
 	}
 
     ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetComponentTransform(), 
+        PrimitiveComp->GetWorldTransform(), 
         PrimitiveComp->GetCustomColor(), 
         PrimitiveComp->IsUseVertexColor()
     };
@@ -248,7 +249,11 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix MVP = FMatrix::Transpose(ProjectionMatrix) * FMatrix::Transpose(ViewMatrix) * UpdateInfo.Transform.GetWorldMatrix();
+    FMatrix MVP = 
+        FMatrix::Transpose(ProjectionMatrix) * 
+        FMatrix::Transpose(ViewMatrix) * 
+        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());
+
     // 상수 버퍼를 CPU 메모리에 매핑
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
@@ -411,6 +416,25 @@ void URenderer::ReleaseFrameBuffer()
     }
 }
 
+void URenderer::ReleaseDepthStencilBuffer()
+{
+	if (DepthStencilBuffer)
+	{
+		DepthStencilBuffer->Release();
+		DepthStencilBuffer = nullptr;
+	}
+	if (DepthStencilView)
+	{
+		DepthStencilView->Release();
+		DepthStencilView = nullptr;
+	}
+	if (DepthStencilState)
+	{
+		DepthStencilState->Release();
+		DepthStencilState = nullptr;
+	}
+}
+
 void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
@@ -466,4 +490,34 @@ void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
         // TODO: 추가 필요.
         // ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
     }
+}
+
+void URenderer::OnUpdateWindowSize(int Width, int Height)
+{
+	if (SwapChain)
+	{
+        SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
+
+		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+		SwapChain->GetDesc(&SwapChainDesc);
+		// 뷰포트 정보 갱신
+		ViewportInfo = {
+			0.0f, 0.0f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
+			0.0f, 1.0f
+		};
+
+		// 프레임 버퍼를 다시 생성
+		ReleaseFrameBuffer();
+        CreateFrameBuffer();
+
+        // 뎁스 스텐실 버퍼를 다시 생성
+		ReleaseDepthStencilBuffer();
+		CreateDepthStencilBuffer();
+
+
+        // 프로젝션 매트릭스 업데이트
+        FCamera& Camera = FCamera::Get();
+        UpdateProjectionMatrix(Camera);
+	}
 }

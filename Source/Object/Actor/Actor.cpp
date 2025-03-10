@@ -44,9 +44,10 @@ const FTransform& AActor::GetActorTransform()
 
 void AActor::SetTransform(const FTransform& InTransform)
 {
+	// InTransform은 월드 기준임
 	if (RootComponent)
 	{
-		RootComponent->SetTransform(InTransform);
+		RootComponent->SetRelativeTransform(InTransform);
 	}
 	else
 	{

@@ -8,7 +8,7 @@ ACube::ACube()
 	UCubeComp* CubeComponent = AddComponent<UCubeComp>();
 	RootComponent = CubeComponent;
 
-	CubeComponent->SetTransform(FTransform());
+	CubeComponent->SetRelativeTransform(FTransform());
 }
 
 void ACube::BeginPlay()

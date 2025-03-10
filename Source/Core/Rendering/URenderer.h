@@ -92,6 +92,8 @@ public:
     /** Projection 변환 Matrix를 업데이트 합니다. */
     void UpdateProjectionMatrix(const class FCamera& Camera);
 
+    void OnUpdateWindowSize(int Width, int Heignt);
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -110,6 +112,9 @@ protected:
 
     /** 프레임 버퍼를 해제합니다. */
     void ReleaseFrameBuffer();
+
+	/** 뎁스 스텐실 버퍼를 해제합니다. */
+	void ReleaseDepthStencilBuffer();
 
     /** 레스터라이즈 상태를 생성합니다. */
     void CreateRasterizerState();

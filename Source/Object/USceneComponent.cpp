@@ -1,5 +1,6 @@
 ﻿#include "USceneComponent.h"
 #include "Debug/DebugConsole.h"
+#include "PrimitiveComponent/UPrimitiveComponent.h"
 
 void USceneComponent::BeginPlay()
 {
@@ -11,10 +12,26 @@ void USceneComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void USceneComponent::SetTransform(const FTransform& InTransform)
+// 내 월드 트랜스폼 반환
+const FTransform USceneComponent::GetWorldTransform()
 {
-	Transform = InTransform;
-	UpdateChildrenTransform();
+	if (Parent)
+	{
+		// 부모가 있을 경우 부모 월드 * 내 로컬
+		FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+		FMatrix MyLocal = RelativeTransform.GetMatrix();
+
+		FMatrix NewMatrix = MyLocal * ParentWorld;
+		return NewMatrix.GetTransform();
+	}
+
+	return RelativeTransform;
+}
+
+void USceneComponent::SetRelativeTransform(const FTransform& InParentTransform)
+{
+	// 내 로컬 트랜스폼 갱신
+	RelativeTransform = InParentTransform;
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -30,7 +47,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 		InParent->Children.Add(this);
 		if (bUpdateChildTransform)
 		{
-			Transform = InParent->GetComponentTransform() * Transform;
+			ApplyParentWorldTransform(InParent->GetWorldTransform());
 		}
 	}
 	else
@@ -39,11 +56,11 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	}
 }
 
-void USceneComponent::UpdateChildrenTransform()
+void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
 {
-	for (auto& Child : Children)
-	{
-		FTransform NewTransform = Transform * Child->GetComponentTransform();
-		Child->SetTransform(NewTransform);
-	}
+	FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
+	FMatrix MyLocal = RelativeTransform.GetMatrix();
+
+	FMatrix NewMatrix = MyLocal * ParentWorld;
+	SetRelativeTransform(NewMatrix.GetTransform());
 }
