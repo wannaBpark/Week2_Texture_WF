@@ -38,9 +38,6 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 	ScreenSize = ImVec2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight));
     bIsInitialized = true;
 
-    AArrow* Arrow = UEngine::Get().GetWorld()->SpawnActor<AArrow>();
-    //->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
-    selectedActor = Arrow;
 }
 
 void UI::Update()
@@ -251,33 +248,30 @@ void UI::RenderCameraSettings()
 
 void UI::RenderPropertyWindow()
 {
-    // bool bIsSelectedObjectExist = (UEngine::Get().World.GetSelected() != nullptr);
-    bool bIsSelectedObjectExist = true;
+    selectedActor = FEditorManager::Get().GetSelectedActor();
 
-    if (bIsSelectedObjectExist)
+    if (selectedActor != nullptr)
     {
-        if (selectedActor != nullptr)
+        FTransform selectedTransform = selectedActor->GetActorTransform();
+        //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
+        float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
+        float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
+        float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
+        if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
-            FTransform selectedTransform = selectedActor->GetActorTransform();
-            //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
-            float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-            float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
-            float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
-            if (ImGui::DragFloat3("Translation", position, 0.1f))
-            {
-                selectedTransform.SetPosition(position[0], position[1], position[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
-            if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
-            {
-                selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
-            if (ImGui::DragFloat3("Scale", scale, 0.1f))
-            {
-                selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
+            selectedTransform.SetPosition(position[0], position[1], position[2]);
+            selectedActor->SetActorTransform(selectedTransform);
+        }
+        if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+        {
+            selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+            selectedActor->SetActorTransform(selectedTransform);
+        }
+        if (ImGui::DragFloat3("Scale", scale, 0.1f))
+        {
+            selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+            selectedActor->SetActorTransform(selectedTransform);
         }
     }
+    
 }

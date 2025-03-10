@@ -20,7 +20,7 @@ void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-	if (Renderer == nullptr /*|| !bCanBeRendered*/)
+	if (Renderer == nullptr || !bCanBeRendered)
 	{
 		return;
 	}

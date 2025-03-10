@@ -21,15 +21,6 @@ void UWorld::BeginPlay()
 
 	APicker* Picker = SpawnActor<APicker>();
 	
-	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
-	//AArrow* TestArrow = SpawnActor<AArrow>();
-	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
-	//ASphere* TestSphere = SpawnActor<ASphere>();
-	//FTransform tr = TestArrow->GetActorTransform();
-	//TestArrow->SetTransform(tr);
-	//TestArrow->SetTransform(FTransform(FVector(0.0f, 0.0f, 2.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.1f, 0.1f, 0.5f)));
-
-
 	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();

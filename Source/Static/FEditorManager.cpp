@@ -2,12 +2,15 @@
 #include "Core/Engine.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
+#include "Core/Math/Vector.h"
+#include "Core/Math/Transform.h"
 
 void FEditorManager::SelectActor(AActor* NewActor)
 {
     if (GizmoHandle == nullptr)
     {
 		GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>();
+        GizmoHandle->SetActive(false);
     }
 
     if (SelectedActor != nullptr)
@@ -21,7 +24,9 @@ void FEditorManager::SelectActor(AActor* NewActor)
     {
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);
-		GizmoHandle->SetActorTransform(SelectedActor->GetActorTransform());
-        // Gizmos.SelectedActor = NewActor;
-    }
+        FVector Pos = SelectedActor->GetActorTransform().GetPosition();
+		FTransform GizmoTransform = GizmoHandle->GetActorTransform();
+		GizmoTransform.SetPosition(Pos);
+		GizmoHandle->SetActorTransform(GizmoTransform);
+	}
 }
