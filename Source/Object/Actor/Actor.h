@@ -19,6 +19,8 @@ public:
 public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
+	virtual void LateTick (float DeltaTime); // 렌더 후 호출
+	
 	virtual void Destroyed();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 	TSet<UActorComponent*>& GetComponents() { return Components; }
