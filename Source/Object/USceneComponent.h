@@ -19,7 +19,7 @@ public:
 
 
 	/* 로컬 트랜스폼을 반환*/
-	const FTransform GetComponentTransform() { return RelativeTransform; }
+	FTransform GetComponentTransform() { return RelativeTransform; }
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
 	const FTransform GetWorldTransform();
 

@@ -6,14 +6,15 @@
 
 #include "UI.h"
 #include "Core/Math/Vector.h"
-#include "Camera.h"
+// #include "Object/Actor/Camera.h"
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 
-
 struct FVertexSimple;
+
+class ACamera;
 
 class URenderer
 {
@@ -92,10 +93,10 @@ public:
     ID3D11DeviceContext* GetDeviceContext() const;
 
     /** View 변환 Matrix를 업데이트 합니다. */
-    void UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransform);
+    void UpdateViewMatrix(const FTransform& CameraTransform);
 
     /** Projection 변환 Matrix를 업데이트 합니다. */
-    void UpdateProjectionMatrix(const class FCamera& Camera);
+    void UpdateProjectionMatrix(ACamera* Camera);
 
 	void OnUpdateWindowSize(int Width, int Height);
 

@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Transform.h"
@@ -16,18 +15,14 @@ namespace ECameraProjectionMode
     };
 }
 
-class FCamera : public AActor
+class ACamera : public AActor
 {
 
     using Super = AActor;
     
 public:
-    FCamera() = default;
-    ~FCamera() = default;
-    
-    virtual void BeginPlay() override;
-    virtual void Tick(float DeltaTime) override;
-    virtual const char* GetTypeName() override;
+    ACamera();
+
 private:    
     float Near;
     float Far;
@@ -50,30 +45,24 @@ public:
     float GetNear() const;
     float GetFar() const;
 
-    // void SetVelocity(FVector InVelocity){ GetActorTransform().SetVelocity() }
         
     FVector GetForward() const
     {
-        return GetActorTransform().Forward;
+        return GetActorTransform().GetForward();
     }
     
     FVector GetRight() const
     {
-        return GetActorTransform().Right;
+        return GetActorTransform().GetRight();
     }
     
     FVector GetUp() const
     {
-        return GetActorTransform().Up;
+        return GetActorTransform().GetUp();
     }
 
     FMatrix GetViewMatrix() const
     {
         return GetActorTransform().GetViewMatrix();
     }
-
-    FVector GetVelocity() const { return GetActorTransform().Velocity; }
-    
-private:
-    void OnUpdateProjectionChanges() const;
 };
