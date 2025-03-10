@@ -41,11 +41,11 @@ public:
 	void SaveWorld();
 
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
-	
+	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
-	void RemoveRenderComponent(class UPrimitiveComponent* Component);
+	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 private:
 	UWorldInfo GetWorldInfo() const;
@@ -56,7 +56,7 @@ public:
 	
 protected:
 	TArray<AActor*> Actors;
-	TArray<UPrimitiveComponent*> ZIgnoreRenderComoponents;
+	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
@@ -79,4 +79,3 @@ T* UWorld::SpawnActor()
 	UE_LOG("Actor Construction Failed. World is nullptr");
 	return nullptr;
 }
-

@@ -100,7 +100,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	}
 
 	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComoponents)
+	for (auto& RenderComponent: ZIgnoreRenderComponents)
 	{
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
@@ -123,7 +123,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	}
 
 	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComoponents)
+	for (auto& RenderComponent: ZIgnoreRenderComponents)
 	{
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
@@ -137,6 +137,7 @@ void UWorld::DisplayPickingTexture(URenderer& Renderer)
 
 void UWorld::ClearWorld()
 {
+	ZIgnoreRenderComponents.Empty();
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
@@ -145,6 +146,8 @@ void UWorld::ClearWorld()
 			DestroyActor(Actor);
 		}
 	}
+
+
 	Actors.Empty();
 	UE_LOG("Clear World");
 }
@@ -179,8 +182,8 @@ void UWorld::SaveWorld()
 
 void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 {
-	ZIgnoreRenderComoponents.Add(InComponent);
-	InComponent->SetIsOrthoGraphic(true);	
+	ZIgnoreRenderComponents.Add(InComponent);
+	InComponent->SetIsOrthoGraphic(true);
 }
 
 void UWorld::LoadWorld(const char* SceneName)
@@ -221,11 +224,6 @@ void UWorld::LoadWorld(const char* SceneName)
 			
 		Actor->SetActorTransform(Transform);
 	}
-}
-
-void UWorld::RemoveRenderComponent(UPrimitiveComponent* Component)
-{
-	RenderComponents.Remove(Component); 
 }
 
 UWorldInfo UWorld::GetWorldInfo() const
