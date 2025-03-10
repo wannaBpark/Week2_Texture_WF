@@ -8,13 +8,13 @@ struct FTransform
 {
 protected:
 	FVector Position;
-	FVector Rotation;
+	FQuaternion Rotation;
 	FVector Scale;
 
 public:
 	FTransform()
 		: Position(FVector(0, 0, 0))
-		, Rotation(FVector(0, 0, 0))
+		, Rotation(FQuaternion(0, 0, 0, 1))
 		, Scale(FVector(1, 1, 1))
 	{
 	}
@@ -22,6 +22,13 @@ public:
 	FTransform(FVector InPosition, FVector InRotation, FVector InScale)
 		: Position(InPosition)
 		, Rotation(InRotation)
+		, Scale(InScale)
+	{
+	}
+
+	FTransform(FVector InPosition, FQuaternion InQuat, FVector InScale)
+		: Position(InPosition)
+		, Rotation(InQuat)
 		, Scale(InScale)
 	{
 	}
@@ -38,11 +45,11 @@ public:
 	}
 	inline virtual void SetRotation(FVector InRotation)
 	{
-		Rotation = InRotation;
+		Rotation = FQuaternion::EulerToQuaternion(InRotation);
 	}
 	inline virtual void SetRotation(float x, float y, float z)
 	{
-		Rotation = {x, y, z};
+		SetRotation(FVector(x, y, z));
 	}
 	inline void SetScale(FVector InScale)
 	{
@@ -56,10 +63,16 @@ public:
 	{
 		return Position;
 	}
-	FVector GetRotation() const 
+	FQuaternion GetRotation() const 
 	{
 		return Rotation;
 	}
+
+	FVector GetEuler() const
+	{
+		return FQuaternion::QuaternionToEuler(Rotation);
+	}
+
 	FVector GetScale() const
 	{
 		return Scale;
@@ -68,7 +81,7 @@ public:
 	FMatrix GetMatrix() const 
 	{
 		return FMatrix::Scale(Scale.X, Scale.Y, Scale.Z)
-			* FMatrix::Rotate(Rotation.X, Rotation.Y, Rotation.Z)
+			* FMatrix::Rotate(Rotation)
 			* FMatrix::Translate(Position.X, Position.Y, Position.Z);
 	}
 

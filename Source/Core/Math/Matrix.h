@@ -372,6 +372,43 @@ struct alignas(16) FMatrix
 		return Rotate(Rotation.X, Rotation.Y, Rotation.Z);
 	}
 
+
+	static FMatrix Rotate(const FQuaternion& Q) 
+	{
+		FMatrix Result;
+
+		float xx = Q.X * Q.X;
+		float yy = Q.Y * Q.Y;
+		float zz = Q.Z * Q.Z;
+		float xy = Q.X * Q.Y;
+		float xz = Q.X * Q.Z;
+		float yz = Q.Y * Q.Z;
+		float wx = Q.W * Q.X;
+		float wy = Q.W * Q.Y;
+		float wz = Q.W * Q.Z;
+
+		Result.M[0][0] = 1.0f - 2.0f * (yy + zz);
+		Result.M[0][1] = 2.0f * (xy - wz);
+		Result.M[0][2] = 2.0f * (xz + wy);
+		Result.M[0][3] = 0.0f;
+
+		Result.M[1][0] = 2.0f * (xy + wz);
+		Result.M[1][1] = 1.0f - 2.0f * (xx + zz);
+		Result.M[1][2] = 2.0f * (yz - wx);
+		Result.M[1][3] = 0.0f;
+
+		Result.M[2][0] = 2.0f * (xz - wy);
+		Result.M[2][1] = 2.0f * (yz + wx);
+		Result.M[2][2] = 1.0f - 2.0f * (xx + yy);
+		Result.M[2][3] = 0.0f;
+
+		Result.M[3][0] = 0.0f;
+		Result.M[3][1] = 0.0f;
+		Result.M[3][2] = 0.0f;
+		Result.M[3][3] = 1.0f;
+
+		return Result;
+	}
 	/// <summary>
 	/// 뷰 변환 행렬을 생성합니다.
 	/// </summary>
