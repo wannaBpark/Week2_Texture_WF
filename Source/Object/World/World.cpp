@@ -11,6 +11,7 @@
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
+#include <Object/Gizmo/GizmoHandle.h>
 
 
 
@@ -50,13 +51,6 @@ void UWorld::Tick(float DeltaTime)
 			Actor->Tick(DeltaTime);
 		}
 	}
-
-	for (const auto& PendingActor : PendingDestroyActors)
-	{
-		// Engine에서 제거
-		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
-	}
-	PendingDestroyActors.Empty();
 }
 
 void UWorld::LateTick(float DeltaTime)
@@ -68,6 +62,14 @@ void UWorld::LateTick(float DeltaTime)
 			Actor->LateTick(DeltaTime);
 		}
 	}
+
+
+	for (const auto& PendingActor : PendingDestroyActors)
+	{
+		// Engine에서 제거
+		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
+	}
+	PendingDestroyActors.Empty();
 }
 
 void UWorld::Render()

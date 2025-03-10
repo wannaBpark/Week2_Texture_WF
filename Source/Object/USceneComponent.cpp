@@ -37,6 +37,10 @@ void USceneComponent::SetRelativeTransform(const FTransform& InParentTransform)
 void USceneComponent::Pick(bool bPicked)
 {
 	bIsPicked = bPicked;
+	for (auto& Child : Children)
+	{
+		Child->Pick(bPicked);
+	}
 }
 
 void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform)

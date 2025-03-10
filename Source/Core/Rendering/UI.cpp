@@ -39,7 +39,7 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
     bIsInitialized = true;
 
     AArrow* Arrow = UEngine::Get().GetWorld()->SpawnActor<AArrow>();
-    Arrow->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
+    //->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
     selectedActor = Arrow;
 }
 
