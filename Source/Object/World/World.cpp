@@ -149,8 +149,6 @@ void UWorld::ClearWorld()
 		}
 	}
 
-
-	Actors.Empty();
 	UE_LOG("Clear World");
 }
 
