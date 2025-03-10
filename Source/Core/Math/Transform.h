@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Core/Engine.h"
+#include "Core/Math/Plane.h"
 
 #define TORAD 0.0174532925199432957f
 
@@ -80,15 +81,15 @@ public:
 
 	FMatrix GetMatrix() const 
 	{
-		return FMatrix::Scale(Scale.X, Scale.Y, Scale.Z)
-			* FMatrix::Rotate(Rotation)
-			* FMatrix::Translate(Position.X, Position.Y, Position.Z);
+		return FMatrix::GetScaleMatrix(Scale.X, Scale.Y, Scale.Z)
+			* FMatrix::GetRotateMatrix(Rotation)
+			* FMatrix::GetTranslateMatrix(Position.X, Position.Y, Position.Z);
 	}
 
 	FVector GetForward() const
 	{
 		// 쿼터니언을 회전 행렬로 변환
-		FMatrix RotationMatrix = FMatrix::Rotate(Rotation);
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
 
 		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
 		FVector Forward = FVector(
@@ -118,24 +119,29 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateYaw(InRotation.Z);
-		RotatePitch(InRotation.Y);
 		RotateRoll(InRotation.X);
+		RotatePitch(InRotation.Y);
+		RotateYaw(InRotation.Z);
 	}
 
 	void RotateYaw(float Angle)
 	{
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
+		FVector Axis = FVector(0, 0, 1);
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+
+		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
 	}
 
 	void RotatePitch(float Angle)
 	{
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, sin(Angle * TORAD / 2), 0, cos(Angle * TORAD / 2)));
+		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 	}
 
 	void RotateRoll(float Angle)
 	{
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(sin(Angle * TORAD / 2), 0, 0, cos(Angle * TORAD / 2)));
+		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 	}
 
 };

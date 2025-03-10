@@ -11,8 +11,11 @@
 #include "Core/Math/Matrix.h"
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
+#include "Core/Math/Plane.h"
+
 
 struct FVertexSimple;
+struct FVector4;
 
 class ACamera;
 
@@ -191,6 +194,7 @@ protected:
 
 public:
 	//피킹용 함수들	
+    void ReleasePickingFrameBuffer();
     void CreatePickingTexture(HWND hWnd);
     void PrepareZIgnore();
     void PreparePicking();

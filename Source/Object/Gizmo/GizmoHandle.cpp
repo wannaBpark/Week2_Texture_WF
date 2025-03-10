@@ -15,13 +15,18 @@ AGizmoHandle::AGizmoHandle()
 
 	// x
 	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
+	FTransform tr = XArrow->GetComponentTransform();
+	tr.Rotate(FVector(0.0f, 90.0f, 0.0f));
+	XArrow->SetRelativeTransform(tr);
+
 	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(XArrow);
 
 	// y
 	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	tr = YArrow->GetComponentTransform();
+	tr.Rotate(FVector(90.0f, 0.0f, 0.0f));
+	YArrow->SetRelativeTransform(tr);
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
@@ -34,8 +39,9 @@ AGizmoHandle::AGizmoHandle()
 	XArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 
-	XArrow->SetupAttachment(ZArrow, true);
-	YArrow->SetupAttachment(ZArrow, true);
+	XArrow->SetupAttachment(ZArrow);
+	YArrow->SetupAttachment(ZArrow);
+
 
 	SetActive(false);
 }
