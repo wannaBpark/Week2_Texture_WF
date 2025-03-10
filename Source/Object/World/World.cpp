@@ -7,7 +7,9 @@
 #include "Object/Actor/Camera.h"
 #include <Object/Gizmo/GizmoHandle.h>
 
+#include "Object/Actor/Cone.h"
 #include "Object/Actor/Cube.h"
+#include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
@@ -149,8 +151,6 @@ void UWorld::ClearWorld()
 		}
 	}
 
-
-	Actors.Empty();
 	UE_LOG("Clear World");
 }
 
@@ -190,11 +190,9 @@ void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 
 void UWorld::LoadWorld(const char* SceneName)
 {
-	if (SceneName == nullptr || strcmp(SceneName, "") == 0)
-	{
+	if (SceneName == nullptr || strcmp(SceneName, "") == 0){
 		return;
 	}
-
 	ClearWorld();
 	
 	UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(SceneName);
@@ -228,7 +226,15 @@ void UWorld::LoadWorld(const char* SceneName)
 		{
 			Actor = SpawnActor<AArrow>();
 		}
-			
+		else if (ObjectInfo->ObjectType == "Cylinder")
+		{
+			Actor = SpawnActor<ACylinder>();
+		}
+		else if (ObjectInfo->ObjectType == "Cone")
+		{
+			Actor = SpawnActor<ACone>();
+		}
+		
 		Actor->SetActorTransform(Transform);
 	}
 }

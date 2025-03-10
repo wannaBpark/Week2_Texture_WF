@@ -14,6 +14,8 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Arrow.h"
+#include "Object/Actor/Cone.h"
+#include "Object/Actor/Cylinder.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 
@@ -151,22 +153,30 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Triangle" };
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone" };
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
     if (ImGui::Button("Spawn"))
     {
         UWorld* World = UEngine::Get().GetWorld();
-            for (int i = 0 ;  i < NumOfSpawn; i++)
+        for (int i = 0 ;  i < NumOfSpawn; i++)
+        {
+            if (strcmp(items[currentItem], "Sphere") == 0)
             {
-                if (strcmp(items[currentItem], "Sphere") == 0)
-                {
-                    World->SpawnActor<ASphere>();
-                }
+                World->SpawnActor<ASphere>();
+            }
             else if (strcmp(items[currentItem], "Cube") == 0)
-                {
-					World->SpawnActor<ACube>();
+            {
+                World->SpawnActor<ACube>();
+            }
+            else if (strcmp(items[currentItem], "Cylinder") == 0)
+            {
+                World->SpawnActor<ACylinder>();
+            }
+            else if (strcmp(items[currentItem], "Cone") == 0)
+            {
+                World->SpawnActor<ACone>();
             }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
