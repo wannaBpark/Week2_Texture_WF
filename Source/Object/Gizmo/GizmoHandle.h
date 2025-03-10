@@ -8,6 +8,7 @@ public:
 	virtual ~AGizmoHandle() = default;
 
 public:
+	virtual void Tick(float DeltaTime) override;
 	void SetActive(bool bActive);
 private:
 	bool bIsActive = false;

@@ -8,6 +8,7 @@
 #include "Core/Input/PlayerInput.h"
 #include "Core/Input/PlayerController.h"
 #include "Object/Actor/Camera.h"
+#include "Object/Actor/Sphere.h"
 #include "Static/FEditorManager.h"
 
 class AArrow;
@@ -221,7 +222,7 @@ void UEngine::InitWorld()
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
 
     // Test
-    World->SpawnActor<AArrow>();
+    World->SpawnActor<ASphere>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();

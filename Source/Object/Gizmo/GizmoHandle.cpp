@@ -1,5 +1,6 @@
 ﻿#include "GizmoHandle.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Static/FEditorManager.h"
 
 
 AGizmoHandle::AGizmoHandle()
@@ -31,8 +32,22 @@ AGizmoHandle::AGizmoHandle()
 	SetActive(false);
 }
 
+void AGizmoHandle::Tick(float DeltaTime)
+{
+	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
+	if (SelectedActor != nullptr && bIsActive)
+	{
+		auto Transform = SelectedActor->GetActorTransform();
+		Transform.SetScale(1, 1, 1);
+		SetActorTransform(Transform);
+	}
+	
+	AActor::Tick(DeltaTime);
+}
+
 void AGizmoHandle::SetActive(bool bActive)
 {
+	bIsActive = bActive;
 	for (auto& Cylinder : CylinderComponents)
 	{
 		Cylinder->SetCanBeRendered(bActive);
