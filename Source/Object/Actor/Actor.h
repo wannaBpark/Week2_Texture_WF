@@ -28,9 +28,15 @@ public:
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
+	bool IsGizmoActor() const { return bIsGizmo; }
+
 private:
 	virtual void Pick();
 	virtual void UnPick();
+
+	bool bIsPicked = false;
+public:
+	bool IsPicked() const { return bIsPicked; }
 
 public:
 	template<typename T>
@@ -70,6 +76,7 @@ public:
 protected:
 	bool bCanEverTick = true;
 	USceneComponent* RootComponent = nullptr;
+	bool bIsGizmo = false;
 
 private:
 	UWorld* World = nullptr;

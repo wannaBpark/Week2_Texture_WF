@@ -41,7 +41,7 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
 float4 outlinePS(PS_INPUT input) : SV_TARGET
 {
     // Output the color directly
-    return float4(1.0f, 1.0f, 1.0f, 0.1f);
+    return float4(1.0f, 0.647f, 0.0f, 0.1f);
 }
 
 float4 PickingPS(PS_INPUT input):SV_TARGET{

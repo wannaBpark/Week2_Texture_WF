@@ -51,6 +51,7 @@ void AActor::Pick()
 {
 	if (RootComponent)
 	{
+		bIsPicked = true;
 		RootComponent->Pick(true);
 	}
 }
@@ -59,6 +60,7 @@ void AActor::UnPick()
 {
 	if (RootComponent)
 	{
+		bIsPicked = false;
 		RootComponent->Pick(false);
 	}	
 }

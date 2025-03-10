@@ -39,3 +39,6 @@ Intermediate/
 *.exe
 *.out
 *.app
+
+# Scenes
+*.scene

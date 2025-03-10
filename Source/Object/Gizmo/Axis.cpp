@@ -2,6 +2,8 @@
 
 AAxis::AAxis()
 {
+	bIsGizmo = true;
+
 	ULineComp* LineX = AddComponent<ULineComp>();
 	FTransform XTransform;
 	XTransform.SetScale(FVector(1000.0f, 1.0f, 1.0f));
