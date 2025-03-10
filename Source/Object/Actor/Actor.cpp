@@ -43,8 +43,13 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{
 		Component->EndPlay(EndPlayReason);
+		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
+		{
+			GetWorld()->RemoveRenderComponent(PrimitiveComp);
+		}
 		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
+	Components.Empty();
 }
 
 void AActor::Pick()
