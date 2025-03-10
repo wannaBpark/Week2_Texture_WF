@@ -12,6 +12,8 @@ public:
 public:
 	void BeginPlay();
 	void Tick(float DeltaTime);
+	void LateTick(float DeltaTime);
+	
 	void Render();
 	void AddActor(class AActor* Actor) { Actors.Add(Actor); }
 

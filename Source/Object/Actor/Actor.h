@@ -18,7 +18,8 @@ public:
 public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
-
+	virtual void LateTick (float DeltaTime); // 렌더 후 호출
+	
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 

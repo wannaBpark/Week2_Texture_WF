@@ -59,6 +59,8 @@ private:
 public:
 	UWorld* GetWorld() const { return World; }
 
+    HWND GetWindowHandle() const { return WindowHandle; }
+    
 private:
     bool IsRunning = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;

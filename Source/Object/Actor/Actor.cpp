@@ -27,6 +27,11 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
+void AActor::LateTick(float DeltaTime)
+{
+	
+}
+
 void AActor::Pick()
 {
 	if (RootComponent)

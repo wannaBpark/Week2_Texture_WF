@@ -6,13 +6,17 @@
 
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
+#include "Core/Input/PlayerInput.h"
 #include "Object/Actor/Cube.h"
+#include "Object/Actor/Picker.h"
 #include "Object/Actor/Sphere.h"
 
 void UWorld::BeginPlay()
 {
 	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
 
+	APicker* Picker = FObjectFactory::ConstructActor<APicker>();
+	
 	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
 	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
 	//ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
@@ -38,12 +42,48 @@ void UWorld::Tick(float DeltaTime)
 	}
 }
 
+void UWorld::LateTick(float DeltaTime)
+{
+	for (auto& Actor : Actors)
+	{
+		if (Actor->CanEverTick())
+		{
+			Actor->LateTick(DeltaTime);
+		}
+	}
+}
+
 void UWorld::Render()
 {
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+
+	if (Renderer == nullptr)
+	{
+		return;
+	}
+
+	// if (APlayerInput::Get().GetMouseDown(false))
+	// {
+		Renderer->PreparePicking();
+		Renderer->PreparePickingShader();
+
+		for (auto& RenderComponent : RenderComponents)
+		{
+			uint32 UUID = RenderComponent->GetUUID();
+			RenderComponent->UpdateConstantPicking(*Renderer, APicker::EncodeUUID(UUID));
+			RenderComponent->Render();
+		}
+	// }
+
+	Renderer->PrepareMain();
+	Renderer->PrepareMainShader();
 	for (auto& RenderComponent : RenderComponents)
 	{
 		RenderComponent->Render();
 	}
+
+	// Renderer->RenderPickingTexture();
+
 }
 
 void UWorld::ClearWorld()
