@@ -191,7 +191,8 @@ void UWorld::LoadWorld(const char* SceneName)
 	for (uint32 i = 0; i < ActorCount; i++)
 	{
 		UObjectInfo* ObjectInfo = WorldInfo->ObjctInfos[i];
-		FTransform Transform = FTransform(ObjectInfo->Location, ObjectInfo->Rotation, ObjectInfo->Scale);
+		FTransform Transform = FTransform(ObjectInfo->Location, FQuat(), ObjectInfo->Scale);
+		Transform.Rotate(ObjectInfo->Rotation);
 
 		AActor* Actor = nullptr;
 		

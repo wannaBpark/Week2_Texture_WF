@@ -271,16 +271,18 @@ void UI::RenderCameraSettings()
         Camera->SetActorTransform(Trans);
     }
 
-    FVector PrevCameraEuler = Camera->GetActorTransform().GetRotation().GetEuler();
-    FVector CameraRotation = { PrevCameraEuler.X, PrevCameraEuler.Y, PrevCameraEuler.Z };
-    if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
+    FVector PrevEulerAngle = Camera->GetActorTransform().GetRotation().GetEuler();
+    FVector UIEulerAngle = { PrevEulerAngle.X, PrevEulerAngle.Y, PrevEulerAngle.Z };
+    if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
     {
-        FTransform Trans = Camera->GetActorTransform();
+        FTransform Transform = Camera->GetActorTransform();
 
-        CameraRotation.Y = FMath::Clamp(CameraRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+        //FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+        //Transform.Rotate(DeltaEulerAngle);
         
-        Trans.SetRotation(CameraRotation);
-        Camera->SetActorTransform(Trans);
+        UIEulerAngle.Y = FMath::Clamp(UIEulerAngle.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+        Transform.SetRotation(UIEulerAngle);
+        Camera->SetActorTransform(Transform);
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 
@@ -311,8 +313,6 @@ void UI::RenderPropertyWindow()
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-		FVector rot = selectedTransform.GetRotation().GetEuler();
-        float rotation[] = { rot.X, rot.Y, rot.Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
@@ -320,10 +320,15 @@ void UI::RenderPropertyWindow()
             selectedTransform.SetPosition(position[0], position[1], position[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-        if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+
+        FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
+        FVector UIEulerAngle = PrevEulerAngle;
+        if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
         {
-			FVector prevRot = selectedTransform.GetRotation().GetEuler();
-			selectedTransform.Rotate(-FVector(prevRot.X - rotation[0], prevRot.Y - rotation[1], prevRot.Z - rotation[2]));
+            FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+
+            selectedTransform.Rotate(DeltaEulerAngle);
+			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
