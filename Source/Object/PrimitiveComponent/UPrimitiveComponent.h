@@ -41,9 +41,13 @@ public:
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
+	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
+	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
+	
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
+	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 };
 

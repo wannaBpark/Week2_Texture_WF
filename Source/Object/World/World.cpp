@@ -177,6 +177,12 @@ void UWorld::SaveWorld()
 	JsonSaveHelper::SaveScene(WorldInfo);
 }
 
+void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
+{
+	ZIgnoreRenderComoponents.Add(InComponent);
+	InComponent->SetIsOrthoGraphic(true);	
+}
+
 void UWorld::LoadWorld(const char* SceneName)
 {
 	ClearWorld();

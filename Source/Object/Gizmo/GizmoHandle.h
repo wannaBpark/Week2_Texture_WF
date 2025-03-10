@@ -9,6 +9,7 @@ public:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	void SetScaleByDistance();
 	void SetActive(bool bActive);
 private:
 	bool bIsActive = false;
