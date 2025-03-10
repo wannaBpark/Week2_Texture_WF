@@ -1,12 +1,25 @@
 ﻿#pragma once
 #include <cstdint>
 
-#define IS_WIDECHAR 0
+//~ Windows.h
+#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
-// Windows.h의 TEXT를 삭제
-#ifdef TEXT
+#ifdef TEXT             // Windows.h의 TEXT를 삭제
     #undef TEXT
 #endif
+//~ Windows.h
+
+
+// inline을 강제하는 매크로
+#define FORCEINLINE __forceinline
+
+// inline을 하지않는 매크로
+#define FORCENOINLINE __declspec(noinline)
+
+
+#define IS_WIDECHAR 0
 
 #if IS_WIDECHAR 
     #define TEXT(x) L##x

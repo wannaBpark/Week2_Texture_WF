@@ -2,10 +2,6 @@
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
 
-#define _TCHAR_DEFINED
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-
 #include "Core/Engine.h"
 
 

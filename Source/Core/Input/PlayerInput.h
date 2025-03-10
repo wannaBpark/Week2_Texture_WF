@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <Windows.h>
 #include <vector>
 
 #include "Core/AbstractClass/Singleton.h"
