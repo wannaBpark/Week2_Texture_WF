@@ -1,15 +1,19 @@
 ﻿#pragma once
-#include "UObject.h"
+#include "Core/Engine.h"
+#include "Core/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Debug/DebugConsole.h"
-#include "Core/Engine.h"
-#include "Debug/DebugConsole.h"
 
-class AActor;
+class UObject;
 
 class FObjectFactory
 {
 public:
+    /**
+     * UObject를 생성합니다.
+     * @tparam T UObject를 상속받은 클래스
+     * @return 캐스팅된 UObject*
+     */
     template<typename T>
         requires std::derived_from<T, UObject>
     static T* ConstructObject()
@@ -24,31 +28,13 @@ public:
         {
             Obj->~T();
             FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
-            UEngine::Get().GObjects.Remove(Obj->shared_from_this());
         });
+        NewObject->UUID = UEngineStatics::GenUUID();
 
+        // Object 제거시 Index가 달라지기 때문에 임시 주석처리
+        // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
         UEngine::Get().GObjects.Add(NewObject);
+
         return NewObject.get();
-    }
-
-    template<typename T>
-        requires std::derived_from<T, AActor>
-    static T* ConstructActor()
-    {
-        auto Actor = ConstructObject<T>();
-        UWorld* World = UEngine::Get().GetWorld();
-
-        if (World == nullptr)
-        {
-            UE_LOG("Actor Construction Failed. World is nullptr");
-            return nullptr;
-        }
-
-        Actor->SetWorld(UEngine::Get().GetWorld());
-
-        World->AddActor(Actor);
-
-        UE_LOG("Actor Construction.");
-        return Actor;
     }
 };

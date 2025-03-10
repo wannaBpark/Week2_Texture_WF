@@ -7,15 +7,16 @@
 #include "Core/HAL/PlatformMemory.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
-#include "Object/Actor/Actor.h"
+#include "Debug/DebugConsole.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/ObjectFactory.h"
-#include "Debug/DebugConsole.h"
-#include <Object/Actor/Sphere.h>
-#include <Object/Actor/Cube.h>
-
+#include "Object/Actor/Actor.h"
+#include "Object/Actor/Sphere.h"
+#include "Object/Actor/Cube.h"
+#include "Object/Actor/Arrow.h"
 #include "Static/FEditorManager.h"
-#include <Object/Actor/Arrow.h>
+#include "Object/World/World.h"
+
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
@@ -37,10 +38,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 	ScreenSize = ImVec2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight));
     bIsInitialized = true;
 
-
-    AArrow* Arrow = FObjectFactory::ConstructActor<AArrow>();
+    AArrow* Arrow = UEngine::Get().GetWorld()->SpawnActor<AArrow>();
     Arrow->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
-    Arrow->BeginPlay();
     selectedActor = Arrow;
 }
 
@@ -134,15 +133,16 @@ void UI::RenderPrimitiveSelection()
 
     if (ImGui::Button("Spawn"))
     {
-        for (int i = 0; i < NumOfSpawn; i++)
-        {
-            if (strcmp(items[currentItem], "Sphere") == 0)
+        UWorld* World = UEngine::Get().GetWorld();
+            for (int i = 0 ;  i < NumOfSpawn; i++)
             {
-                FObjectFactory::ConstructActor<ASphere>();
-            }
+                if (strcmp(items[currentItem], "Sphere") == 0)
+                {
+                    World->SpawnActor<ASphere>();
+                }
             else if (strcmp(items[currentItem], "Cube") == 0)
-            {
-                FObjectFactory::ConstructActor<ACube>();
+                {
+					World->SpawnActor<ACube>();
             }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
@@ -266,17 +266,17 @@ void UI::RenderPropertyWindow()
             if (ImGui::DragFloat3("Translation", position, 0.1f))
             {
                 selectedTransform.SetPosition(position[0], position[1], position[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
             if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
             {
                 selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
             if (ImGui::DragFloat3("Scale", scale, 0.1f))
             {
                 selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-                selectedActor->SetTransform(selectedTransform);
+                selectedActor->SetActorTransform(selectedTransform);
             }
         }
     }

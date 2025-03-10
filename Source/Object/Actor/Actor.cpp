@@ -1,7 +1,8 @@
 ﻿#include "Actor.h"
 #include "Object/USceneComponent.h"
-#include <Debug/DebugConsole.h>
-#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include "Debug/DebugConsole.h"
+#include "Object/World/World.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 void AActor::BeginPlay()
 {
@@ -27,6 +28,20 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
+void AActor::Destroyed()
+{
+	EndPlay(EEndPlayReason::Destroyed);
+}
+
+void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (auto& Component : Components)
+	{
+		Component->EndPlay(EndPlayReason);
+		UEngine::Get().GObjects.Remove(Component->shared_from_this());
+	}
+}
+
 void AActor::Pick()
 {
 	if (RootComponent)
@@ -43,12 +58,12 @@ void AActor::UnPick()
 	}	
 }
 
-const FTransform& AActor::GetActorTransform()
+const FTransform& AActor::GetActorTransform() const
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
 }
 
-void AActor::SetTransform(const FTransform& InTransform)
+void AActor::SetActorTransform(const FTransform& InTransform)
 {
 	// InTransform은 월드 기준임
 	if (RootComponent)
@@ -66,9 +81,9 @@ const char* AActor::GetTypeName()
 	return "Actor";
 }
 
-USceneComponent* AActor::GetRootComponent()
+bool AActor::Destroy()
 {
-	return RootComponent;
+	return GetWorld()->DestroyActor(this);
 }
 
 void AActor::SetColor(FVector4 InColor)

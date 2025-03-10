@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Core/EngineTypes.h"
 #include "Object/UObject.h"
 #include "Object/ActorComponent/ActorComponent.h"
 #include "Core/Math/Transform.h"
@@ -13,11 +14,13 @@ class AActor : public UObject
 	friend class FEditorManager;
 public:
 	AActor() = default;
-	virtual ~AActor() = default;
+	virtual ~AActor() override = default;
 
 public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
+	virtual void Destroyed();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 	UWorld* GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
@@ -45,13 +48,16 @@ public:
 		Components.Remove(Object);
 	}
 
-	const FTransform& GetActorTransform();
-	void SetTransform(const FTransform& InTransform);
+	const FTransform& GetActorTransform() const;
+	void SetActorTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	virtual const char* GetTypeName();
-	
+
+	bool Destroy();
+
 public:
-	class USceneComponent* GetRootComponent();
+	USceneComponent* GetRootComponent() const { return RootComponent; }
+	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 
 public:
 	void SetColor(FVector4 InColor);
@@ -59,8 +65,10 @@ public:
 
 protected:
 	bool bCanEverTick = true;
-	TSet<UActorComponent*> Components;
 	USceneComponent* RootComponent = nullptr;
+
+private:
 	UWorld* World = nullptr;
+	TSet<UActorComponent*> Components;
 };
 

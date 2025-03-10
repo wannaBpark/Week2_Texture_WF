@@ -12,7 +12,6 @@ class USceneComponent : public UActorComponent
 	using Super = UActorComponent;
 public:
 	USceneComponent() = default;
-	virtual ~USceneComponent() = default;
 
 public:
 	virtual void BeginPlay() override;
@@ -25,7 +24,6 @@ public:
 	const FTransform GetWorldTransform();
 
 	void SetRelativeTransform(const FTransform& InTransform);
-	bool CanEverTick() const { return bCanEverTick; }
 
 	void Pick(bool bPicked);
 
