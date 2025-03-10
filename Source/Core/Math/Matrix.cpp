@@ -328,7 +328,6 @@ FVector4 FMatrix::TransformVector4(const FVector4& Vector) const
 
 FTransform FMatrix::GetTransform() const
 {
-	FTransform Transform = FTransform(GetTranslation(), FQuat(), GetScale());
-	Transform.Rotate(GetRotation());
-	return Transform;
+	FQuat RotationQuat = FQuat::MakeFromRotationMatrix(*this);
+	return FTransform(GetTranslation(), RotationQuat, GetScale());
 }

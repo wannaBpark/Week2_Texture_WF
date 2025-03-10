@@ -29,10 +29,11 @@ void FEditorManager::SelectActor(AActor* NewActor)
     {
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);
-        FVector Pos = SelectedActor->GetActorTransform().GetPosition();
-		FTransform GizmoTransform = GizmoHandle->GetActorTransform();
-		GizmoTransform.SetPosition(Pos);
-		GizmoHandle->SetActorTransform(GizmoTransform);
+        //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
+		//FTransform GizmoTransform = GizmoHandle->GetActorTransform();
+		//GizmoTransform.SetPosition(Pos);
+		//GizmoHandle->SetActorTransform(GizmoTransform);
+        //GizmoHandle
 	}
 }
 
