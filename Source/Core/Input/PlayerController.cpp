@@ -68,11 +68,11 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::Q))
     {
-        NewVelocity -= Camera->GetUp();
+        NewVelocity -= {0.0f, 0.0f, 1.0f};
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::E))
     {
-        NewVelocity += Camera->GetUp();
+        NewVelocity += {0.0f, 0.0f, 1.0f};
     }
     if (NewVelocity.Length() > 0.001f)
     {

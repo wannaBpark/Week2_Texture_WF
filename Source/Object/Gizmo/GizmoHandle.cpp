@@ -146,6 +146,7 @@ void AGizmoHandle::SetActive(bool bActive)
 	for (auto& Cylinder : CylinderComponents)
 	{
 		Cylinder->SetCanBeRendered(bActive);
+		GetWorld()->AddZIgnoreComponent(Cylinder);
 	}
 }
 
