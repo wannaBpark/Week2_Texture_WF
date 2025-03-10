@@ -29,9 +29,12 @@ struct alignas(16) FQuat : public FVector4{
     FQuat() : FVector4(0.0f, 0.0f, 0.0f, 1.0f) {}
 	explicit FQuat(float InX, float InY, float InZ, float InW) : FVector4(InX, InY, InZ, InW) {}
     explicit FQuat(FVector Rotation) : FVector4(EulerToQuaternion(Rotation)) {}
+    FQuat(const FVector& Axis, float AngleInDegrees) : FVector4(AxisAngleToQuaternion(Axis, AngleInDegrees)) {}
+
 
     static FQuat EulerToQuaternion(FVector Euler);
     static FVector QuaternionToEuler(const FQuat& quaternion);
+    static FQuat AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees);
 
     static FQuat AddQuaternions(const FQuat& q1, const FQuat& q2);
     static FQuat MultiplyQuaternions(const FQuat& q1, const FQuat& q2);
@@ -39,6 +42,17 @@ struct alignas(16) FQuat : public FVector4{
 
 	FVector GetEuler() const { return QuaternionToEuler(*this); }
 };
+inline FQuat FQuat::AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees) {
+    float AngleInRadians = FMath::DegreesToRadians(AngleInDegrees);
+    float HalfAngle = AngleInRadians * 0.5f;
+    float s = sinf(HalfAngle);
+    return FQuat(
+        Axis.X * s,
+        Axis.Y * s,
+        Axis.Z * s,
+        cosf(HalfAngle)
+    );
+}
 
 inline FQuat FQuat::EulerToQuaternion(FVector Euler) 
 {

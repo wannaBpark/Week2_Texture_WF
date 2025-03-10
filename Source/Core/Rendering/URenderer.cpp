@@ -410,6 +410,18 @@ void URenderer::ReleaseFrameBuffer()
         FrameBufferRTV->Release();
         FrameBufferRTV = nullptr;
     }
+
+    if (PickingFrameBuffer)
+    {
+		PickingFrameBuffer->Release();
+		PickingFrameBuffer = nullptr;
+    }
+
+    if (PickingFrameBufferRTV)
+    {
+		PickingFrameBufferRTV->Release();
+		PickingFrameBufferRTV = nullptr;
+    }
 }
 
 void URenderer::ReleaseDepthStencilBuffer()
@@ -460,6 +472,20 @@ void URenderer::InitMatrix()
 	WorldMatrix = FMatrix::Identity();
 	ViewMatrix = FMatrix::Identity();
 	ProjectionMatrix = FMatrix::Identity();
+}
+
+void URenderer::ReleasePickingFrameBuffer()
+{
+	if (PickingFrameBuffer)
+	{
+		PickingFrameBuffer->Release();
+		PickingFrameBuffer = nullptr;
+	}
+	if (PickingFrameBufferRTV)
+	{
+		PickingFrameBufferRTV->Release();
+		PickingFrameBufferRTV = nullptr;
+	}
 }
 
 void URenderer::CreatePickingTexture(HWND hWnd)
@@ -635,6 +661,9 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         // 프레임 버퍼를 다시 생성
         ReleaseFrameBuffer();
         CreateFrameBuffer();
+
+        ReleasePickingFrameBuffer();
+		CreatePickingTexture(UEngine::Get().GetWindowHandle());
 
         // 뎁스 스텐실 버퍼를 다시 생성
         ReleaseDepthStencilBuffer();

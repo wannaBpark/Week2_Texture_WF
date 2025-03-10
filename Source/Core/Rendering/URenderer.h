@@ -181,6 +181,7 @@ protected:
 	ID3D11PixelShader* PickingPixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
 public:
 	//피킹용 함수들	
+    void ReleasePickingFrameBuffer();
     void CreatePickingTexture(HWND hWnd);
 	void PreparePicking();
 	void PreparePickingShader() const;

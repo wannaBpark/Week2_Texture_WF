@@ -277,6 +277,7 @@ void UI::RenderCameraSettings()
     {
         FTransform Trans = Camera->GetActorTransform();
         Trans.SetRotation(CameraRotation);
+        Camera->SetActorTransform(Trans);
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 
@@ -307,7 +308,8 @@ void UI::RenderPropertyWindow()
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-        float rotation[] = { selectedTransform.GetRotation().GetEuler().X, selectedTransform.GetRotation().GetEuler().Y, selectedTransform.GetRotation().GetEuler().Z };
+		FVector rot = selectedTransform.GetRotation().GetEuler();
+        float rotation[] = { rot.X, rot.Y, rot.Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
@@ -318,6 +320,7 @@ void UI::RenderPropertyWindow()
         if (ImGui::DragFloat3("Rotation", rotation, 0.01f))
         {
 			selectedTransform.SetRotation(FVector(rotation[0], rotation[1], rotation[2]));
+			UE_LOG("Rotation: %.2f, %.2f, %.2f", rotation[0], rotation[1], rotation[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))

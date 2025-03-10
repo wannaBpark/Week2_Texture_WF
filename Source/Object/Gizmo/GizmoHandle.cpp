@@ -25,8 +25,8 @@ AGizmoHandle::AGizmoHandle()
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
 
-	XArrow->SetupAttachment(ZArrow, true);
-	YArrow->SetupAttachment(ZArrow, true);
+	XArrow->SetupAttachment(ZArrow);
+	YArrow->SetupAttachment(ZArrow);
 
 	SetActive(false);
 }
