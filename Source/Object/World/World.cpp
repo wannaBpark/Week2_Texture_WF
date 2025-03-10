@@ -184,7 +184,7 @@ void UWorld::SaveWorld()
 
 void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 {
-	ZIgnoreRenderComponents.Add(InComponent);
+	ZIgnoreRenderComponents.AddUnique(InComponent);
 	InComponent->SetIsOrthoGraphic(true);
 }
 
