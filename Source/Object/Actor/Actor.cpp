@@ -3,6 +3,7 @@
 #include "Debug/DebugConsole.h"
 #include "Object/World/World.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Static/FEditorManager.h"
 
 void AActor::BeginPlay()
 {
@@ -48,6 +49,10 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
 		}
 		UEngine::Get().GObjects.Remove(Component->GetUUID());
+		if (FEditorManager::Get().GetSelectedActor() == this)
+		{
+			FEditorManager::Get().SelectActor(nullptr);
+		}
 	}
 	Components.Empty();
 }

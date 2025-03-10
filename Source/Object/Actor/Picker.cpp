@@ -5,6 +5,11 @@
 #include "Core/Input/PlayerInput.h"
 #include "Static/FEditorManager.h"
 
+APicker::APicker()
+{    
+    bIsGizmo = true;
+}
+
 FVector4 APicker::EncodeUUID(unsigned int UUID)
 {
     float a = (UUID >> 24) & 0xff;
@@ -25,8 +30,6 @@ int APicker::DecodeUUID(FVector4 color)
 void APicker::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    
-
 }
 
 void APicker::LateTick(float DeltaTime)
@@ -45,11 +48,31 @@ void APicker::LateTick(float DeltaTime)
 
         UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
 
-		AActor* PickedActor = (PickedComponent && PickedComponent->GetOwner() && PickedComponent->GetOwner()->IsGizmoActor() == false) 
-            ? PickedComponent->GetOwner() : nullptr;
+        if (PickedComponent != nullptr)
+        {
+            AActor* PickedActor = PickedComponent->GetOwner();
 
-        FEditorManager::Get().SelectActor(PickedActor);
-        
-        std::cout<<UUID << "\n";
+            if (PickedActor != nullptr && PickedComponent->GetOwner()->IsGizmoActor() == false)
+            {
+                if (PickedActor == FEditorManager::Get().GetSelectedActor())
+                {
+                    FEditorManager::Get().SelectActor(nullptr);   
+                }
+                else
+                {
+                    FEditorManager::Get().SelectActor(PickedActor);
+                }
+            }
+            else
+            {
+                // Do Nothing
+            }
+        }
+        UE_LOG("Pick - UUID: %d", UUID);
     }
+}
+
+const char* APicker::GetTypeName()
+{
+    return "Picker";
 }

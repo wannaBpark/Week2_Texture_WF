@@ -39,8 +39,6 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 	ScreenSize = ImVec2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight));
     InitialScreenSize = ScreenSize;
     bIsInitialized = true;
-
-    UEngine::Get().GetWorld()->SpawnActor<AArrow>();
     
     io.DisplaySize = ScreenSize;
 
@@ -193,7 +191,7 @@ void UI::RenderPrimitiveSelection()
     
     if (ImGui::Button("New Scene"))
     {
-        World->ClearWorld();   
+        World->ClearWorld();
     }
     if (ImGui::Button("Save Scene"))
     {
@@ -293,7 +291,6 @@ void UI::RenderCameraSettings()
 
 void UI::RenderPropertyWindow()
 {
-    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
 
     ImGui::Begin("Properties");
 
@@ -305,6 +302,7 @@ void UI::RenderPropertyWindow()
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
     
+    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
