@@ -23,8 +23,6 @@ void UWorld::BeginPlay()
 
 	APicker* Picker = SpawnActor<APicker>();
 
-	ACamera* Camera = SpawnActor<ACamera>();
-	
 	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
