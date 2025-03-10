@@ -141,7 +141,6 @@ void UWorld::DisplayPickingTexture(URenderer& Renderer)
 
 void UWorld::ClearWorld()
 {
-	ZIgnoreRenderComponents.Empty();
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
