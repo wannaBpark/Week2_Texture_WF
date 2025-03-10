@@ -23,9 +23,9 @@ FString FString::SanitizeFloat(float InFloat)
 #endif
 }
 
-bool FString::IsEmpty() const
+void FString::Empty()
 {
-    return PrivateString.empty();
+    PrivateString.clear();
 }
 
 bool FString::Equals(const FString& Other, ESearchCase::Type SearchCase) const

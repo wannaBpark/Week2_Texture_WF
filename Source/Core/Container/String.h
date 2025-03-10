@@ -2,6 +2,7 @@
 
 #include <string>
 #include "ContainerAllocator.h"
+#include "CString.h"
 #include "Core/HAL/PlatformType.h"
 
 /*
@@ -56,7 +57,15 @@ private:
     BaseStringType PrivateString;
 
 public:
-    FString() {}
+    FString() = default;
+    ~FString() = default;
+
+    FString(const FString&) = default;
+    FString& operator=(const FString&) = default;
+    FString(FString&&) = default;
+    FString& operator=(FString&&) = default;
+
+    FString(BaseStringType InString) : PrivateString(std::move(InString)) {}
 
 #if IS_WIDECHAR
 private:
@@ -77,16 +86,82 @@ public:
     static FString SanitizeFloat(float InFloat);
 
 public:
-    int32 Len() const { return static_cast<int32>(PrivateString.length()); }
-    bool IsEmpty() const;
+    FORCEINLINE int32 Len() const;
+    FORCEINLINE bool IsEmpty() const;
+
+    /** 배열의 모든 요소를 지웁니다. */
+    void Empty();
+
+    /**
+     * 문자열이 서로 같은지 비교합니다.
+     * @param Other 비교할 String
+     * @param SearchCase 대소문자 구분
+     * @return 같은지 여부
+     */
     bool Equals(const FString& Other, ESearchCase::Type SearchCase = ESearchCase::CaseSensitive) const;
-    bool Contains(const FString& SubStr, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase, ESearchDir::Type SearchDir = ESearchDir::FromStart) const;
-    int32 Find(const FString& SubStr, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase, ESearchDir::Type SearchDir = ESearchDir::FromStart, int32 StartPosition = -1) const;
+
+    /**
+     * 문자열이 겹치는지 확인합니다.
+     * @param SubStr 찾을 문자열
+     * @param SearchCase 대소문자 구분
+     * @param SearchDir 찾을 방향
+     * @return 문자열 겹침 여부
+     */
+    bool Contains(
+        const FString& SubStr, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase,
+        ESearchDir::Type SearchDir = ESearchDir::FromStart
+    ) const;
+
+    /**
+     * 문자열을 찾아 Index를 반홥합니다.
+     * @param SubStr 찾을 문자열
+     * @param SearchCase 대소문자 구분
+     * @param SearchDir 찾을 방향
+     * @param StartPosition 시작 위치
+     * @return 찾은 문자열의 Index를 반환합니다. 찾지 못하면 -1
+     */
+    int32 Find(
+        const FString& SubStr, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase,
+        ESearchDir::Type SearchDir = ESearchDir::FromStart, int32 StartPosition = -1
+    ) const;
 
 public:
     /** TCHAR* 로 반환하는 연산자 */
-    const TCHAR* operator*() const
-    {
-        return PrivateString.c_str();
-    }
+    FORCEINLINE const TCHAR* operator*() const;
+
+    FORCEINLINE FString operator+(const FString& SubStr) const;
+
+    FORCEINLINE bool operator==(const FString& Rhs) const;
+    FORCEINLINE bool operator==(const TCHAR* Rhs) const;
 };
+
+
+FORCEINLINE int32 FString::Len() const
+{
+    return static_cast<int32>(PrivateString.length());
+}
+
+FORCEINLINE bool FString::IsEmpty() const
+{
+    return PrivateString.empty();
+}
+
+FORCEINLINE const TCHAR* FString::operator*() const
+{
+    return PrivateString.c_str();
+}
+
+FORCEINLINE FString FString::operator+(const FString& SubStr) const
+{
+    return this->PrivateString + SubStr.PrivateString;
+}
+
+FORCEINLINE bool FString::operator==(const FString& Rhs) const
+{
+    return Equals(Rhs, ESearchCase::IgnoreCase);
+}
+
+FORCEINLINE bool FString::operator==(const TCHAR* Rhs) const
+{
+    return TCString<TCHAR>::Stricmp(PrivateString.c_str(), Rhs);
+}
