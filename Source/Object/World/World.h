@@ -2,6 +2,7 @@
 #include "JsonSavehelper.h"
 #include "Core/Engine.h"
 #include "Core/Container/Array.h"
+#include "Core/Container/Set.h"
 #include "Object/UObject.h"
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
@@ -45,7 +46,7 @@ protected:
 	TArray<AActor*> Actors;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
-	TSet<class UPrimitiveComponent*> RenderComponents;
+	TSet<UPrimitiveComponent*> RenderComponents;
 };
 
 template <typename T>
