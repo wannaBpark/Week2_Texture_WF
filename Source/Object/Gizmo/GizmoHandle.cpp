@@ -11,24 +11,21 @@ AGizmoHandle::AGizmoHandle()
 	// !NOTE : Z방향으로 서있음
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
-	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.01, 0.01, 0.5)));
+	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	CylinderComponents.Add(ZArrow);
 
 	// x
 	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	FTransform tr = XArrow->GetComponentTransform();
-	tr.Rotate(FVector(0.0f, 90.0f, 0.0f));
-	XArrow->SetRelativeTransform(tr);
-
+	XArrow->SetupAttachment(ZArrow);
+	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
 	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(XArrow);
 
 	// y
 	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	tr = YArrow->GetComponentTransform();
-	tr.Rotate(FVector(90.0f, 0.0f, 0.0f));
-	YArrow->SetRelativeTransform(tr);
+	YArrow->SetupAttachment(ZArrow);
+	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
@@ -37,12 +34,6 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
-	ZArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	XArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-
-	XArrow->SetupAttachment(ZArrow);
-	YArrow->SetupAttachment(ZArrow);
 
 
 	SetActive(false);
@@ -53,9 +44,9 @@ void AGizmoHandle::Tick(float DeltaTime)
 	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
 	if (SelectedActor != nullptr && bIsActive)
 	{
-		auto Transform = SelectedActor->GetActorTransform();
-		Transform.SetScale(1, 1, 1);
-		SetActorTransform(Transform);
+		FTransform GizmoTr = RootComponent->GetComponentTransform();
+		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		SetActorTransform(GizmoTr);
 	}
 
 	SetScaleByDistance();

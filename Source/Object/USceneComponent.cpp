@@ -66,5 +66,7 @@ void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTra
 	FMatrix MyLocal = RelativeTransform.GetMatrix();
 
 	FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
+
+	// 내 로컬 트랜스폼 갱신
 	SetRelativeTransform(NewMatrix.GetTransform());
 }
