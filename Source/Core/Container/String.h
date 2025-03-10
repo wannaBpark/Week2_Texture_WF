@@ -130,6 +130,7 @@ public:
     FORCEINLINE const TCHAR* operator*() const;
 
     FORCEINLINE FString operator+(const FString& SubStr) const;
+    FORCEINLINE FString& operator+=(const FString& SubStr);
 
     FORCEINLINE bool operator==(const FString& Rhs) const;
     FORCEINLINE bool operator==(const TCHAR* Rhs) const;
@@ -164,4 +165,10 @@ FORCEINLINE bool FString::operator==(const FString& Rhs) const
 FORCEINLINE bool FString::operator==(const TCHAR* Rhs) const
 {
     return TCString<TCHAR>::Stricmp(PrivateString.c_str(), Rhs);
+}
+
+FORCEINLINE FString& FString::operator+=(const FString& SubStr)
+{
+    this->PrivateString += SubStr.PrivateString;
+    return *this;
 }
