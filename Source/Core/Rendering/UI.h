@@ -13,7 +13,6 @@ public:
     int currentItem = 0;
     int NumOfSpawn = 0;
 	bool bIsInitialized = false;
-    AActor* selectedActor = nullptr;
     
     void Initialize(HWND hWnd, const class URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
     void Update();
@@ -28,8 +27,13 @@ public:// UIWindows
     void RenderCameraSettings();
     void RenderPropertyWindow();
 
+private:
+	ImVec2 ResizeToScreen(const ImVec2& vec2) const;
 
-    bool bIsConsoleOpen = true;
+    ImVec2 GetRatio() const;
 
+	bool bIsConsoleOpen = true;
+	
     ImVec2 ScreenSize;
+	ImVec2 InitialScreenSize;
 };
