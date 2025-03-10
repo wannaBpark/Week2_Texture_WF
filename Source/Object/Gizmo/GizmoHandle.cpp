@@ -1,6 +1,7 @@
 ﻿#include "GizmoHandle.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-
+#include "Object/World/World.h"
+#include "Static/FEditorManager.h"
 
 AGizmoHandle::AGizmoHandle()
 {
@@ -29,6 +30,14 @@ AGizmoHandle::AGizmoHandle()
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
+	
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+
+	ZArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	XArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	XArrow->SetupAttachment(ZArrow);
 	YArrow->SetupAttachment(ZArrow);
@@ -37,8 +46,22 @@ AGizmoHandle::AGizmoHandle()
 	SetActive(false);
 }
 
+void AGizmoHandle::Tick(float DeltaTime)
+{
+	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
+	if (SelectedActor != nullptr && bIsActive)
+	{
+		auto Transform = SelectedActor->GetActorTransform();
+		Transform.SetScale(1, 1, 1);
+		SetActorTransform(Transform);
+	}
+	
+	AActor::Tick(DeltaTime);
+}
+
 void AGizmoHandle::SetActive(bool bActive)
 {
+	bIsActive = bActive;
 	for (auto& Cylinder : CylinderComponents)
 	{
 		Cylinder->SetCanBeRendered(bActive);

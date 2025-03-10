@@ -35,6 +35,12 @@ private:
 	{
 		FVector4 UUIDColor;
 	};
+
+	struct alignas(16) FDepthConstants{
+		unsigned int DepthOffset;
+		int nearPlane;
+		int farPlane;
+	};
 	
     struct ConstantUpdateInfo
     {
@@ -182,15 +188,21 @@ protected:
 	ID3D11Buffer* ConstantPickingBuffer = nullptr;                 // 뷰 상수 버퍼
 	FLOAT PickingClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f }; //
 	ID3D11PixelShader* PickingPixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
+	ID3D11Buffer* ConstantsDepthBuffer = nullptr;
+
+	ID3D11DepthStencilState* IgnoreDepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
+
 public:
 	//피킹용 함수들	
     void ReleasePickingFrameBuffer();
     void CreatePickingTexture(HWND hWnd);
-	void PreparePicking();
+    void PrepareZIgnore();
+    void PreparePicking();
 	void PreparePickingShader() const;
 	void UpdateConstantPicking(FVector4 UUIDColor) const;
-	
-	void PrepareMain();
+    void UpdateConstantDepth(int Depth) const;
+
+    void PrepareMain();
 	void PrepareMainShader();
 
 	FVector4 GetPixel(FVector MPos);

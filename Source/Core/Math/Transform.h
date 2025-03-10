@@ -12,7 +12,8 @@ protected:
 	FVector Position;
 	FQuat Rotation;
 	FVector Scale;
-
+	int Depth;
+	
 public:
 	FTransform()
 		: Position(FVector(0, 0, 0))
@@ -142,4 +143,5 @@ public:
 		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
 		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 	}
+
 };

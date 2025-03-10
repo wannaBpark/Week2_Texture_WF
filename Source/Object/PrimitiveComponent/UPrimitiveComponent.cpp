@@ -18,6 +18,11 @@ void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const
 	Renderer.UpdateConstantPicking(UUIDColor);
 }
 
+void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const int Depth)const
+{
+	Renderer.UpdateConstantDepth(Depth);
+}
+
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
@@ -25,7 +30,6 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-
 	if (GetOwner()->IsGizmoActor() == false)
 	{
 		if (bIsPicked)
@@ -38,7 +42,6 @@ void UPrimitiveComponent::Render()
 			bUseVertexColor = true;
 		}
 	}
-
 	Renderer->RenderPrimitive(this);
 }
 

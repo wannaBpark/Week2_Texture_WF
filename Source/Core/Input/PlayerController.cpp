@@ -16,9 +16,12 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
     if (APlayerInput::Get().IsPressedMouse(true) == false)
     {
-        // FEditorManager::Get().GetCamera()->SetVelocity(NewVelocity);
+        // Camera->SetVelocity(NewVelocity);
         return;
     }
+
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    
     //전프레임이랑 비교
     //x좌표 받아와서 x만큼 x축회전
     //y좌표 받아와서 y만큼 y축 회전
@@ -46,27 +49,31 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 	newRot = FQuat::MultiplyQuaternions(newRot, yDelta);*/
 
 
-    float CamSpeed = FEditorManager::Get().GetCamera()->CameraSpeed;
+    FTransform NewTransf = Camera->GetActorTransform();
+    NewTransf.SetRotation(FQuat::AddQuaternions(CameraRot, DeltaQuaternion));
+    Camera->SetActorTransform(NewTransf);
+    
+    float CamSpeed = Camera->CameraSpeed;
 
     if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
-        NewVelocity -= FEditorManager::Get().GetCamera()->GetRight();
+        NewVelocity -= Camera->GetRight();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::D)) {
-        NewVelocity += FEditorManager::Get().GetCamera()->GetRight();
+        NewVelocity += Camera->GetRight();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::W)) {
-        NewVelocity += FEditorManager::Get().GetCamera()->GetForward();
+        NewVelocity += Camera->GetForward();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::S)) {
-        NewVelocity -= FEditorManager::Get().GetCamera()->GetForward();
+        NewVelocity -= Camera->GetForward();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::Q))
     {
-        NewVelocity -= FEditorManager::Get().GetCamera()->GetUp();
+        NewVelocity -= Camera->GetUp();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::E))
     {
-        NewVelocity += FEditorManager::Get().GetCamera()->GetUp();
+        NewVelocity += Camera->GetUp();
     }
     if (NewVelocity.Length() > 0.001f)
     {
