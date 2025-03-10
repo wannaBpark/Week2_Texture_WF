@@ -164,9 +164,6 @@
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
-    <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
-    <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
-    <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
@@ -183,7 +180,6 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
-    <ClCompile Include="Source\Static\FEditorManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -204,10 +200,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Core\EngineTypes.h" />
-    <ClInclude Include="Source\Object\Actor\Arrow.h" />
-    <ClInclude Include="Source\Core\Input\PlayerController.h" />
-    <ClInclude Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
@@ -231,7 +223,6 @@
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
-    <ClInclude Include="Source\Static\FEditorManager.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
