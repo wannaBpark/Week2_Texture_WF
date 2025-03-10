@@ -12,11 +12,16 @@ public:
 public:
 	void BeginPlay();
 	void Tick(float DeltaTime);
+	void Render();
 	void AddActor(class AActor* Actor) { Actors.Add(Actor); }
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
 	void SaveWorld();
+	
+	// render
+	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
+	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 private:
 	UWorldInfo GetWorldInfo() const;
@@ -27,5 +32,6 @@ public:
 	
 protected:
 	TSet<class AActor*> Actors;
+	TSet<class UPrimitiveComponent*> RenderComponents;
 };
 

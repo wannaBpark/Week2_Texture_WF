@@ -127,6 +127,7 @@ void UEngine::Run()
 		if (World)
 		{
 			World->Tick(DeltaTime);
+			World->Render();
 		}
 
         //각 Actor에서 TickActor() -> PlayerTick() -> TickPlayerInput() 호출하는데 지금은 Message에서 처리하고 있다.

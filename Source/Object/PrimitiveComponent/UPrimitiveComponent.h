@@ -26,7 +26,15 @@ public:
 		CustomColor = InColor; 
 		bUseVertexColor = false;
 	}
+
+	void SetUseVertexColor(bool bUse)
+	{
+		bUseVertexColor = bUse;
+	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
+
+public:
+	virtual void RegisterComponentWithWorld(class UWorld* World);
 
 protected:
 	const bool bCanBeRendered = GetType() != EPrimitiveType::EPT_None;

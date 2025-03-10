@@ -38,6 +38,14 @@ void UWorld::Tick(float DeltaTime)
 	}
 }
 
+void UWorld::Render()
+{
+	for (auto& RenderComponent : RenderComponents)
+	{
+		RenderComponent->Render();
+	}
+}
+
 void UWorld::ClearWorld()
 {
 	
