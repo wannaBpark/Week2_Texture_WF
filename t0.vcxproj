@@ -201,6 +201,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Container\CString.h" />
     <ClInclude Include="Source\Object\Actor\Arrow.h" />
     <ClInclude Include="Source\Core\Input\PlayerController.h" />
     <ClInclude Include="Source\Core\Input\PlayerInput.h" />
