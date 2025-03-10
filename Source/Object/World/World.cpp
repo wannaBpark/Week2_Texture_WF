@@ -141,7 +141,6 @@ void UWorld::DisplayPickingTexture(URenderer& Renderer)
 
 void UWorld::ClearWorld()
 {
-	ZIgnoreRenderComponents.Empty();
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
@@ -184,7 +183,7 @@ void UWorld::SaveWorld()
 
 void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 {
-	ZIgnoreRenderComponents.AddUnique(InComponent);
+	ZIgnoreRenderComponents.Add(InComponent);
 	InComponent->SetIsOrthoGraphic(true);
 }
 

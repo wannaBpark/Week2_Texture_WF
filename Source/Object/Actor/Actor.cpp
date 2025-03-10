@@ -46,10 +46,15 @@ void AActor::Destroyed()
 void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	for (auto& Component : Components)
-	{
+	{		
 		Component->EndPlay(EndPlayReason);
 		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
+			if (World->ContainsZIgnoreComponent(PrimitiveComp))
+			{
+				World->RemoveZIgnoreComponent(PrimitiveComp);
+			}
+			
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
 		}
 		if (FEditorManager::Get().GetSelectedActor() == this)
