@@ -271,11 +271,14 @@ void UI::RenderCameraSettings()
         Camera->SetActorTransform(Trans);
     }
 
-    // float CameraRotation[] = { Camera->GetActorTransform().GetRotation().X, Camera->GetActorTransform().GetRotation().Y, Camera->GetActorTransform().GetRotation().Z };
-    FVector CameraRotation = Camera->GetActorTransform().GetRotation().GetEuler();
+    FVector PrevCameraEuler = Camera->GetActorTransform().GetRotation().GetEuler();
+    FVector CameraRotation = { PrevCameraEuler.X, PrevCameraEuler.Y, PrevCameraEuler.Z };
     if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
     {
         FTransform Trans = Camera->GetActorTransform();
+
+        CameraRotation.Y = FMath::Clamp(CameraRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+        
         Trans.SetRotation(CameraRotation);
         Camera->SetActorTransform(Trans);
     }

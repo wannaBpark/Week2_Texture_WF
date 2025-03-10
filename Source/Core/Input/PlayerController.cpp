@@ -25,11 +25,19 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
-    FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
+    //FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
 
-    ACamera* cam = FEditorManager::Get().GetCamera();
-    FTransform camTransform = cam->GetActorTransform();
-    camTransform.Rotate(FVector(0, cam->CameraSpeed * DeltaPos.Y * DeltaTime, cam->CameraSpeed * DeltaPos.X * DeltaTime));
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    FTransform camTransform = Camera->GetActorTransform();
+
+    FVector TargetRotation = camTransform.GetRotation().GetEuler();
+    TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime;
+    TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime;
+    
+    TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+    
+    
+    camTransform.SetRotation(TargetRotation);
 
 
     /*FQuat xDelta = FQuat(FVector(0, 0, 1), DeltaPos.X * DeltaTime);
@@ -67,7 +75,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
     //회전이랑 마우스클릭 구현 카메라로 해야할듯?
     camTransform.Translate(NewVelocity * DeltaTime * CamSpeed);
-    cam->SetActorTransform(camTransform); //임시용
+    Camera->SetActorTransform(camTransform); //임시용
     // FCamera::Get().SetVelocity(NewVelocity);
 }
 
