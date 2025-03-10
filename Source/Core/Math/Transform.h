@@ -61,6 +61,12 @@ public:
 	{
 		Scale = InScale;
 	}
+	inline void AddScale(FVector InScale)
+	{
+		Scale.X += InScale.X;
+		Scale.Y += InScale.Y;
+		Scale.Z += InScale.Z;
+	}
 	inline void SetScale(float x, float y, float z)
 	{
 		Scale = {x, y, z};

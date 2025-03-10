@@ -18,6 +18,7 @@
 #include "Object/Actor/Cylinder.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
+#include "Object/Gizmo/GizmoHandle.h"
 
 
 
@@ -346,6 +347,22 @@ void UI::RenderPropertyWindow()
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
+		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
+		{
+			AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+            if(Gizmo->GetGizmoType() == EGizmoType::Translate)
+			{
+				ImGui::Text("GizmoType: Translate");
+			}
+			else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
+			{
+				ImGui::Text("GizmoType: Rotate");
+			}
+			else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
+			{
+				ImGui::Text("GizmoType: Scale");
+			}
+		}
     }
     ImGui::End();
 }

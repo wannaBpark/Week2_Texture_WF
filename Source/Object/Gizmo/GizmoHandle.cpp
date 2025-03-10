@@ -4,6 +4,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
+#include <Core/Input/PlayerInput.h>
 
 AGizmoHandle::AGizmoHandle()
 {
@@ -97,22 +98,19 @@ void AGizmoHandle::Tick(float DeltaTime)
 			FVector Result = RayOrigin + RayDir * Distance;
 	
 			FTransform AT = Actor->GetActorTransform();
-			const FVector& AP = AT.GetPosition();
-			if (SelectedAxis == ESelectedAxis::X)
-			{
-				AT.SetPosition({Result.X, AP.Y, AP.Z});
-			}
-			else if (SelectedAxis == ESelectedAxis::Y)
-			{
-				AT.SetPosition({AP.X, Result.Y, AP.Z});
-			}
-			else if (SelectedAxis == ESelectedAxis::Z)
-			{
-				AT.SetPosition({AP.X, AP.Y, Result.Z});
-			}
-			Actor->SetActorTransform(AT);
+
+			DoTransform(AT, Result, Actor);
+			
 		}
 	}
+
+	if (APlayerInput::Get().IsPressedKey(EKeyCode::Space))
+	{
+		int type = static_cast<int>(GizmoType);
+		type = (type + 1) % static_cast<int>(EGizmoType::Max);
+		GizmoType = static_cast<EGizmoType>(type);
+	}
+
 }
 
 void AGizmoHandle::SetScaleByDistance()
@@ -146,12 +144,63 @@ void AGizmoHandle::SetActive(bool bActive)
 	for (auto& Cylinder : CylinderComponents)
 	{
 		Cylinder->SetCanBeRendered(bActive);
-		GetWorld()->AddZIgnoreComponent(Cylinder);
 	}
 }
 
 const char* AGizmoHandle::GetTypeName()
 {
 	return "GizmoHandle";
+}
+
+void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
+{
+	const FVector& AP = AT.GetPosition();
+
+	if (SelectedAxis == ESelectedAxis::X)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.SetPosition({ Result.X, AP.Y, AP.Z });
+			break;
+		case EGizmoType::Rotate:
+			AT.RotatePitch(Result.X);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
+			break;
+		}
+	}
+	else if (SelectedAxis == ESelectedAxis::Y)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.SetPosition({ AP.X, Result.Y, AP.Z });
+			break;
+		case EGizmoType::Rotate:
+			AT.RotateRoll(Result.Y);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({ 0, Result.Y * .1f, 0 });
+			break;
+		}
+	}
+	else if (SelectedAxis == ESelectedAxis::Z)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.SetPosition({ AP.X, AP.Y, Result.Z });
+			break;
+		case EGizmoType::Rotate:
+			AT.RotatePitch(-Result.Z);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({0, 0, Result.Z * .1f });
+			break;
+		}
+	}
+	Actor->SetActorTransform(AT);
 }
 
