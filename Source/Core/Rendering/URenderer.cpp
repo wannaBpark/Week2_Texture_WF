@@ -666,11 +666,15 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
     // 5. 픽셀 데이터 추출 (1x1 텍스처이므로 offset = 0)
     const BYTE* pixelData = static_cast<const BYTE*>(mapped.pData);
-    FVector4 color;
-    color.X = static_cast<float>(pixelData[0]); // R
-    color.Y = static_cast<float>(pixelData[1]); // G
-    color.Z = static_cast<float>(pixelData[2]); // B
-    color.W = static_cast<float>(pixelData[3]); // A
+
+    FVector4 color {1, 1, 1, 1};
+    if (pixelData)
+    {
+        color.X = static_cast<float>(pixelData[0]); // R
+        color.Y = static_cast<float>(pixelData[1]); // G
+        color.Z = static_cast<float>(pixelData[2]); // B
+        color.W = static_cast<float>(pixelData[3]); // A
+    }
 
     std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
               << " Z: " << color.Z << " A: " << color.W << "\n";
