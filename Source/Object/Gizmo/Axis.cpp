@@ -5,18 +5,35 @@ AAxis::AAxis()
 	bIsGizmo = true;
 
 	ULineComp* LineX = AddComponent<ULineComp>();
-	FTransform XTransform;
+	FTransform XTransform = LineX->GetComponentTransform();
 	XTransform.SetScale(FVector(1000.0f, 1.0f, 1.0f));
 	XTransform.SetRotation(FVector(0.0f, 0.0f, 0.0f));
 	LineX->SetRelativeTransform(XTransform);
 	LineX->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 
+	FVector Euler = LineX->GetComponentTransform().GetRotation().GetEuler();
+	UE_LOG("LineX Rot: %f, %f, %f", 
+		Euler.X,
+		Euler.Y,
+		Euler.Z
+	);
+
+	RootComponent = LineX;
+
 	ULineComp* LineY = AddComponent<ULineComp>();
-	FTransform YTransform;
+	FTransform YTransform = LineY->GetComponentTransform();
 	YTransform.SetScale(FVector(1000.0f, 1.0f, 1.0f));
 	YTransform.SetRotation(FVector(0.0f, 0.0f, 90.0f));
 	LineY->SetRelativeTransform(YTransform);
 	LineY->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+
+
+	Euler = LineY->GetComponentTransform().GetRotation().GetEuler();
+	UE_LOG("LineY Rot: %f, %f, %f",
+		Euler.X,
+		Euler.Y,
+		Euler.Z
+	);
 
 	ULineComp* LineZ = AddComponent<ULineComp>();
 	FTransform ZTransform;
@@ -25,9 +42,13 @@ AAxis::AAxis()
 	LineZ->SetRelativeTransform(ZTransform);
 	LineZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 
-	RootComponent = LineX;
-	LineY->SetupAttachment(LineX, true);
-	LineZ->SetupAttachment(LineX, true);
+	Euler = LineZ->GetComponentTransform().GetRotation().GetEuler();
+	UE_LOG("LineZ Rot: %f, %f, %f",
+		Euler.X,
+		Euler.Y,
+		Euler.Z
+	);
+
 } 
 
 void AAxis::BeginPlay()

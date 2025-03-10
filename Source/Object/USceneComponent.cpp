@@ -28,10 +28,13 @@ const FTransform USceneComponent::GetWorldTransform()
 	return RelativeTransform;
 }
 
-void USceneComponent::SetRelativeTransform(const FTransform& InParentTransform)
+void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
 	// 내 로컬 트랜스폼 갱신
-	RelativeTransform = InParentTransform;
+	RelativeTransform = InTransform;
+	FVector Rot = RelativeTransform.GetRotation().GetEuler();
+	UE_LOG("%d Rotation : %f,%f,%f", this->GetUUID(), Rot.X, Rot.Y, Rot.Z);
+
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -49,10 +52,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	{
 		Parent = InParent;
 		InParent->Children.Add(this);
-		if (bUpdateChildTransform)
-		{
-			ApplyParentWorldTransform(InParent->GetWorldTransform());
-		}
+		ApplyParentWorldTransform(InParent->GetWorldTransform());
 	}
 	else
 	{
@@ -65,6 +65,6 @@ void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTra
 	FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
 	FMatrix MyLocal = RelativeTransform.GetMatrix();
 
-	FMatrix NewMatrix = MyLocal * ParentWorld;
+	FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
 	SetRelativeTransform(NewMatrix.GetTransform());
 }

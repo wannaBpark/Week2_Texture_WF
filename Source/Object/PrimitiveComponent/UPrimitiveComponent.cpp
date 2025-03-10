@@ -26,14 +26,17 @@ void UPrimitiveComponent::Render()
 		return;
 	}
 
-	if (bIsPicked && GetOwner()->IsGizmoActor() == false)
+	if (GetOwner()->IsGizmoActor() == false)
 	{
-		/*bUseVertexColor = false;
-		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
-	}
-	else
-	{
-		bUseVertexColor = true;
+		if (bIsPicked)
+		{
+			/*bUseVertexColor = false;
+			SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
+		}
+		else
+		{
+			bUseVertexColor = true;
+		}
 	}
 
 	Renderer->RenderPrimitive(this);

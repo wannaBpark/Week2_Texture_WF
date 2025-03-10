@@ -11,8 +11,11 @@
 #include "Core/Math/Matrix.h"
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
+#include "Core/Math/Plane.h"
+
 
 struct FVertexSimple;
+struct FVector4;
 
 class ACamera;
 

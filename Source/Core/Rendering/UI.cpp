@@ -324,7 +324,6 @@ void UI::RenderPropertyWindow()
         {
 			FVector prevRot = selectedTransform.GetRotation().GetEuler();
 			selectedTransform.Rotate(-FVector(prevRot.X - rotation[0], prevRot.Y - rotation[1], prevRot.Z - rotation[2]));
-			UE_LOG("Rotation: %.2f, %.2f, %.2f", rotation[0], rotation[1], rotation[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
