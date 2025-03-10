@@ -245,3 +245,12 @@ void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 		ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
 	}
 }
+
+UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
+{
+    if (const auto Obj = GObjects.Find(InUUID))
+    {
+        return Obj->get();
+    }
+    return nullptr;
+}

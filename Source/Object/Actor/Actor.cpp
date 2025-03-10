@@ -43,7 +43,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{
 		Component->EndPlay(EndPlayReason);
-		UEngine::Get().GObjects.Remove(Component->shared_from_this());
+		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
 }
 
