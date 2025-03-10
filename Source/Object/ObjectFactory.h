@@ -31,7 +31,7 @@ public:
         });
         NewObject->UUID = UEngineStatics::GenUUID();
 
-        // Object 제거시 Index가 달라지기 때문에 임시 주석처리
+        // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
         UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
 
