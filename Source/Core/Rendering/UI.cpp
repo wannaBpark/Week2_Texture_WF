@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "Camera.h"
+#include "Object/Actor/Camera.h"
 #include "URenderer.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -187,14 +187,14 @@ void UI::RenderCameraSettings()
 {
     ImGui::Text("Camera");
 
-    FCamera& Camera = FCamera::Get();
+    ACamera* Camera = FEditorManager::Get().GetCamera();
 
     bool IsOrthogonal;
-    if (Camera.ProjectionMode == ECameraProjectionMode::Orthographic)
+    if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
     {
         IsOrthogonal = true;
     }
-    else if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+    else if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
     {
         IsOrthogonal = false;
     }
@@ -203,22 +203,22 @@ void UI::RenderCameraSettings()
     {
         if (IsOrthogonal)
         {
-            Camera.ProjectionMode = ECameraProjectionMode::Orthographic;
+            Camera->ProjectionMode = ECameraProjectionMode::Orthographic;
         }
         else
         {
-            Camera.ProjectionMode = ECameraProjectionMode::Perspective;
+            Camera->ProjectionMode = ECameraProjectionMode::Perspective;
         }
     }
 
-    float FOV = Camera.GetFieldOfView();
+    float FOV = Camera->GetFieldOfView();
     if (ImGui::DragFloat("FOV", &FOV, 0.1f))
     {
         FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera.SetFieldOfVew(FOV);
+        Camera->SetFieldOfVew(FOV);
     }
 
-    float NearFar[2] = { Camera.GetNear(), Camera.GetFar() };
+    float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
     if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
     {
         NearFar[0] = FMath::Max(0.01f, NearFar[0]);
@@ -226,43 +226,46 @@ void UI::RenderCameraSettings()
 
         if (NearFar[0] < NearFar[1])
         {
-            Camera.SetNear(NearFar[0]);
-            Camera.SetFar(NearFar[1]);
+            Camera->SetNear(NearFar[0]);
+            Camera->SetFar(NearFar[1]);
         }
         else
         {
-            if (abs(NearFar[0] - Camera.GetNear()) < 0.00001f)
+            if (abs(NearFar[0] - Camera->GetNear()) < 0.00001f)
             {
-                Camera.SetFar(NearFar[0] + 0.01f);
+                Camera->SetFar(NearFar[0] + 0.01f);
             }
-            else if (abs(NearFar[1] - Camera.GetFar()) < 0.00001f)
+            else if (abs(NearFar[1] - Camera->GetFar()) < 0.00001f)
             {
-                Camera.SetNear(NearFar[1] - 0.01f);
+                Camera->SetNear(NearFar[1] - 0.01f);
             }
         }
     }
-
-    float CameraLocation[] = { Camera.GetTransform().GetPosition().X, Camera.GetTransform().GetPosition().Y, Camera.GetTransform().GetPosition().Z };
-    if (ImGui::DragFloat3("Camera Location", CameraLocation, 0.1f))
+    
+    FVector CameraPosition = Camera->GetActorTransform().GetPosition();
+    if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraPosition), 0.1f))
     {
-        Camera.GetTransform().SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
+        FTransform Trans = Camera->GetActorTransform();
+        Trans.SetPosition(CameraPosition);
+        Camera->SetActorTransform(Trans);
     }
 
-    float CameraRotation[] = { Camera.GetTransform().GetRotation().X, Camera.GetTransform().GetRotation().Y, Camera.GetTransform().GetRotation().Z };
-    if (ImGui::DragFloat3("Camera Rotation", CameraRotation, 0.1f))
+    // float CameraRotation[] = { Camera->GetActorTransform().GetRotation().X, Camera->GetActorTransform().GetRotation().Y, Camera->GetActorTransform().GetRotation().Z };
+    FVector CameraRotation = Camera->GetActorTransform().GetEuler();
+    if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
     {
-        Camera.GetTransform().SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
-
+        FTransform Trans = Camera->GetActorTransform();
+        Trans.SetRotation(CameraRotation);
     }
-    ImGui::DragFloat("Camera Speed", &Camera.CameraSpeed, 0.1f);
+    ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 
-    FVector Forward = Camera.GetForward();
-    FVector Up = Camera.GetUp();
-    FVector Right = Camera.GetRight();
+    FVector Forward = Camera->GetActorTransform().GetForward();
+    FVector Up = Camera->GetActorTransform().GetUp();
+    FVector Right = Camera->GetActorTransform().GetRight();
 
-    ImGui::Text("Camera Forward: (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
-    ImGui::Text("Camera Up: (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
-    ImGui::Text("Camera Right: (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+    ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
+    ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
+    ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
 }
 
 void UI::RenderPropertyWindow()

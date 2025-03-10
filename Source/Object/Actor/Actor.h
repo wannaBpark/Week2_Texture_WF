@@ -58,7 +58,7 @@ public:
 		Components.Remove(Object);
 	}
 
-	const FTransform& GetActorTransform() const;
+	FTransform GetActorTransform() const;
 	void SetActorTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	virtual const char* GetTypeName();

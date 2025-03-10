@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Vector.h"
 #include "Matrix.h"
+#include "Core/Engine.h"
 
 #define TORAD 0.0174532925199432957f
 
@@ -32,10 +33,13 @@ public:
 		, Scale(InScale)
 	{
 	}
-
-	virtual ~FTransform() = default;
+	        
+	inline FMatrix GetViewMatrix() const
+	{
+		return FMatrix::LookAtLH(Position, Position + GetForward(), GetUp());
+	}
 	
-	inline virtual void SetPosition(FVector InPosition)
+	inline virtual void SetPosition(const FVector& InPosition)
 	{
 		Position = InPosition;
 	}
@@ -43,7 +47,7 @@ public:
 	{
 		Position = {x, y, z};
 	}
-	inline virtual void SetRotation(FVector InRotation)
+	inline virtual void SetRotation(const FVector& InRotation)
 	{
 		Rotation = FQuaternion::EulerToQuaternion(InRotation);
 	}
@@ -55,6 +59,12 @@ public:
 	{
 		Scale = InScale;
 	}
+
+	inline virtual void SetRotation(const FQuaternion& InRotation)
+	{
+		Rotation = InRotation;
+	}
+	
 	inline void SetScale(float x, float y, float z)
 	{
 		Scale = {x, y, z};
@@ -67,7 +77,6 @@ public:
 	{
 		return Rotation;
 	}
-
 	FVector GetEuler() const
 	{
 		return FQuaternion::QuaternionToEuler(Rotation);
@@ -99,12 +108,36 @@ public:
 		return FTransform(NewPosition, NewRotation, NewScale);
 	}
 
-	// FVector GetForward() const
+	// void OnTranslate() const
 	// {
-	// 	return FVector(
-	// 		std::cos(Rotation.Z * TORAD) * std::cos(Rotation.Y * TORAD),
-	// 		std::sin(Rotation.Y * TORAD),
-	// 		std::sin(Rotation.Z * TORAD) * std::cos(Rotation.Y * TORAD)
-	// 	).GetSafeNormal();
+	// 	UEngine::Get().GetRenderer()->UpdateViewMatrix(*this);
 	// }
+
+	FVector GetForward() const
+	{
+		float sinX = sin(Rotation.X * (PI / 180.f));
+		float cosX = cos(Rotation.X * (PI / 180.f));
+		
+		float sinY = sin(Rotation.Y * (PI / 180.f));
+		float cosY = cos(Rotation.Y * (PI / 180.f));
+		
+		float sinZ = sin(Rotation.Z * (PI / 180.f));
+		float cosZ = cos(Rotation.Z * (PI / 180.f));
+		
+		return FVector(
+			cosY * cosZ,                      // X
+			sinX * sinY * cosZ + cosX * sinZ, // Y
+			-cosX * sinY * cosZ + sinX * sinZ // Z
+		).GetSafeNormal();
+	}
+
+	FVector GetRight() const
+	{
+		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
+	}
+
+	FVector GetUp() const{
+		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
+
+	}
 };

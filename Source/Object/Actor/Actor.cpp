@@ -65,9 +65,9 @@ void AActor::UnPick()
 	}	
 }
 
-const FTransform& AActor::GetActorTransform() const
+FTransform AActor::GetActorTransform() const
 {
-	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
+	return RootComponent != nullptr ? RootComponent->GetComponentTransform() : FTransform();
 }
 
 void AActor::SetActorTransform(const FTransform& InTransform)

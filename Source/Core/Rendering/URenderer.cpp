@@ -2,7 +2,7 @@
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Transform.h"
-#include <Camera.h>
+#include <Object/Actor/Camera.h>
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 void URenderer::Create(HWND hWindow)
@@ -591,24 +591,24 @@ FVector4 URenderer::GetPixel(FVector MPos)
     return color;
 }
 
-void URenderer::UpdateViewMatrix(const FCamera::FCameraTransform& CameraTransform)
+void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
 {
     ViewMatrix = CameraTransform.GetViewMatrix();
 }
 
-void URenderer::UpdateProjectionMatrix(const FCamera& Camera)
+void URenderer::UpdateProjectionMatrix(ACamera* Camera)
 {
     float AspectRatio = UEngine::Get().GetScreenRatio();
 
-    float FOV = FMath::DegreesToRadians(Camera.GetFieldOfView());
-    float Near = Camera.GetNear();
-    float Far = Camera.GetFar();
+    float FOV = FMath::DegreesToRadians(Camera->GetFieldOfView());
+    float Near = Camera->GetNear();
+    float Far = Camera->GetFar();
 
-    if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+    if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
     {
         ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
     }
-    else if (Camera.ProjectionMode == ECameraProjectionMode::Perspective)
+    else if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
     {
         ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
 
@@ -642,8 +642,8 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
 
 
         // 프로젝션 매트릭스 업데이트
-        FCamera& Camera = FCamera::Get();
-        UpdateProjectionMatrix(Camera);
+        // ACamera& Camera = ACamera::Get();
+        // UpdateProjectionMatrix(Camera);
     }
 }
 
