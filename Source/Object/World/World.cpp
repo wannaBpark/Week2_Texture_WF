@@ -9,12 +9,6 @@
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 
-void UWorld::ClearWorld()
-{
-	//Actors.Empty();
-}
-
-
 
 void UWorld::BeginPlay()
 {
@@ -57,6 +51,18 @@ void UWorld::Tick(float DeltaTime)
 	}
 	PendingDestroyActors.Empty();
 }
+
+void UWorld::Render()
+{
+	for (auto& RenderComponent : RenderComponents)
+	{
+		RenderComponent->Render();
+	}
+}
+
+void UWorld::ClearWorld()
+{}
+
 
 bool UWorld::DestroyActor(AActor* InActor)
 {

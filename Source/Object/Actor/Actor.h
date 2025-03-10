@@ -59,6 +59,10 @@ public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 
+public:
+	void SetColor(FVector4 InColor);
+	void SetUseVertexColor(bool bUseVertexColor);
+
 protected:
 	bool bCanEverTick = true;
 	USceneComponent* RootComponent = nullptr;

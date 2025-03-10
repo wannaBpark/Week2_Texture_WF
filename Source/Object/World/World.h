@@ -23,10 +23,16 @@ public:
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
 	bool DestroyActor(AActor* InActor);
+	
+	void Render();
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
 	void SaveWorld();
+	
+	// render
+	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
+	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 private:
 	UWorldInfo GetWorldInfo() const;
@@ -39,6 +45,7 @@ protected:
 	TArray<AActor*> Actors;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
+	TSet<class UPrimitiveComponent*> RenderComponents;
 };
 
 template <typename T>

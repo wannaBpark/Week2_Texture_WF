@@ -2,12 +2,18 @@
 #include "Object/USceneComponent.h"
 #include "Debug/DebugConsole.h"
 #include "Object/World/World.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 void AActor::BeginPlay()
 {
 	for (auto& Component : Components)
 	{
 		Component->BeginPlay();
+
+		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		{
+			PrimitiveComponent->RegisterComponentWithWorld(World);
+		}
 	}
 }
 
@@ -78,4 +84,50 @@ const char* AActor::GetTypeName()
 bool AActor::Destroy()
 {
 	return GetWorld()->DestroyActor(this);
+}
+
+void AActor::SetColor(FVector4 InColor)
+{
+	if (RootComponent == nullptr)
+	{
+		return;
+	}
+
+	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
+	if (RootPrimitive)
+	{
+		RootPrimitive->SetCustomColor(InColor);
+	}
+
+	for (auto& Component : Components)
+	{
+		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
+		if (PrimitiveComponent)
+		{
+			PrimitiveComponent->SetCustomColor(InColor);
+		}
+	}
+}
+
+void AActor::SetUseVertexColor(bool bUseVertexColor)
+{
+	if (RootComponent == nullptr)
+	{
+		return;
+	}
+
+	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
+	if (RootPrimitive)
+	{
+		RootPrimitive->SetUseVertexColor(bUseVertexColor);
+	}
+
+	for (auto& Component : Components)
+	{
+		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
+		if (PrimitiveComponent)
+		{
+			PrimitiveComponent->SetUseVertexColor(bUseVertexColor);
+		}
+	}
 }
