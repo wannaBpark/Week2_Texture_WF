@@ -1,6 +1,7 @@
 ﻿#include "Actor.h"
 #include "Object/USceneComponent.h"
 #include <Debug/DebugConsole.h>
+#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
 void AActor::BeginPlay()
 {
@@ -63,4 +64,27 @@ const char* AActor::GetTypeName()
 USceneComponent* AActor::GetRootComponent()
 {
 	return RootComponent;
+}
+
+void AActor::SetColor(FVector4 InColor)
+{
+	if (RootComponent == nullptr)
+	{
+		return;
+	}
+
+	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
+	if (RootPrimitive)
+	{
+		RootPrimitive->SetCustomColor(InColor);
+	}
+
+	for (auto& Component : Components)
+	{
+		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
+		if (PrimitiveComponent)
+		{
+			PrimitiveComponent->SetCustomColor(InColor);
+		}
+	}
 }

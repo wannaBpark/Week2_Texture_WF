@@ -39,6 +39,7 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
 
     AArrow* Arrow = FObjectFactory::ConstructActor<AArrow>();
+    Arrow->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
     selectedActor = Arrow;
 }
 

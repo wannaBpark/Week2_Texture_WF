@@ -53,6 +53,9 @@ public:
 public:
 	class USceneComponent* GetRootComponent();
 
+public:
+	void SetColor(FVector4 InColor);
+
 protected:
 	bool bCanEverTick = true;
 	TSet<UActorComponent*> Components;
