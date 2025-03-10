@@ -28,6 +28,9 @@ public:
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();
+	void RenderPickingTexture(URenderer& Renderer);
+	void DisplayPickingTexture(URenderer& Renderer);
+	void RenderMainTexture(URenderer& Renderer);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);

@@ -3,6 +3,7 @@
 #include "Picker.h"
 
 #include "Core/Input/PlayerInput.h"
+#include "Static/FEditorManager.h"
 
 FVector4 APicker::EncodeUUID(unsigned int UUID)
 {
@@ -42,6 +43,8 @@ void APicker::LateTick(float DeltaTime)
 
         uint32_t UUID = DecodeUUID(color);
 
+        //TODO: UUID로 픽한 애 변경 아마 FEditorManager에서 처리할듯
+        
         std::cout<<UUID << "\n";
         // UE_LOG("%d\n", UUID);
     }
