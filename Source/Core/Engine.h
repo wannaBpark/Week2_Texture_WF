@@ -48,6 +48,10 @@ public:
 
 	class URenderer* GetRenderer() const { return Renderer.get(); }
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
+    int GetScreenWidth() const { return ScreenWidth; }
+    int GetScreenHeight() const { return ScreenHeight; }
+    int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
+    int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
 
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
@@ -74,6 +78,9 @@ private:
     const WCHAR* WindowClassName = nullptr;
     HWND WindowHandle = nullptr;
     HINSTANCE WindowInstance = nullptr;
+
+    int InitializedScreenWidth = 0;
+    int InitializedScreenHeight = 0;
 
     int ScreenWidth = 0;
     int ScreenHeight = 0;

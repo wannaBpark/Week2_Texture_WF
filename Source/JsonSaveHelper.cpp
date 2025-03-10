@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "Core/EngineStatics.h"
+#include "Debug/DebugConsole.h"
 #include "SimpleJSON/Json.hpp"
 
 using json::JSON;
@@ -14,7 +15,8 @@ UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
 
     if (!Input.is_open())
     {
-        throw std::exception("Scene file not found"); 
+        UE_LOG("Scene file not found");
+        return nullptr;
     }
     std::string Contents;
     Input.seekg( 0, std::ios::end );

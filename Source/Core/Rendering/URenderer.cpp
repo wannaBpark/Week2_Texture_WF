@@ -626,8 +626,8 @@ void URenderer::PrepareMainShader()
 
 FVector4 URenderer::GetPixel(FVector MPos)
 {
-    MPos.X = FMath::Min(MPos.X, ViewportInfo.Width);
-    MPos.Y = FMath::Min(MPos.Y, ViewportInfo.Height);
+    MPos.X = FMath::Clamp(MPos.X, 0.0f, ViewportInfo.Width);
+    MPos.Y = FMath::Clamp(MPos.Y, 0.0f, ViewportInfo.Height);
     // 1. Staging 텍스처 생성 (1x1 픽셀)
     D3D11_TEXTURE2D_DESC stagingDesc = {};
     stagingDesc.Width = 1; // 픽셀 1개만 복사

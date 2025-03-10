@@ -193,9 +193,11 @@ void UWorld::LoadWorld(const char* SceneName)
 	if (SceneName == nullptr || strcmp(SceneName, "") == 0){
 		return;
 	}
-	ClearWorld();
 	
 	UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(SceneName);
+	if (WorldInfo == nullptr) return;
+
+	ClearWorld();
 
 	Version = WorldInfo->Version;
 	this->SceneName = WorldInfo->SceneName;

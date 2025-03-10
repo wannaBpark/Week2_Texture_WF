@@ -43,7 +43,13 @@ void APicker::LateTick(float DeltaTime)
         POINT pt;
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-    		
+
+
+        float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
+        float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
+        pt.x = pt.x * ratioX;
+        pt.y = pt.y * ratioY;
+        
         FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
 
         uint32_t UUID = DecodeUUID(color);
