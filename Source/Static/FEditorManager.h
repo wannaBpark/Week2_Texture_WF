@@ -16,7 +16,7 @@ public:
 
     inline ACamera* GetCamera() const {return Camera;}
 
-    void SelectCamera(ACamera* NewCamera);
+    void SetCamera(ACamera* NewCamera);
     
 private:
     ACamera* Camera = nullptr;

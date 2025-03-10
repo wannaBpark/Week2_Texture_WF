@@ -41,3 +41,8 @@ void FEditorManager::SelectActor(AActor* NewActor)
 		GizmoHandle->SetActorTransform(GizmoTransform);
 	}
 }
+
+void FEditorManager::SetCamera(ACamera* NewCamera)
+{
+    Camera = NewCamera;
+}
