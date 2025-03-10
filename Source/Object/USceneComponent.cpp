@@ -33,7 +33,6 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 	// 내 로컬 트랜스폼 갱신
 	RelativeTransform = InTransform;
 	FVector Rot = RelativeTransform.GetRotation().GetEuler();
-	UE_LOG("%d Rotation : %f,%f,%f", this->GetUUID(), Rot.X, Rot.Y, Rot.Z);
 
 }
 

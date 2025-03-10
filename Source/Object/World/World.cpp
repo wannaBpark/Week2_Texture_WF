@@ -102,6 +102,8 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	Renderer.PrepareZIgnore();
 	for (auto& RenderComponent: ZIgnoreRenderComponents)
 	{
+		uint32 UUID = RenderComponent->GetUUID();
+		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
 	}
