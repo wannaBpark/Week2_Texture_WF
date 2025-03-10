@@ -11,6 +11,7 @@
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
+#include <Object/Gizmo/GizmoHandle.h>
 
 
 
@@ -20,6 +21,7 @@ void UWorld::BeginPlay()
 
 	APicker* Picker = SpawnActor<APicker>();
 	
+	AGizmoHandle* Handle = SpawnActor<AGizmoHandle>();
 	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
 	//AArrow* TestArrow = SpawnActor<AArrow>();
 	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));

@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
@@ -201,6 +202,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />

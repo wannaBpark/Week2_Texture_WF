@@ -340,8 +340,8 @@ struct alignas(16) FMatrix
 		float S = sin(Angle);
 
 		Result.M[0][0] = C;  
-		Result.M[0][2] = S;  
-		Result.M[2][0] = -S; 
+		Result.M[0][2] = -S;  
+		Result.M[2][0] = S; 
 		Result.M[2][2] = C;  
 		return Result;
 	}
