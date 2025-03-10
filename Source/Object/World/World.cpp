@@ -1,31 +1,35 @@
 ﻿#include "World.h"
-#include "Object/Actor/Actor.h"
+#include <cassert>
 #include "JsonSavehelper.h"
-#include <Object/Gizmo/Axis.h>
-#include <Object/Actor/Arrow.h>
+
+#include "Object/Actor/Arrow.h"
+#include "Object/Actor/Cube.h"
+#include "Object/Actor/Picker.h"
+#include "Object/Actor/Sphere.h"
+#include "Object/Gizmo/Axis.h"
 
 #include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
-#include "Object/Actor/Cube.h"
-#include "Object/Actor/Picker.h"
-#include "Object/Actor/Sphere.h"
+
+
 
 void UWorld::BeginPlay()
 {
-	AAxis* Axis = FObjectFactory::ConstructActor<AAxis>();
+	AAxis* Axis = SpawnActor<AAxis>();
 
-	APicker* Picker = FObjectFactory::ConstructActor<APicker>();
+	APicker* Picker = SpawnActor<APicker>();
 	
 	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
+	//AArrow* TestArrow = SpawnActor<AArrow>();
 	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
-	//ASphere* TestSphere = FObjectFactory::ConstructActor<ASphere>();
+	//ASphere* TestSphere = SpawnActor<ASphere>();
 	//FTransform tr = TestArrow->GetActorTransform();
 	//TestArrow->SetTransform(tr);
 	//TestArrow->SetTransform(FTransform(FVector(0.0f, 0.0f, 2.0f), FVector(0.0f, 0.0f, 0.0f), FVector(0.1f, 0.1f, 0.5f)));
 
 
-	for (auto& Actor : Actors)
+	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
 	}
@@ -33,13 +37,26 @@ void UWorld::BeginPlay()
 
 void UWorld::Tick(float DeltaTime)
 {
-	for (auto& Actor : Actors)
+	for (const auto& Actor : ActorsToSpawn)
+	{
+		Actor->BeginPlay();
+	}
+	ActorsToSpawn.Empty();
+
+	for (const auto& Actor : Actors)
 	{
 		if (Actor->CanEverTick())
 		{
 			Actor->Tick(DeltaTime);
 		}
 	}
+
+	for (const auto& PendingActor : PendingDestroyActors)
+	{
+		// Engine에서 제거
+		UEngine::Get().GObjects.Remove(PendingActor->shared_from_this());
+	}
+	PendingDestroyActors.Empty();
 }
 
 void UWorld::LateTick(float DeltaTime)
@@ -87,8 +104,28 @@ void UWorld::Render()
 }
 
 void UWorld::ClearWorld()
+{}
+
+
+bool UWorld::DestroyActor(AActor* InActor)
 {
-	
+	// 나중에 Destroy가 실패할 일이 있다면 return false; 하기
+	assert(InActor);
+
+	if (PendingDestroyActors.Find(InActor) != -1)
+	{
+		return true;
+	}
+
+	// 삭제될 때 Destroyed 호출
+	InActor->Destroyed();
+
+	// World에서 제거
+	Actors.Remove(InActor);
+
+	// 제거 대기열에 추가
+	PendingDestroyActors.Add(InActor);
+	return true;
 }
 
 void UWorld::SaveWorld()
@@ -117,26 +154,26 @@ void UWorld::LoadWorld(const char* SceneName)
 		
 		if (ObjectInfo->ObjectType == "Actor")
 		{
-			Actor = FObjectFactory::ConstructActor<AActor>();
+			Actor = SpawnActor<AActor>();
 		}
 		else if (ObjectInfo->ObjectType == "Sphere")
 		{
-			Actor = FObjectFactory::ConstructActor<ASphere>();
+			Actor = SpawnActor<ASphere>();
 		}
 		else if (ObjectInfo->ObjectType == "Cube")
 		{
-			Actor = FObjectFactory::ConstructActor<ACube>();
+			Actor = SpawnActor<ACube>();
 		}
 		else if (ObjectInfo->ObjectType == "Arrow")
 		{
-			Actor = FObjectFactory::ConstructActor<AArrow>();
+			Actor = SpawnActor<AArrow>();
 		}
 		else if (ObjectInfo->ObjectType == "Axis")
 		{
-			Actor = FObjectFactory::ConstructActor<AAxis>();
+			Actor = SpawnActor<AAxis>();
 		}
 			
-		Actor->SetTransform(Transform);
+		Actor->SetActorTransform(Transform);
 	}
 }
 

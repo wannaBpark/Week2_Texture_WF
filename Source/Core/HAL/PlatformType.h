@@ -1,6 +1,12 @@
 ﻿#pragma once
 #include <cstdint>
 
+#define _TCHAR_DEFINED
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+
+
 #define IS_WIDECHAR 0
 
 // Windows.h의 TEXT를 삭제
