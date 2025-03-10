@@ -8,9 +8,9 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "Debug/DebugConsole.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Object/ObjectFactory.h"
+#include "ImGui/imgui_internal.h"
 #include "Object/Actor/Actor.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Arrow.h"
@@ -30,21 +30,34 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     // 기본 폰트 크기 설정
     io.FontGlobalScale = 1.0f;
-
+    io.DisplaySize = ScreenSize;
+    //io.WantSetMousePos = true;
     // ImGui Backend 초기화
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX11_Init(Renderer.GetDevice(), Renderer.GetDeviceContext());
 
 	ScreenSize = ImVec2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight));
+    InitialScreenSize = ScreenSize;
     bIsInitialized = true;
 
-    AArrow* Arrow = UEngine::Get().GetWorld()->SpawnActor<AArrow>();
-    //->SetColor(FVector4(1.0f, 0.0f, 0.0f, 0.0f));
-    selectedActor = Arrow;
+    UEngine::Get().GetWorld()->SpawnActor<AArrow>();
+    
+    io.DisplaySize = ScreenSize;
 }
 
 void UI::Update()
 {
+    POINT mousePos;
+    if (GetCursorPos(&mousePos)) {
+        HWND hwnd = GetActiveWindow();
+        ScreenToClient(hwnd, &mousePos);
+
+        ImVec2 CalculatedMousePos = ResizeToScreen(ImVec2(mousePos.x, mousePos.y));
+        ImGui::GetIO().MousePos = CalculatedMousePos;
+        //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
+    }
+
+    
     // ImGui Frame 생성
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -73,30 +86,20 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
     // ImGUI 리소스 다시 생성
     ImGui_ImplDX11_InvalidateDeviceObjects();
     ImGui_ImplDX11_CreateDeviceObjects();
- //   // ImGui 창 크기 업데이트
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2(static_cast<float>(InScreenWidth), static_cast<float>(InScreenHeight));
+   // ImGui 창 크기 업데이트
 	ScreenSize = ImVec2(static_cast<float>(InScreenWidth), static_cast<float>(InScreenHeight));
-
- //   // 폰트 스케일 조정 (예: 창 높이에 비례하여 폰트 크기 조정)
- //   float scaleFactor = static_cast<float>(InScreenHeight) / 1080.0f; // 1080은 기준 해상도 높이
- //   io.FontGlobalScale = scaleFactor;
 }
 
 void UI::RenderControlPanel()
 {
-    // ImGui 창의 크기와 위치를 수동으로 조정
-    ImGui::SetNextWindowSize(ImVec2(400, 600)); // 원하는 크기로 설정
-    ImGui::SetNextWindowPos(ImVec2(50, 50));    // 원하는 위치로 설정
-    if (ImGui::Begin("Jungle Control Panel"))
-    {
-        ImGui::Text("Hello, Jungle World!");
-        ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
+    ImGui::Begin("Jungle Control Panel");
+    ImGui::Text("Hello, Jungle World!");
+    ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
 
-        RenderMemoryUsage();
-        RenderPrimitiveSelection();
-        RenderCameraSettings();
-    }
+    RenderMemoryUsage();
+    RenderPrimitiveSelection();
+    RenderCameraSettings();
+    
     ImGui::End();
 }
 
@@ -156,13 +159,20 @@ void UI::RenderPrimitiveSelection()
     ImGui::Separator();
 
     UWorld* World = UEngine::Get().GetWorld();
+    uint32 bufferSize = 100;
+    char* SceneNameInput = new char[bufferSize];
+    strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_str());
+    if (ImGui::Button("New Scene"))
+    {
+        World->SaveWorld();   
+    }
     if (ImGui::Button("Save Scene"))
     {
-        // World.SaveWorld();   
+        World->SaveWorld();   
     }
     if (ImGui::Button("Load Scene"))
     {
-        // World.LoadWorld(SceneName);
+        World->LoadWorld(SceneNameInput);
     }
     ImGui::Separator();
 }
@@ -251,33 +261,43 @@ void UI::RenderCameraSettings()
 
 void UI::RenderPropertyWindow()
 {
-    // bool bIsSelectedObjectExist = (UEngine::Get().World.GetSelected() != nullptr);
-    bool bIsSelectedObjectExist = true;
+    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
 
-    if (bIsSelectedObjectExist)
+    ImGui::Begin("Properties");
+    
+    if (selectedActor != nullptr)
     {
-        if (selectedActor != nullptr)
+        FTransform selectedTransform = selectedActor->GetActorTransform();
+        float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
+        float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
+        float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
+
+        if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
-            FTransform selectedTransform = selectedActor->GetActorTransform();
-            //FTransform* selectedTransform = UEngine::Get().World.GetSelected().GetTransform();
-            float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-            float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
-            float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
-            if (ImGui::DragFloat3("Translation", position, 0.1f))
-            {
-                selectedTransform.SetPosition(position[0], position[1], position[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
-            if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
-            {
-                selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
-            if (ImGui::DragFloat3("Scale", scale, 0.1f))
-            {
-                selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-                selectedActor->SetActorTransform(selectedTransform);
-            }
+            selectedTransform.SetPosition(position[0], position[1], position[2]);
+            selectedActor->SetActorTransform(selectedTransform);
+        }
+        if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+        {
+            selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+            selectedActor->SetActorTransform(selectedTransform);
+        }
+        if (ImGui::DragFloat3("Scale", scale, 0.1f))
+        {
+            selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+            selectedActor->SetActorTransform(selectedTransform);
         }
     }
+    ImGui::End();
 }
+
+ImVec2 UI::ResizeToScreen(const ImVec2& vec2) const
+{
+    return {vec2.x / GetRatio().x, vec2.y / GetRatio().y };
+}
+
+ImVec2 UI::GetRatio() const
+{
+    return {ScreenSize.x / InitialScreenSize.x, ScreenSize.y / InitialScreenSize.y};
+}
+
