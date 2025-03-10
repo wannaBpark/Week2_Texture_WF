@@ -315,9 +315,9 @@ void UI::RenderPropertyWindow()
             selectedTransform.SetPosition(position[0], position[1], position[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-        if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+        if (ImGui::DragFloat3("Rotation", rotation, 0.01f))
         {
-            selectedTransform.SetRotation(FVector(rotation[0], rotation[1], rotation[2]));
+			selectedTransform.SetRotation(FVector(rotation[0], rotation[1], rotation[2]));
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))

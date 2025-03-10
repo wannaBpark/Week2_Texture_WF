@@ -29,9 +29,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
 
-    FQuat CameraRot = Camera->GetActorTransform().GetRotation();
+    FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
     FQuat DeltaQuaternion = FQuat::EulerToQuaternion(FVector(0.0f, DeltaPos.Y, DeltaPos.X));
-    FQuat NewQuat = FQuat::MultiplyQuaternions(CameraRot, FQuat::AddQuaternions(CameraRot, DeltaQuaternion));
+    FEditorManager::Get().GetCamera()->GetActorTransform().SetRotation(FQuat::AddQuaternions(CameraRot, DeltaQuaternion));
 
     FTransform NewTransf = Camera->GetActorTransform();
     NewTransf.SetRotation(FQuat::AddQuaternions(CameraRot, DeltaQuaternion));

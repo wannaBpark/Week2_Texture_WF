@@ -124,6 +124,16 @@ struct alignas(16) FMatrix
 		return !(*this == Other);
 	}
 
+	FVector4 TransformVector4(const FVector4& Vector) const
+	{
+		return {
+			Vector.X * M[0][0] + Vector.Y * M[1][0] + Vector.Z * M[2][0] + Vector.W * M[3][0],
+			Vector.X * M[0][1] + Vector.Y * M[1][1] + Vector.Z * M[2][1] + Vector.W * M[3][1],
+			Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2] + Vector.W * M[3][2],
+			Vector.X * M[0][3] + Vector.Y * M[1][3] + Vector.Z * M[2][3] + Vector.W * M[3][3]
+		};
+	}
+
 	FMatrix GetTransposed() const
 	{
 		FMatrix Result;
@@ -139,137 +149,47 @@ struct alignas(16) FMatrix
 
 	float Determinant() const
 	{
-		return	M[0][0] * (
-			M[1][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) -
-			M[2][1] * (M[1][2] * M[3][3] - M[1][3] * M[3][2]) +
-			M[3][1] * (M[1][2] * M[2][3] - M[1][3] * M[2][2])
-			) -
-			M[1][0] * (
-				M[0][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) -
-				M[2][1] * (M[0][2] * M[3][3] - M[0][3] * M[3][2]) +
-				M[3][1] * (M[0][2] * M[2][3] - M[0][3] * M[2][2])
-				) +
-			M[2][0] * (
-				M[0][1] * (M[1][2] * M[3][3] - M[1][3] * M[3][2]) -
-				M[1][1] * (M[0][2] * M[3][3] - M[0][3] * M[3][2]) +
-				M[3][1] * (M[0][2] * M[1][3] - M[0][3] * M[1][2])
-				) -
-			M[3][0] * (
-				M[0][1] * (M[1][2] * M[2][3] - M[1][3] * M[2][2]) -
-				M[1][1] * (M[0][2] * M[2][3] - M[0][3] * M[2][2]) +
-				M[2][1] * (M[0][2] * M[1][3] - M[0][3] * M[1][2])
-				);
+		const float* m = &M[0][0];
+		return 
+			m[0] * (m[5] * (m[10] * m[15] - m[11] * m[14]) - m[6] * (m[9] * m[15] - m[11] * m[13]) + m[7] * (m[9] * m[14] - m[10] * m[13])) -
+			m[1] * (m[4] * (m[10] * m[15] - m[11] * m[14]) - m[6] * (m[8] * m[15] - m[11] * m[12]) + m[7] * (m[8] * m[14] - m[10] * m[12])) +
+			m[2] * (m[4] * (m[9]  * m[15] - m[11] * m[13]) - m[5] * (m[8] * m[15] - m[11] * m[12]) + m[7] * (m[8] * m[13] - m[9]  * m[12])) -
+			m[3] * (m[4] * (m[9]  * m[14] - m[10] * m[13]) - m[5] * (m[8] * m[14] - m[10] * m[12]) + m[6] * (m[8] * m[13] - m[9]  * m[12]));
 	}
 
 	FMatrix Inverse() const
 	{
-		float Det = Determinant();
-		if (Det == 0)
+		const float Det = Determinant();
+		if (FMath::Abs(Det) < 1.0e-6f)
 		{
-			return FMatrix();
+			return {};
 		}
 
-		FMatrix Inv;
-		float InvDet = 1.0f / Det;
+		FMatrix Result;
+		const float* m = &M[0][0];
+		const float InvDet = 1.0f / Det;
 
-		Inv.M[0][0] = InvDet * (
-			M[1][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) -
-			M[2][1] * (M[1][2] * M[3][3] - M[1][3] * M[3][2]) +
-			M[3][1] * (M[1][2] * M[2][3] - M[1][3] * M[2][2])
-			);
+		Result.M[0][0] = InvDet * (m[5]*(m[10]*m[15]-m[11]*m[14]) - m[6]*(m[9]*m[15]-m[11]*m[13]) + m[7]*(m[9]*m[14]-m[10]*m[13]));
+		Result.M[0][1] = -InvDet * (m[1]*(m[10]*m[15]-m[11]*m[14]) - m[2]*(m[9]*m[15]-m[11]*m[13]) + m[3]*(m[9]*m[14]-m[10]*m[13]));
+		Result.M[0][2] = InvDet * (m[1]*(m[6]*m[15]-m[7]*m[14]) - m[2]*(m[5]*m[15]-m[7]*m[13]) + m[3]*(m[5]*m[14]-m[6]*m[13]));
+		Result.M[0][3] = -InvDet * (m[1]*(m[6]*m[11]-m[7]*m[10]) - m[2]*(m[5]*m[11]-m[7]*m[9]) + m[3]*(m[5]*m[10]-m[6]*m[9]));
 
-		Inv.M[0][1] = InvDet * (
-			M[0][2] * (M[2][3] * M[3][1] - M[2][1] * M[3][3]) -
-			M[0][3] * (M[2][2] * M[3][1] - M[2][1] * M[3][2]) +
-			M[0][1] * (M[2][3] * M[3][2] - M[2][2] * M[3][3])
-			);
+		Result.M[1][0] = -InvDet * (m[4]*(m[10]*m[15]-m[11]*m[14]) - m[6]*(m[8]*m[15]-m[11]*m[12]) + m[7]*(m[8]*m[14]-m[10]*m[12]));
+		Result.M[1][1] = InvDet * (m[0]*(m[10]*m[15]-m[11]*m[14]) - m[2]*(m[8]*m[15]-m[11]*m[12]) + m[3]*(m[8]*m[14]-m[10]*m[12]));
+		Result.M[1][2] = -InvDet * (m[0]*(m[6]*m[15]-m[7]*m[14]) - m[2]*(m[4]*m[15]-m[7]*m[12]) + m[3]*(m[4]*m[14]-m[6]*m[12]));
+		Result.M[1][3] = InvDet * (m[0]*(m[6]*m[11]-m[7]*m[10]) - m[2]*(m[4]*m[11]-m[7]*m[8]) + m[3]*(m[4]*m[10]-m[6]*m[8]));
 
-		Inv.M[0][2] = InvDet * (
-			M[0][3] * (M[1][2] * M[3][1] - M[1][1] * M[3][2]) -
-			M[0][2] * (M[1][3] * M[3][1] - M[1][1] * M[3][3]) +
-			M[0][1] * (M[1][3] * M[3][2] - M[1][2] * M[3][3])
-			);
+		Result.M[2][0] = InvDet * (m[4]*(m[9]*m[15]-m[11]*m[13]) - m[5]*(m[8]*m[15]-m[11]*m[12]) + m[7]*(m[8]*m[13]-m[9]*m[12]));
+		Result.M[2][1] = -InvDet * (m[0]*(m[9]*m[15]-m[11]*m[13]) - m[1]*(m[8]*m[15]-m[11]*m[12]) + m[3]*(m[8]*m[13]-m[9]*m[12]));
+		Result.M[2][2] = InvDet * (m[0]*(m[5]*m[15]-m[7]*m[13]) - m[1]*(m[4]*m[15]-m[7]*m[12]) + m[3]*(m[4]*m[13]-m[5]*m[12]));
+		Result.M[2][3] = -InvDet * (m[0]*(m[5]*m[11]-m[7]*m[9]) - m[1]*(m[4]*m[11]-m[7]*m[8]) + m[3]*(m[4]*m[9]-m[5]*m[8]));
 
-		Inv.M[0][3] = InvDet * (
-			M[0][2] * (M[1][3] * M[2][1] - M[1][1] * M[2][3]) -
-			M[0][3] * (M[1][2] * M[2][1] - M[1][1] * M[2][2]) +
-			M[0][1] * (M[1][2] * M[2][3] - M[1][3] * M[2][2])
-			);
+		Result.M[3][0] = -InvDet * (m[4]*(m[9]*m[14]-m[10]*m[13]) - m[5]*(m[8]*m[14]-m[10]*m[12]) + m[6]*(m[8]*m[13]-m[9]*m[12]));
+		Result.M[3][1] = InvDet * (m[0]*(m[9]*m[14]-m[10]*m[13]) - m[1]*(m[8]*m[14]-m[10]*m[12]) + m[2]*(m[8]*m[13]-m[9]*m[12]));
+		Result.M[3][2] = -InvDet * (m[0]*(m[5]*m[14]-m[6]*m[13]) - m[1]*(m[4]*m[14]-m[6]*m[12]) + m[2]*(m[4]*m[13]-m[5]*m[12]));
+		Result.M[3][3] = InvDet * (m[0]*(m[5]*m[10]-m[6]*m[9]) - m[1]*(m[4]*m[10]-m[6]*m[8]) + m[2]*(m[4]*m[9]-m[5]*m[8]));
 
-		Inv.M[1][0] = InvDet * (
-			M[1][2] * (M[2][3] * M[3][0] - M[2][0] * M[3][3]) -
-			M[1][3] * (M[2][2] * M[3][0] - M[2][0] * M[3][2]) +
-			M[1][0] * (M[2][3] * M[3][2] - M[2][2] * M[3][3])
-			);
-
-		Inv.M[1][1] = InvDet * (
-			M[0][0] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) -
-			M[2][0] * (M[0][2] * M[3][3] - M[0][3] * M[3][2]) +
-			M[3][0] * (M[0][2] * M[2][3] - M[0][3] * M[2][2])
-			);
-
-		Inv.M[1][2] = InvDet * (
-			M[0][3] * (M[1][2] * M[3][0] - M[1][0] * M[3][2]) -
-			M[0][2] * (M[1][3] * M[3][0] - M[1][0] * M[3][3]) +
-			M[0][0] * (M[1][3] * M[3][2] - M[1][2] * M[3][3])
-			);
-
-		Inv.M[1][3] = InvDet * (
-			M[0][2] * (M[1][3] * M[2][0] - M[1][0] * M[2][3]) -
-			M[0][3] * (M[1][2] * M[2][0] - M[1][0] * M[2][2]) +
-			M[0][0] * (M[1][2] * M[2][3] - M[1][3] * M[2][2])
-			);
-
-		Inv.M[2][0] = InvDet * (
-			M[1][3] * (M[2][0] * M[3][1] - M[2][1] * M[3][0]) -
-			M[1][0] * (M[2][3] * M[3][1] - M[2][1] * M[3][3]) +
-			M[1][1] * (M[2][3] * M[3][0] - M[2][0] * M[3][3])
-			);
-
-		Inv.M[2][1] = InvDet * (
-			M[0][0] * (M[2][3] * M[3][1] - M[2][1] * M[3][3]) -
-			M[2][0] * (M[0][3] * M[3][1] - M[0][1] * M[3][3]) +
-			M[3][0] * (M[0][3] * M[2][1] - M[0][1] * M[2][3])
-			);
-
-		Inv.M[2][2] = InvDet * (
-			M[0][0] * (M[1][1] * M[3][3] - M[1][3] * M[3][1]) -
-			M[1][0] * (M[0][1] * M[3][3] - M[0][3] * M[3][1]) +
-			M[3][0] * (M[0][1] * M[1][3] - M[0][3] * M[1][1])
-			);
-
-		Inv.M[2][3] = InvDet * (
-			M[0][0] * (M[1][3] * M[2][1] - M[1][1] * M[2][3]) -
-			M[1][0] * (M[0][3] * M[2][1] - M[0][1] * M[2][3]) +
-			M[2][0] * (M[0][3] * M[1][1] - M[0][1] * M[1][3])
-			);
-
-		Inv.M[3][0] = InvDet * (
-			M[1][0] * (M[2][2] * M[3][1] - M[2][1] * M[3][2]) -
-			M[2][0] * (M[1][2] * M[3][1] - M[1][1] * M[3][2]) +
-			M[3][0] * (M[1][2] * M[2][1] - M[1][1] * M[2][2])
-			);
-
-		Inv.M[3][1] = InvDet * (
-			M[0][0] * (M[2][1] * M[3][2] - M[2][2] * M[3][1]) -
-			M[2][0] * (M[0][1] * M[3][2] - M[0][2] * M[3][1]) +
-			M[3][0] * (M[0][1] * M[2][2] - M[0][2] * M[2][1])
-			);
-
-		Inv.M[3][2] = InvDet * (
-			M[0][0] * (M[1][1] * M[3][2] - M[1][2] * M[3][1]) -
-			M[1][0] * (M[0][1] * M[3][2] - M[0][2] * M[3][1]) +
-			M[3][0] * (M[0][1] * M[1][2] - M[0][2] * M[1][1])
-			);
-
-		Inv.M[3][3] = InvDet * (
-			M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) -
-			M[1][0] * (M[0][1] * M[2][2] - M[0][2] * M[2][1]) +
-			M[2][0] * (M[0][1] * M[1][2] - M[0][2] * M[1][1])
-			);
-
-		return Inv;
-
+		return Result;
 	}
 
 	static FMatrix Transpose(const FMatrix& Matrix)
@@ -312,66 +232,6 @@ struct alignas(16) FMatrix
 	{
 		return Scale(InScale.X, InScale.Y, InScale.Z);
 	}
-
-	static FMatrix RotateRoll(float Angle) //x�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[1][1] = C; 
-		Result.M[1][2] = -S;  
-		Result.M[2][1] = S; 
-		Result.M[2][2] = C;  
-
-		return Result;
-	}
-
-	static FMatrix RotatePitch(float Angle) // y�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[0][0] = C;  
-		Result.M[0][2] = -S;  
-		Result.M[2][0] = S; 
-		Result.M[2][2] = C;  
-		return Result;
-	}
-
-	static FMatrix RotateYaw(float Angle) // z�� ȸ��
-	{
-		Angle = FMath::DegreesToRadians(Angle);
-		FMatrix Result;
-
-		float C = cos(Angle);
-		float S = sin(Angle);
-
-		Result.M[0][0] = C;  // ù ��° ���� ù ��° ��
-		Result.M[0][1] = -S;  // ù ��° ���� �� ��° ��
-		Result.M[1][0] = S; // �� ��° ���� ù ��° ��
-		Result.M[1][1] = C;  // �� ��° ���� �� ��° ��
-
-		return Result;
-	}
-
-	static FMatrix Rotate(float X, float Y, float Z)
-	{
-		return  RotateYaw(Z) * RotatePitch(Y) * RotateRoll(X);
-	}
-
-	static FMatrix Rotate(const FVector& Rotation)
-	{
-		return Rotate(Rotation.X, Rotation.Y, Rotation.Z);
-	}
-
 
 	static FMatrix Rotate(const FQuat& Q) 
 	{

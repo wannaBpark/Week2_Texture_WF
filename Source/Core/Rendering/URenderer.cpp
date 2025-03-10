@@ -704,11 +704,6 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         // 뎁스 스텐실 버퍼를 다시 생성
         ReleaseDepthStencilBuffer();
         CreateDepthStencilBuffer();
-
-
-        // 프로젝션 매트릭스 업데이트
-        // ACamera& Camera = ACamera::Get();
-        // UpdateProjectionMatrix(Camera);
     }
 }
 
