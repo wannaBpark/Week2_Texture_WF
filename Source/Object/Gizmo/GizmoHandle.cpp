@@ -1,7 +1,7 @@
 ﻿#include "GizmoHandle.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/World/World.h"
 #include "Static/FEditorManager.h"
-
 
 AGizmoHandle::AGizmoHandle()
 {
@@ -25,6 +25,14 @@ AGizmoHandle::AGizmoHandle()
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
+	
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+
+	ZArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	XArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	XArrow->SetupAttachment(ZArrow, true);
 	YArrow->SetupAttachment(ZArrow, true);

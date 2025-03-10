@@ -8,8 +8,8 @@ ACamera::ACamera()
 {
     bIsGizmo = true;
     
-    Near = 1.f;
-    Far = 1000.f;
+    Near = 0.1f;
+    Far = 100.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
 
+class AGizmoHandle;
+
 class FEditorManager : public TSingleton<FEditorManager>
 {
 public:
@@ -16,5 +18,5 @@ public:
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
-    class AGizmoHandle* GizmoHandle = nullptr;
+    AGizmoHandle* GizmoHandle = nullptr;
 };
