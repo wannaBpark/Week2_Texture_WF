@@ -114,7 +114,9 @@ void UWorld::DisplayPickingTexture(URenderer& Renderer)
 }
 
 void UWorld::ClearWorld()
-{}
+{
+	
+}
 
 
 bool UWorld::DestroyActor(AActor* InActor)

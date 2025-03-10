@@ -162,9 +162,15 @@ void UI::RenderPrimitiveSelection()
     uint32 bufferSize = 100;
     char* SceneNameInput = new char[bufferSize];
     strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_str());
+    
+	if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
+	{
+		World->SceneName = SceneNameInput;
+	}
+    
     if (ImGui::Button("New Scene"))
     {
-        World->SaveWorld();   
+        World->ClearWorld();   
     }
     if (ImGui::Button("Save Scene"))
     {
