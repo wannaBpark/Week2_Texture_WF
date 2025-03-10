@@ -131,6 +131,7 @@ public:
 
     FORCEINLINE FString operator+(const FString& SubStr) const;
     FORCEINLINE FString& operator+=(const FString& SubStr);
+    FORCEINLINE friend FString operator+(const FString& Lhs, const FString& Rhs);
 
     FORCEINLINE bool operator==(const FString& Rhs) const;
     FORCEINLINE bool operator==(const TCHAR* Rhs) const;
@@ -157,6 +158,12 @@ FORCEINLINE FString FString::operator+(const FString& SubStr) const
     return this->PrivateString + SubStr.PrivateString;
 }
 
+FString operator+(const FString& Lhs, const FString& Rhs)
+{
+    FString CopyLhs{Lhs};
+    return CopyLhs += Rhs;
+}
+
 FORCEINLINE bool FString::operator==(const FString& Rhs) const
 {
     return Equals(Rhs, ESearchCase::IgnoreCase);
@@ -164,7 +171,7 @@ FORCEINLINE bool FString::operator==(const FString& Rhs) const
 
 FORCEINLINE bool FString::operator==(const TCHAR* Rhs) const
 {
-    return TCString<TCHAR>::Stricmp(PrivateString.c_str(), Rhs);
+    return Equals(Rhs);
 }
 
 FORCEINLINE FString& FString::operator+=(const FString& SubStr)
