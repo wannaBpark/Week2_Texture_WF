@@ -18,6 +18,8 @@ public:
     static float DotProduct(const FVector& A, const FVector& B);
     static FVector CrossProduct(const FVector& A, const FVector& B);
 
+    static float Distance(const FVector& V1, const FVector& V2);
+
     float Length() const;
     float LengthSquared() const;
 
@@ -61,6 +63,11 @@ inline FVector FVector::CrossProduct(const FVector& A, const FVector& B)
         A.Z * B.X - A.X * B.Z,
         A.X * B.Y - A.Y * B.X
     };
+}
+
+inline float FVector::Distance(const FVector& V1, const FVector& V2)
+{
+    return FMath::Sqrt(FMath::Square(V2.X-V1.X) + FMath::Square(V2.Y-V1.Y) + FMath::Square(V2.Z-V1.Z));
 }
 
 inline float FVector::Length() const
