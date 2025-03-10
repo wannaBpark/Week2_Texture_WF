@@ -61,6 +61,12 @@ void UWorld::BeginPlay()
 
 void UWorld::Tick(float DeltaTime)
 {
+	for (const auto& Actor : ActorsToSpawn)
+	{
+		Actor->BeginPlay();
+	}
+	ActorsToSpawn.Empty();
+
 	for (const auto& Actor : Actors)
 	{
 		if (Actor->CanEverTick())

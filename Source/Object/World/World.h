@@ -33,6 +33,7 @@ public:
 	
 protected:
 	TArray<AActor*> Actors;
+	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 };
 
@@ -46,6 +47,7 @@ T* UWorld::SpawnActor()
 	{
 		Actor->SetWorld(World);
 		Actors.Add(Actor);
+		ActorsToSpawn.Add(Actor);
 		return Actor;
 	}
 
