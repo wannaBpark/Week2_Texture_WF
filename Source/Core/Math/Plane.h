@@ -56,55 +56,49 @@ inline FQuat FQuat::AxisAngleToQuaternion(const FVector& Axis, float AngleInDegr
 
 inline FQuat FQuat::EulerToQuaternion(FVector Euler) 
 {
+	float roll = FMath::DegreesToRadians(Euler.X);
+	float pitch = FMath::DegreesToRadians(Euler.Y);
+	float yaw = FMath::DegreesToRadians(Euler.Z);
 
+    double cr = cos(roll * 0.5);
+    double sr = sin(roll * 0.5);
+    double cp = cos(pitch * 0.5);
+    double sp = sin(pitch * 0.5);
+    double cy = cos(yaw * 0.5);
+    double sy = sin(yaw * 0.5);
 
-    // 오일러 각도를 라디안으로 변환
-    float cy = cosf(Euler.Z * 0.5f);   // cos(yaw / 2)
-    float sy = sinf(Euler.Z * 0.5f);   // sin(yaw / 2)
-    float cp = cosf(Euler.Y * 0.5f); // cos(pitch / 2)
-    float sp = sinf(Euler.Y * 0.5f); // sin(pitch / 2)
-    float cr = cosf(Euler.X * 0.5f);  // cos(roll / 2)
-    float sr = sinf(Euler.X * 0.5f);  // sin(roll / 2)
+    FQuat q;
+    q.W = cr * cp * cy + sr * sp * sy;
+    q.X = sr * cp * cy - cr * sp * sy;
+    q.Y = cr * sp * cy + sr * cp * sy;
+    q.Z = cr * cp * sy - sr * sp * cy;
 
-    // 쿼터니언 계산
-    FQuat quaternion;
-    quaternion.X = sr * cp * cy - cr * sp * sy; // X축
-    quaternion.Y = cr * sp * cy + sr * cp * sy; // Y축
-    quaternion.Z = cr * cp * sy - sr * sp * cy; // Z축
-    quaternion.W = cr * cp * cy + sr * sp * sy; // W축 (스칼라)
-
-    return quaternion;
+    return q;
 }
 
-inline FVector FQuat::QuaternionToEuler(const FQuat& quaternion) {
-    // 쿼터니언 요소 추출
-    float X = quaternion.X;
-    float Y = quaternion.Y;
-    float Z = quaternion.Z;
-    float W = quaternion.W;
+inline FVector FQuat::QuaternionToEuler(const FQuat& Quat) {
+    FVector angles;
 
-    // 오일러 각도 계산
-    FVector euler;
+    // roll (x-axis rotation)
+    double sinr_cosp = 2 * (Quat.W * Quat.X + Quat.Y * Quat.Z);
+    double cosr_cosp = 1 - 2 * (Quat.X * Quat.X + Quat.Y * Quat.Y);
+    angles.X = std::atan2(sinr_cosp, cosr_cosp);
 
-    // Pitch (x축 회전)
-    float sinPitch = 2.0f * (W * X + Y * Z);
-    float cosPitch = 1.0f - 2.0f * (X * X + Y * Y);
-    euler.X = FMath::RadiansToDegrees(std::atan2(sinPitch, cosPitch));
+    // pitch (y-axis rotation)
+    double sinp = std::sqrt(1 + 2 * (Quat.W * Quat.Y - Quat.X * Quat.Z));
+    double cosp = std::sqrt(1 - 2 * (Quat.W * Quat.Y - Quat.X * Quat.Z));
+    angles.Y = 2 * std::atan2(sinp, cosp) - PI / 2;
 
-    // Yaw (y축 회전)
-    float sinYaw = 2.0f * (W * Y - Z * X);
-    if (std::abs(sinYaw) >= 1.0f) {
-        euler.Y = FMath::RadiansToDegrees(std::copysign(PIDIV2, sinYaw)); // ±90도 (짐벌락 방지)
-    } else {
-        euler.Z = FMath::RadiansToDegrees(std::asin(sinYaw));
-    }
+    // yaw (z-axis rotation)
+    double siny_cosp = 2 * (Quat.W * Quat.Z + Quat.X * Quat.Y);
+    double cosy_cosp = 1 - 2 * (Quat.Y * Quat.Y + Quat.Z * Quat.Z);
+    angles.Z = std::atan2(siny_cosp, cosy_cosp);
 
-    // Roll (z축 회전)
-    float sinRoll = 2.0f * (W * Z + X * Y);
-    float cosRoll = 1.0f - 2.0f * (Y * Y + Z * Z);
-    euler.Z = FMath::RadiansToDegrees(std::atan2(sinRoll, cosRoll));
+	angles.X = FMath::RadiansToDegrees(angles.X);
+	angles.Y = FMath::RadiansToDegrees(angles.Y);
+	angles.Z = FMath::RadiansToDegrees(angles.Z);
 
-    return euler; // 반환: 라디안 단위의 오일러 각도
+    return angles;
 }
 
 inline FQuat FQuat::AddQuaternions(const FQuat& q1, const FQuat& q2) {
