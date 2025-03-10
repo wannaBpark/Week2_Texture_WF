@@ -54,7 +54,7 @@ void UWorld::Tick(float DeltaTime)
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
 		// Engine에서 제거
-		UEngine::Get().GObjects.Remove(PendingActor->shared_from_this());
+		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
 	}
 	PendingDestroyActors.Empty();
 }
