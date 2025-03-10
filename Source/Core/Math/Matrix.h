@@ -308,7 +308,7 @@ struct alignas(16) FMatrix
 		return Result;
 	}
 
-	static FMatrix Scale(FVector InScale)
+	static FMatrix Scale(const FVector& InScale)
 	{
 		return Scale(InScale.X, InScale.Y, InScale.Z);
 	}
@@ -367,13 +367,13 @@ struct alignas(16) FMatrix
 		return  RotateYaw(Z) * RotatePitch(Y) * RotateRoll(X);
 	}
 
-	static FMatrix Rotate(FVector Rotation)
+	static FMatrix Rotate(const FVector& Rotation)
 	{
 		return Rotate(Rotation.X, Rotation.Y, Rotation.Z);
 	}
 
 
-	static FMatrix Rotate(const FQuaternion& Q) 
+	static FMatrix Rotate(const FQuat& Q) 
 	{
 		FMatrix Result;
 

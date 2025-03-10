@@ -28,6 +28,8 @@ public:// UIWindows
     void RenderPropertyWindow();
 
 private:
+
+private:
 	ImVec2 ResizeToScreen(const ImVec2& vec2) const;
 
     ImVec2 GetRatio() const;

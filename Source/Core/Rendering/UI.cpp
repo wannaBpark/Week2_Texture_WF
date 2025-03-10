@@ -248,10 +248,10 @@ void UI::RenderCameraSettings()
         Camera.GetTransform().SetPosition(CameraLocation[0], CameraLocation[1], CameraLocation[2]);
     }
 
-    float CameraRotation[] = { Camera.GetTransform().GetRotation().X, Camera.GetTransform().GetRotation().Y, Camera.GetTransform().GetRotation().Z };
+    float CameraRotation[] = { Camera.GetTransform().GetRotation().GetEuler().X, Camera.GetTransform().GetRotation().GetEuler().Y, Camera.GetTransform().GetRotation().Z };
     if (ImGui::DragFloat3("Camera Rotation", CameraRotation, 0.1f))
     {
-        Camera.GetTransform().SetRotation(CameraRotation[0], CameraRotation[1], CameraRotation[2]);
+        Camera.GetTransform().SetRotation(FMath::DegreesToRadians(CameraRotation[0]), FMath::DegreesToRadians(CameraRotation[1]), FMath::DegreesToRadians(CameraRotation[2]));
 
     }
     ImGui::DragFloat("Camera Speed", &Camera.CameraSpeed, 0.1f);
@@ -275,7 +275,9 @@ void UI::RenderPropertyWindow()
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-        float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
+		FQuat quat = selectedTransform.GetRotation();
+		FVector rot = quat.GetEuler();
+        float rotation[] = { rot.X, rot.Y, rot.Z};
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
@@ -285,7 +287,8 @@ void UI::RenderPropertyWindow()
         }
         if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
         {
-            selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+			FVector newRot = FVector(rotation[0], rotation[1],rotation[2]);
+            selectedTransform.SetRotation(newRot);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))

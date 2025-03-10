@@ -20,25 +20,27 @@ struct alignas(16) FVector4 : public FVector
     }
 };
 
-struct alignas(16) FQuaternion : public FVector4{
+struct alignas(16) FQuat : public FVector4{
     using FVector::X;
     using FVector::Y;
     using FVector::Z;
     using FVector4::W;
 
-    FQuaternion() : FVector4(0.0f, 0.0f, 0.0f, 1.0f) {}
-	explicit FQuaternion(float InX, float InY, float InZ, float InW) : FVector4(InX, InY, InZ, InW) {}
-    explicit FQuaternion(FVector Rotation) : FVector4(EulerToQuaternion(Rotation)) {}
+    FQuat() : FVector4(0.0f, 0.0f, 0.0f, 1.0f) {}
+	explicit FQuat(float InX, float InY, float InZ, float InW) : FVector4(InX, InY, InZ, InW) {}
+    explicit FQuat(FVector Rotation) : FVector4(EulerToQuaternion(Rotation)) {}
 
-    static FQuaternion EulerToQuaternion(FVector Euler);
+    static FQuat EulerToQuaternion(FVector Euler);
     static FVector QuaternionToEuler(const FVector4& quaternion);
 
     static FVector4 AddQuaternions(const FVector4& q1, const FVector4& q2);
     static FVector4 MultiplyQuaternions(const FVector4& q1, const FVector4& q2);
     static FVector4 SubtractQuaternions(const FVector4& q1, const FVector4& q2);
+
+	FVector GetEuler() const { return QuaternionToEuler(*this); }
 };
 
-inline FQuaternion FQuaternion::EulerToQuaternion(FVector Euler) {
+inline FQuat FQuat::EulerToQuaternion(FVector Euler) {
     // 오일러 각도를 라디안으로 변환
     float cy = cosf(Euler.Z * 0.5f);   // cos(yaw / 2)
     float sy = sinf(Euler.Z * 0.5f);   // sin(yaw / 2)
@@ -48,7 +50,7 @@ inline FQuaternion FQuaternion::EulerToQuaternion(FVector Euler) {
     float sr = sinf(Euler.X * 0.5f);  // sin(roll / 2)
 
     // 쿼터니언 계산
-    FQuaternion quaternion;
+    FQuat quaternion;
     quaternion.X = sr * cp * cy - cr * sp * sy; // X축
     quaternion.Y = cr * sp * cy + sr * cp * sy; // Y축
     quaternion.Z = cr * cp * sy - sr * sp * cy; // Z축
@@ -57,7 +59,7 @@ inline FQuaternion FQuaternion::EulerToQuaternion(FVector Euler) {
     return quaternion;
 }
 
-inline FVector FQuaternion::QuaternionToEuler(const FVector4& quaternion) {
+inline FVector FQuat::QuaternionToEuler(const FVector4& quaternion) {
     // 쿼터니언 요소 추출
     float X = quaternion.X;
     float Y = quaternion.Y;
@@ -88,7 +90,7 @@ inline FVector FQuaternion::QuaternionToEuler(const FVector4& quaternion) {
     return euler; // 반환: 라디안 단위의 오일러 각도
 }
 
-inline FVector4 FQuaternion::AddQuaternions(const FVector4& q1, const FVector4& q2) {
+inline FVector4 FQuat::AddQuaternions(const FVector4& q1, const FVector4& q2) {
     return FVector4(
         q1.X + q2.X,
         q1.Y + q2.Y,
@@ -97,7 +99,7 @@ inline FVector4 FQuaternion::AddQuaternions(const FVector4& q1, const FVector4& 
     );
 }
 
-inline FVector4 FQuaternion::MultiplyQuaternions(const FVector4& q1, const FVector4& q2) {
+inline FVector4 FQuat::MultiplyQuaternions(const FVector4& q1, const FVector4& q2) {
     return FVector4(
         q1.W * q2.X + q1.X * q2.W + q1.Y * q2.Z - q1.Z * q2.Y, // X
         q1.W * q2.Y - q1.X * q2.Z + q1.Y * q2.W + q1.Z * q2.X, // Y
@@ -106,7 +108,7 @@ inline FVector4 FQuaternion::MultiplyQuaternions(const FVector4& q1, const FVect
     );
 }
 
-inline FVector4 FQuaternion::SubtractQuaternions(const FVector4& q1, const FVector4& q2) {
+inline FVector4 FQuat::SubtractQuaternions(const FVector4& q1, const FVector4& q2) {
     return FVector4(
         q1.X - q2.X,
         q1.Y - q2.Y,
