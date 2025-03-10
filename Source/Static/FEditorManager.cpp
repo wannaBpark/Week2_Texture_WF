@@ -13,14 +13,25 @@ void FEditorManager::SelectActor(AActor* NewActor)
         GizmoHandle->SetActive(false);
     }
 
+    if (NewActor == nullptr)
+        return;
+
     if (SelectedActor != nullptr)
     {
         SelectedActor->UnPick();
-		GizmoHandle->SetActive(false);
+        GizmoHandle->SetActive(false);
     }
-    SelectedActor = NewActor;
 
-    if (NewActor != nullptr)
+    if (NewActor == SelectedActor)
+    {
+        SelectedActor = nullptr;
+    }
+    else
+    {
+        SelectedActor = NewActor;
+    }
+
+    if (SelectedActor != nullptr)
     {
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);

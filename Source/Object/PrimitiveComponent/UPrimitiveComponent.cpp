@@ -1,5 +1,6 @@
 ﻿#include "UPrimitiveComponent.h"
 #include "Object/World/World.h"
+#include "Object/Actor/Actor.h"
 
 
 void UPrimitiveComponent::BeginPlay()
@@ -24,7 +25,18 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-	Renderer->RenderPrimitive(this, bIsPicked);
+
+	if (bIsPicked && GetOwner()->IsGizmoActor() == false)
+	{
+		bUseVertexColor = false;
+		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));
+	}
+	else
+	{
+		bUseVertexColor = true;
+	}
+
+	Renderer->RenderPrimitive(this);
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)

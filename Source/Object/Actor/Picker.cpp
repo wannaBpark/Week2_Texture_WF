@@ -45,7 +45,7 @@ void APicker::LateTick(float DeltaTime)
 
         UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
 
-        AActor* PickedActor = (PickedComponent && PickedComponent->GetOwner() && PickedComponent->GetOwner()->IsGizmoActor() == false)
+		AActor* PickedActor = (PickedComponent && PickedComponent->GetOwner() && PickedComponent->GetOwner()->IsGizmoActor() == false) 
             ? PickedComponent->GetOwner() : nullptr;
 
         FEditorManager::Get().SelectActor(PickedActor);

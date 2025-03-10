@@ -63,7 +63,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
 
-	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp, bool bRenderOutline = false);
+	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
 
     /**
      * Buffer에 있는 Vertex를 그립니다.
@@ -150,8 +150,6 @@ protected:
     ID3D11VertexShader* SimpleVertexShader = nullptr;       // Vertex 데이터를 처리하는 Vertex 셰이더
     ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
 
-	ID3D11PixelShader* OutlinePixelShader = nullptr;        // 외곽선을 그리는 Pixel 셰이더
-
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
     unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
@@ -159,7 +157,7 @@ protected:
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
 	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
-    ID3D11DepthStencilState* GizmoDepthStencilState = nullptr;
+    ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 	
 	// Buffer Cache
 

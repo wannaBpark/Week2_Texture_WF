@@ -46,7 +46,6 @@ void URenderer::CreateShader()
          */
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
-    ID3DBlob* OutlineShaderCSO;
 
     ID3DBlob* PickingShaderCSO;
     
@@ -57,9 +56,6 @@ void URenderer::CreateShader()
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
-
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "outlinePS", "ps_5_0", 0, 0, &OutlineShaderCSO, &ErrorMsg);
-    Device->CreatePixelShader(OutlineShaderCSO->GetBufferPointer(), OutlineShaderCSO->GetBufferSize(), nullptr, &OutlinePixelShader);
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
     Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);
@@ -81,7 +77,6 @@ void URenderer::CreateShader()
 
     VertexShaderCSO->Release();
     PixelShaderCSO->Release();
-	OutlineShaderCSO->Release();
     PickingShaderCSO->Release();
 
     // 정점 하나의 크기를 설정 (바이트 단위)
@@ -107,12 +102,6 @@ void URenderer::ReleaseShader()
         SimpleVertexShader->Release();
         SimpleVertexShader = nullptr;
     }
-
-	if (OutlinePixelShader)
-	{
-		OutlinePixelShader->Release();
-		OutlinePixelShader = nullptr;
-	}
 }
 
 void URenderer::CreateConstantBuffer()
@@ -187,7 +176,7 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRenderOutline)
+void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
 {
     if (BufferCache == nullptr)
     {
@@ -215,20 +204,8 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, bool bRender
 
     UpdateConstant(UpdateInfo);
 
+    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
 
-    if (bRenderOutline)
-    {
-        // 윤곽선 셰이더 설정
-        DeviceContext->PSSetShader(OutlinePixelShader, nullptr, 0);
-        RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
-
-		// 기본 셰이더로 변경
-		DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
-    }
-    else
-    {
-	    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
-    }
 }
 
 void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const

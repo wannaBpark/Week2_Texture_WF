@@ -26,6 +26,8 @@ public:
 	void SetRelativeTransform(const FTransform& InTransform);
 
 	void Pick(bool bPicked);
+public:
+	bool IsPicked() const { return bIsPicked; }
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
