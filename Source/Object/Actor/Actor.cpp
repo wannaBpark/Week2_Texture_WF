@@ -28,6 +28,10 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
+void AActor::LateTick(float DeltaTime)
+{
+}
+
 void AActor::Destroyed()
 {
 	EndPlay(EEndPlayReason::Destroyed);

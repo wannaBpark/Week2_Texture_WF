@@ -12,6 +12,11 @@ void UPrimitiveComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime); 
 }
 
+void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const FVector4 UUIDColor)const
+{
+	Renderer.UpdateConstantPicking(UUIDColor);
+}
+
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();

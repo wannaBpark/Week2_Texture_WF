@@ -19,10 +19,12 @@ public:
 public:
 	void BeginPlay();
 	void Tick(float DeltaTime);
+	void LateTick(float DeltaTime);
 
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
+  
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();
