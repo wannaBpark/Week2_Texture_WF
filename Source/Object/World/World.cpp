@@ -21,7 +21,6 @@ void UWorld::BeginPlay()
 
 	APicker* Picker = SpawnActor<APicker>();
 	
-	AGizmoHandle* Handle = SpawnActor<AGizmoHandle>();
 	//AArrow* TestArrow = FObjectFactory::ConstructActor<AArrow>();
 	//AArrow* TestArrow = SpawnActor<AArrow>();
 	//TestArrow->SetTransform(FTransform(FVector(1.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(0.2f, 0.2f, 0.5f)));
@@ -52,13 +51,6 @@ void UWorld::Tick(float DeltaTime)
 			Actor->Tick(DeltaTime);
 		}
 	}
-
-	for (const auto& PendingActor : PendingDestroyActors)
-	{
-		// Engine에서 제거
-		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
-	}
-	PendingDestroyActors.Empty();
 }
 
 void UWorld::LateTick(float DeltaTime)
@@ -70,6 +62,14 @@ void UWorld::LateTick(float DeltaTime)
 			Actor->LateTick(DeltaTime);
 		}
 	}
+
+
+	for (const auto& PendingActor : PendingDestroyActors)
+	{
+		// Engine에서 제거
+		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
+	}
+	PendingDestroyActors.Empty();
 }
 
 void UWorld::Render()

@@ -8,10 +8,10 @@ public:
 	virtual ~AGizmoHandle() = default;
 
 public:
-	void SetActive(bool bActive) { bIsActive = bActive; }
+	void SetActive(bool bActive);
 private:
 	bool bIsActive = false;
-	TArray<class UCylinderComp*> ArrowComponents;
+	TArray<class UCylinderComp*> CylinderComponents;
 
 	virtual const char* GetTypeName() override;
 };

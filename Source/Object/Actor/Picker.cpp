@@ -1,4 +1,4 @@
-#include "Core/HAL/PlatformType.h"
+﻿#include "Core/HAL/PlatformType.h"
 #include "Core/Rendering/URenderer.h"
 #include "Picker.h"
 
@@ -43,9 +43,11 @@ void APicker::LateTick(float DeltaTime)
 
         uint32_t UUID = DecodeUUID(color);
 
-        //TODO: UUID로 픽한 애 변경 아마 FEditorManager에서 처리할듯
+        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+
+		AActor* PickedActor = (!PickedComponent || PickedComponent->GetOwner() == nullptr) ? nullptr : PickedComponent->GetOwner();
+        FEditorManager::Get().SelectActor(PickedActor);
         
         std::cout<<UUID << "\n";
-        // UE_LOG("%d\n", UUID);
     }
 }
