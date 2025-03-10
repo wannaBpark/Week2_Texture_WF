@@ -123,7 +123,16 @@ void UWorld::DisplayPickingTexture(URenderer& Renderer)
 
 void UWorld::ClearWorld()
 {
-	
+	TArray CopyActors = Actors;
+	for (AActor* Actor : CopyActors)
+	{
+		DestroyActor(Actor);
+	}
+	Actors.Empty();
+	UE_LOG("Clear World");
+
+	AAxis* Axis = SpawnActor<AAxis>();
+	APicker* Picker = SpawnActor<APicker>();
 }
 
 
@@ -142,16 +151,6 @@ bool UWorld::DestroyActor(AActor* InActor)
 
 	// World에서 제거
 	Actors.Remove(InActor);
-
-	// RenderComponent 제거
-	auto Components = InActor->GetComponents();
-	for (auto& Component : Components)
-	{
-		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
-		{
-			RemoveRenderComponent(PrimitiveComponent);
-		}
-	}
 
 	// 제거 대기열에 추가
 	PendingDestroyActors.Add(InActor);
@@ -217,7 +216,7 @@ UWorldInfo UWorld::GetWorldInfo() const
 	UWorldInfo WorldInfo;
 	WorldInfo.ActorCount = Actors.Num();
 	WorldInfo.ObjctInfos = new UObjectInfo*[WorldInfo.ActorCount];
-	WorldInfo.SceneName = SceneName;
+	WorldInfo.SceneName = *SceneName;
 	WorldInfo.Version = 1;
 	uint32 i = 0;
 	for (auto& actor : Actors)

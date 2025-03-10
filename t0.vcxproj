@@ -243,7 +243,6 @@
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
-    <ClCompile Include="Source\Object\Actor\Picker.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
     <ClCompile Include="Source\Debug\DebugConsole.cpp" />
@@ -301,7 +300,6 @@
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
-    <ClInclude Include="Source\Object\Actor\Picker.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
@@ -318,6 +316,10 @@
     <ClInclude Include="Source\Core\Engine.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
+    <ClCompile Include="Source\Object\Actor\Picker.cpp" />
+    <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
+    <ClInclude Include="Source\Core\Container\CString.h" />
+    <ClInclude Include="Source\Object\Actor\Picker.h" />
     <ClCompile Include="Source\Static\FEditorManager.cpp" />
     <ClInclude Include="Source\Object\Actor\Arrow.h" />
     <ClInclude Include="Source\Core\Input\PlayerController.h" />
