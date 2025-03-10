@@ -39,6 +39,7 @@ public:
 	{
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
 		Components.Add(ObjectInstance);
+		ObjectInstance->SetOwner(this);
 
 		return ObjectInstance;
 	}
