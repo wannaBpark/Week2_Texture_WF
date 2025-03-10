@@ -274,7 +274,7 @@ void UI::RenderCameraSettings()
     }
 
     // float CameraRotation[] = { Camera->GetActorTransform().GetRotation().X, Camera->GetActorTransform().GetRotation().Y, Camera->GetActorTransform().GetRotation().Z };
-    FVector CameraRotation = Camera->GetActorTransform().GetEuler();
+    FVector CameraRotation = Camera->GetActorTransform().GetRotation().GetEuler();
     if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&CameraRotation), 0.1f))
     {
         FTransform Trans = Camera->GetActorTransform();
@@ -309,7 +309,7 @@ void UI::RenderPropertyWindow()
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-        float rotation[] = { selectedTransform.GetRotation().X, selectedTransform.GetRotation().Y, selectedTransform.GetRotation().Z };
+        float rotation[] = { selectedTransform.GetRotation().GetEuler().X, selectedTransform.GetRotation().GetEuler().Y, selectedTransform.GetRotation().GetEuler().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
@@ -319,7 +319,7 @@ void UI::RenderPropertyWindow()
         }
         if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
         {
-            selectedTransform.SetRotation(rotation[0], rotation[1], rotation[2]);
+            selectedTransform.SetRotation(FVector(rotation[0], rotation[1], rotation[2]));
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
