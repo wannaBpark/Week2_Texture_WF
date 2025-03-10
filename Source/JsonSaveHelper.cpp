@@ -43,7 +43,9 @@ UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
         
         UObjectInfo* ObjectInfo = new UObjectInfo();
         WorldInfo->ObjctInfos[index] = ObjectInfo;
-        ObjectInfo->UUID = std::stoi(Json["Actors"][UUID].ToString());
+        //auto asd = Json["Actors"][UUID];
+        //auto bb = Json["Actors"][UUID].ToString();
+        //ObjectInfo->UUID = std::stoi(Json["Actors"][UUID].ToString());
         
         JSON Location = Json["Actors"][UUID]["Location"];
         JSON Rotation = Json["Actors"][UUID]["Rotation"];

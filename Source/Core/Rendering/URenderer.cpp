@@ -427,7 +427,7 @@ void URenderer::CreateDepthStencilState()
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     DepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;                     
-    Device->CreateDepthStencilState(&DepthStencilDesc,&IgnoreDepthStencilState);
+    Device->CreateDepthStencilState(&IgnoreDepthStencilDesc ,&IgnoreDepthStencilState);
 }
 
 void URenderer::ReleaseFrameBuffer()
@@ -530,11 +530,10 @@ void URenderer::CreatePickingTexture(HWND hWnd)
 {
     RECT Rect;
     int Width , Height;
-    if (GetClientRect(hWnd , &Rect)) {
-        Width = Rect.right - Rect.left;
-        Height = Rect.bottom - Rect.top;
-    }
-    
+
+    Width = ViewportInfo.Width;
+	Height = ViewportInfo.Height;
+
     D3D11_TEXTURE2D_DESC textureDesc = {};
     textureDesc.Width = Width;
     textureDesc.Height = Height;
@@ -544,6 +543,7 @@ void URenderer::CreatePickingTexture(HWND hWnd)
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
     Device->CreateTexture2D(&textureDesc, nullptr, &PickingFrameBuffer);
 
     D3D11_RENDER_TARGET_VIEW_DESC PickingFrameBufferRTVDesc = {};

@@ -188,6 +188,11 @@ void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 
 void UWorld::LoadWorld(const char* SceneName)
 {
+	if (SceneName == nullptr || strcmp(SceneName, "") == 0)
+	{
+		return;
+	}
+
 	ClearWorld();
 	
 	UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(SceneName);
