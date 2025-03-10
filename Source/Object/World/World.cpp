@@ -44,7 +44,8 @@ void UWorld::Tick(float DeltaTime)
 	}
 	ActorsToSpawn.Empty();
 
-	for (const auto& Actor : Actors)
+	const auto CopyActors = Actors;
+	for (const auto& Actor : CopyActors)
 	{
 		if (Actor->CanEverTick())
 		{
@@ -55,7 +56,8 @@ void UWorld::Tick(float DeltaTime)
 
 void UWorld::LateTick(float DeltaTime)
 {
-	for (auto& Actor : Actors)
+	const auto CopyActors = Actors;
+	for (const auto& Actor : CopyActors)
 	{
 		if (Actor->CanEverTick())
 		{
