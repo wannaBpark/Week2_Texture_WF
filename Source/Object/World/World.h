@@ -3,6 +3,7 @@
 #include "Core/Engine.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Set.h"
+#include "Core/Container/String.h"
 #include "Object/UObject.h"
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
@@ -44,7 +45,7 @@ private:
 	UWorldInfo GetWorldInfo() const;
 
 public:
-	std::string SceneName;
+	FString SceneName;
 	uint32 Version = 1;
 	
 protected:

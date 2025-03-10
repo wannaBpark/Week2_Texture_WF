@@ -2,15 +2,17 @@
 #include "Debug/DebugConsole.h"
 #include <cstdarg>
 #include <algorithm>
+#include "Core/Container/String.h"
 
 #include "ImGui/imgui_internal.h"
 
-std::vector<std::string> Debug::items;
+std::vector<FString> Debug::items;
+
 
 void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurRatio)
 {    
     static char inputBuf[256] = "";
-    static std::vector<std::string> history;
+    static std::vector<FString> history;
     static int historyPos = -1;
     bool reclaimFocus = false;
 
@@ -70,7 +72,7 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
     ImGui::End();
 }
 
-void Debug::ProcessCommand(const std::string& command, std::vector<std::string>& log)
+void Debug::ProcessCommand(const FString& command, std::vector<FString>& log)
 {
     log.push_back("Executing: " + command);
 

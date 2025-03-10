@@ -208,7 +208,7 @@ UWorldInfo UWorld::GetWorldInfo() const
 	UWorldInfo WorldInfo;
 	WorldInfo.ActorCount = Actors.Num();
 	WorldInfo.ObjctInfos = new UObjectInfo*[WorldInfo.ActorCount];
-	WorldInfo.SceneName = SceneName;
+	WorldInfo.SceneName = *SceneName;
 	WorldInfo.Version = 1;
 	uint32 i = 0;
 	for (auto& actor : Actors)
