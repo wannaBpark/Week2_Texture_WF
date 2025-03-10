@@ -93,7 +93,7 @@ public:
     void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo, bool IsOrthoGraphic = false) const;
+    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
