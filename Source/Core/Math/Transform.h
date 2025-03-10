@@ -60,7 +60,7 @@ public:
 		Scale = InScale;
 	}
 
-	inline virtual void SetRotation(const FQuaternion& InRotation)
+	inline virtual void SetRotation(const FQuat& InRotation)
 	{
 		Rotation = InRotation;
 	}
