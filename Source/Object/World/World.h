@@ -8,6 +8,9 @@
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
 
+#include "Object/Actor/Arrow.h"
+#include "Object/Actor/Picker.h"
+
 class AActor;
 
 

@@ -10,6 +10,8 @@
 #include "Object/Actor/Camera.h"
 #include "Static/FEditorManager.h"
 
+class AArrow;
+class APicker;
 // ImGui WndProc 정의
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -218,8 +220,12 @@ void UEngine::InitWorld()
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
 
-	// !TODO : Load World
-	//auto Axis = FObjectFactory::ConstructActor<AAxis>();
+    // Test
+    World->SpawnActor<AArrow>();
+    
+    World->SpawnActor<AAxis>();
+    World->SpawnActor<APicker>();
+
 	World->BeginPlay();
 }
 

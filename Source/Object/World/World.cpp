@@ -2,27 +2,19 @@
 #include <cassert>
 #include "JsonSavehelper.h"
 
-#include "Object/Actor/Arrow.h"
-#include "Object/Actor/Cube.h"
-#include "Object/Actor/Picker.h"
-#include "Object/Actor/Sphere.h"
-#include "Object/Gizmo/Axis.h"
-
-#include "Core/EngineStatics.h"
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
 #include "Object/Actor/Camera.h"
 #include <Object/Gizmo/GizmoHandle.h>
 
+#include "Object/Actor/Cube.h"
+#include "Object/Actor/Sphere.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
 
 void UWorld::BeginPlay()
 {
-	AAxis* Axis = SpawnActor<AAxis>();
-
-	APicker* Picker = SpawnActor<APicker>();
-
 	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
@@ -57,7 +49,6 @@ void UWorld::LateTick(float DeltaTime)
 			Actor->LateTick(DeltaTime);
 		}
 	}
-
 
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
@@ -124,13 +115,13 @@ void UWorld::ClearWorld()
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
-		DestroyActor(Actor);
+		if (!Actor->IsGizmoActor())
+		{
+			DestroyActor(Actor);
+		}
 	}
 	Actors.Empty();
 	UE_LOG("Clear World");
-
-	AAxis* Axis = SpawnActor<AAxis>();
-	APicker* Picker = SpawnActor<APicker>();
 }
 
 
@@ -195,10 +186,6 @@ void UWorld::LoadWorld(const char* SceneName)
 		{
 			Actor = SpawnActor<AArrow>();
 		}
-		else if (ObjectInfo->ObjectType == "Axis")
-		{
-			Actor = SpawnActor<AAxis>();
-		}
 			
 		Actor->SetActorTransform(Transform);
 	}
@@ -219,6 +206,11 @@ UWorldInfo UWorld::GetWorldInfo() const
 	uint32 i = 0;
 	for (auto& actor : Actors)
 	{
+		if (actor->IsGizmoActor())
+		{
+			WorldInfo.ActorCount--;
+			continue;
+		}
 		WorldInfo.ObjctInfos[i] = new UObjectInfo();
 		const FTransform& Transform = actor->GetActorTransform();
 		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
