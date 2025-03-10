@@ -97,7 +97,7 @@ void UI::Update()
         UWorld* World = UEngine::Get().GetWorld();
         uint32 bufferSize = 100;
         char* SceneNameInput = new char[bufferSize];
-        strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_str());
+        strcpy_s(SceneNameInput, bufferSize, *World->SceneName);
         // std::copy(World->SceneName.begin(), World->SceneName.end(), SceneNameInput);
         if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
         {

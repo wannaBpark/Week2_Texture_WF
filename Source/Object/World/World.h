@@ -2,6 +2,7 @@
 #include "JsonSavehelper.h"
 #include "Object/UObject.h"
 #include "Core/Container/Set.h"
+#include "Core/Container/String.h"
 
 class UWorld :public UObject
 {
@@ -22,7 +23,7 @@ private:
 	UWorldInfo GetWorldInfo() const;
 
 public:
-	std::string SceneName = "";
+	FString SceneName;
 	uint32 Version = 1;
 	
 protected:

@@ -3,12 +3,14 @@
 #include <cstdarg>
 #include <algorithm>
 
-std::vector<std::string> Debug::items;
+#include "Core/Container/String.h"
+
+std::vector<FString> Debug::items;
 
 void Debug::ShowConsole(bool* bOpen)
 {
     static char inputBuf[256] = "";
-    static std::vector<std::string> history;
+    static std::vector<FString> history;
     static int historyPos = -1;
     bool reclaimFocus = false;
 
@@ -22,7 +24,7 @@ void Debug::ShowConsole(bool* bOpen)
     if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar))
     {
         for (const auto& Item : items)
-            ImGui::TextUnformatted(Item.c_str());
+            ImGui::TextUnformatted(*Item);
 
         if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
             ImGui::SetScrollHereY(1.0f);
@@ -39,19 +41,19 @@ void Debug::ShowConsole(bool* bOpen)
                 historyPos += (data->EventKey == ImGuiKey_UpArrow) ? -1 : 1;
                 historyPos = std::clamp(historyPos, 0, (int)history.size() - 1);
 
-                std::string& historyCommand = history[historyPos];
+                FString& historyCommand = history[historyPos];
                 data->DeleteChars(0, data->BufTextLen);
-                data->InsertChars(0, historyCommand.c_str());
+                data->InsertChars(0, *historyCommand);
             }
             return 0;
         }))
     {
-        std::string inputStr = inputBuf;
-        if (!inputStr.empty())
+        FString inputStr = inputBuf;
+        if (!inputStr.IsEmpty())
         {
             items.push_back("> " + inputStr);
             history.push_back(inputStr);
-            historyPos = (int)history.size();
+            historyPos = static_cast<int>(history.size());
             ProcessCommand(inputStr, items);
         }
         inputBuf[0] = '\0';
@@ -63,7 +65,7 @@ void Debug::ShowConsole(bool* bOpen)
     ImGui::End();
 }
 
-void Debug::ProcessCommand(const std::string& command, std::vector<std::string>& log)
+void Debug::ProcessCommand(const FString& command, std::vector<FString>& log)
 {
     log.push_back("Executing: " + command);
 
