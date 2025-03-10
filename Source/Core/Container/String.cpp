@@ -1,9 +1,18 @@
 ﻿#include "String.h"
 #include <cctype>
 
-#include "CString.h"
 #include "Core/Math/MathUtility.h"
 
+
+#if IS_WIDECHAR
+std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
+{
+    const int Size = MultiByteToWideChar(CP_UTF8, 0, NarrowStr, -1, nullptr, 0);
+    std::wstring Str(Size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, NarrowStr, -1, Str.data(), Size);
+    return Str;
+}
+#endif
 
 FString FString::FromInt(int32 Num)
 {
