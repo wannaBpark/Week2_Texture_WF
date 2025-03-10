@@ -65,25 +65,25 @@ public:
 		return Scale;
 	}
 
-	FMatrix GetWorldMatrix() const 
+	FMatrix GetMatrix() const 
 	{
-		return FMatrix::Translate(Position.X, Position.Y, Position.Z) 
-			* FMatrix::Rotate(Rotation.X, Rotation.Y, Rotation.Z) 
-			* FMatrix::Scale(Scale.X, Scale.Y, Scale.Z);
+		return FMatrix::Scale(Scale.X, Scale.Y, Scale.Z)
+			* FMatrix::Rotate(Rotation.X, Rotation.Y, Rotation.Z)
+			* FMatrix::Translate(Position.X, Position.Y, Position.Z);
 	}
 
-	FTransform operator*(const FTransform& Other) const
+	FTransform ApplyParentTransform(const FTransform& ParentTransform) const
 	{
-		FMatrix ParentMatrix = GetWorldMatrix();
-		FMatrix ChildMatrix = Other.GetWorldMatrix();
+		FMatrix ParentMatrix = ParentTransform.GetMatrix();
+		FMatrix LocalMatrix = GetMatrix();
 
-		FMatrix Result = ParentMatrix * ChildMatrix;
+		FMatrix NewMatrix = ParentMatrix * LocalMatrix;
 
-		FVector ResultPosition = Result.GetTranslation();
-		FVector ResultRotation = Result.GetRotation();
-		FVector ResultScale = Result.GetScale();
+		FVector NewPosition = NewMatrix.GetTranslation();
+		FVector NewRotation = NewMatrix.GetRotation();
+		FVector NewScale = NewMatrix.GetScale();
 
-		return FTransform(ResultPosition, ResultRotation, ResultScale);
+		return FTransform(NewPosition, NewRotation, NewScale);
 	}
 
 	// FVector GetForward() const

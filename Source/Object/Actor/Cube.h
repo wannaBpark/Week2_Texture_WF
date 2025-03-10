@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
-class ACube :
-    public AActor
+class ACube : public AActor
 {
 	using Super = AActor;
 public:
@@ -9,5 +8,6 @@ public:
 	virtual ~ACube() = default;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual const char* GetTypeName() override;
 };
 

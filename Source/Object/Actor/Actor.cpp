@@ -36,21 +36,48 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-const FTransform& AActor::GetActorTransform() const
+void AActor::Pick()
+{
+	if (RootComponent)
+	{
+		RootComponent->Pick(true);
+	}
+}
+
+void AActor::UnPick()
+{
+	if (RootComponent)
+	{
+		RootComponent->Pick(false);
+	}	
+}
+
+const FTransform& AActor::GetActorTransform()
 {
 	return RootComponent ? RootComponent->GetComponentTransform() : FTransform();
 }
 
-void AActor::SetTransform(const FTransform& InTransform)
+void AActor::SetActorTransform(const FTransform& InTransform)
 {
+	// InTransform은 월드 기준임
 	if (RootComponent)
 	{
-		RootComponent->SetTransform(InTransform);
+		RootComponent->SetRelativeTransform(InTransform);
 	}
 	else
 	{
 		UE_LOG("RootComponent is nullptr");
 	}
+}
+
+const char* AActor::GetTypeName()
+{
+	return "Actor";
+}
+
+USceneComponent* AActor::GetRootComponent()
+{
+	return RootComponent;
 }
 
 bool AActor::Destroy()

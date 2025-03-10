@@ -3,6 +3,7 @@
 #include "Core/Math/Vector.h"
 #include "Core/Container/Set.h"
 #include "Core/Math/Transform.h"
+#include "Core/Math/Matrix.h"
 #include "Object/ActorComponent/ActorComponent.h"
 
 class USceneComponent : public UActorComponent
@@ -17,18 +18,28 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	const FTransform& GetComponentTransform() { return Transform; }
+	/* 로컬 트랜스폼을 반환*/
+	const FTransform GetComponentTransform() { return RelativeTransform; }
+	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
+	const FTransform GetWorldTransform();
 
-	void SetTransform(const FTransform& InTransform);
+	void SetRelativeTransform(const FTransform& InTransform);
+
+	void Pick(bool bPicked);
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
-
-protected:
-	void UpdateChildrenTransform();
+	// 부모의 월드 트랜스폼을 받아서 자신의 로컬 트랜스폼을 갱신
+	void ApplyParentWorldTransform(const FTransform& InTransform);
 
 protected:
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
-	FTransform Transform = FTransform();
+	// 이건 내 로컬 트랜스폼
+	FTransform RelativeTransform = FTransform();
+	bool bCanEverTick = true;
+
+	// debug
+protected:
+	bool bIsPicked = false;
 };

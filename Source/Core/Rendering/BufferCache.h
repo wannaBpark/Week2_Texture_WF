@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 #include <unordered_map>
 #include "Primitive/PrimitiveVertices.h"
+#include "Core/Container/Array.h"
 
 struct BufferInfo
 {
@@ -39,6 +40,11 @@ public:
 
 	void Init();
 	BufferInfo GetBufferInfo(EPrimitiveType Type);
+
+public:
+	TArray<FVertexSimple> CreateArrowVertices();
+	TArray<FVertexSimple> CreateConeVertices();
+	TArray<FVertexSimple> CreateCylinderVertices();
 
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);

@@ -20,3 +20,8 @@ void ASphere::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+const char* ASphere::GetTypeName()
+{
+	return "Sphere";
+}

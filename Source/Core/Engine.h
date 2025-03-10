@@ -53,6 +53,7 @@ private:
     void InitRenderer();
     void InitWorld();
     void ShutdownWindow();
+    void UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:
 	UWorld* GetWorld() const { return World; }
