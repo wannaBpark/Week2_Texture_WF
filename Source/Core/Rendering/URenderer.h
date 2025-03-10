@@ -208,5 +208,6 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
+	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
 #pragma endregion picking
 };
