@@ -128,6 +128,7 @@ public:
      * 키를 눌림 상태로 전환합니다. 
      */
     void KeyDown(EKeyCode key);
+    void KeyOnceUp(EKeyCode key);
 
     /**
      * 키를 눌리지 않은 상태로 전환합니다.

@@ -59,6 +59,11 @@ void APlayerInput::KeyDown(EKeyCode key)
     _onceKeys[static_cast<uint8_t>(key)] = true;
 }
 
+void APlayerInput::KeyOnceUp(EKeyCode key)
+{
+    _onceKeys[static_cast<uint8_t>(key)] = false;
+}
+
 void APlayerInput::KeyUp(EKeyCode key)
 {
     _keys[static_cast<uint8_t>(key)] = false;
