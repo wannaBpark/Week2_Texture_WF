@@ -3,6 +3,9 @@
 #include <iostream>
 
 #include "Core/HAL/PlatformType.h"
+#include "Core/HAL/StackAllocator.h"
+
+#include "StackAllocator.h"
 
 enum EAllocationType : uint8
 {
@@ -22,6 +25,7 @@ private:
     static std::atomic<uint64> ObjectAllocationCount;
     static std::atomic<uint64> ContainerAllocationBytes;
     static std::atomic<uint64> ContainerAllocationCount;
+    StackAllocator stackAllocator;
 
     template <EAllocationType AllocType>
     static void IncrementStats(size_t Size);
@@ -32,6 +36,9 @@ private:
 public:
     template <EAllocationType AllocType>
     static void* Malloc(size_t Size);
+
+    template <typename T, EAllocationType AllocType>
+    T* FPlatformMemory::Malloc(T obj, size_t Size);
 
     template <EAllocationType AllocType>
     static void* AlignedMalloc(size_t Size, size_t Alignment);
@@ -98,10 +105,22 @@ void FPlatformMemory::DecrementStats(size_t Size)
 template <EAllocationType AllocType>
 void* FPlatformMemory::Malloc(size_t Size)
 {
+    
     void* Ptr = std::malloc(Size);
     if (Ptr)
     {
         IncrementStats<AllocType>(Size);
+    }
+    return Ptr;
+}
+
+template <typename T, EAllocationType AllocType>
+T* FPlatformMemory::Malloc(T obj, size_t Size)
+{
+    T* Ptr = stackAllocator.newNode<T>();
+    if (Ptr)
+    {
+        IncrementStats<AllocType>(sizeof(T));
     }
     return Ptr;
 }
@@ -120,11 +139,11 @@ void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
 template <EAllocationType AllocType>
 void FPlatformMemory::Free(void* Address, size_t Size)
 {
-    if (Address)
+    /*if (Address)
     {
         DecrementStats<AllocType>(Size);
         std::free(Address);
-    }
+    }*/
 }
 
 template <EAllocationType AllocType>

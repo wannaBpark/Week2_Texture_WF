@@ -21,7 +21,7 @@ public:
         UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
 
         constexpr size_t ObjectSize = sizeof(T);
-        void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
+        void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(T, ObjectSize);
 
         T* ObjectPtr = new (RawMemory) T();
         std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
