@@ -14,30 +14,19 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
     FVector NewVelocity(0, 0, 0);
 
-    if (APlayerInput::Get().IsPressedMouse(true) == false)
-    {
-        // Camera->SetVelocity(NewVelocity);
-        return;
-    }
+   
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
     
     //전프레임이랑 비교
     //x좌표 받아와서 x만큼 x축회전
     //y좌표 받아와서 y만큼 y축 회전
-    FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
-    FVector MousePos = APlayerInput::Get().GetMousePos();
-    FVector DeltaPos = MousePos - MousePrePos;
     //FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
 
     FTransform CameraTransform = Camera->GetActorTransform();
 
     FVector TargetRotation = CameraTransform.GetRotation().GetEuler();
-    TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime;
-    TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime;
     
-    TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
-    CameraTransform.SetRotation(TargetRotation);
 
     
     //CameraTransform.Rotate({0, Camera->CameraSpeed * DeltaPos.Y * DeltaTime, Camera->CameraSpeed * DeltaPos.X * DeltaTime});
@@ -78,11 +67,20 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     {
         NewVelocity = NewVelocity.GetSafeNormal();
     }
-
     //회전이랑 마우스클릭 구현 카메라로 해야할듯?
     CameraTransform.Translate(NewVelocity * DeltaTime * CamSpeed);
-    Camera->SetActorTransform(CameraTransform); //임시용
     // FCamera::Get().SetVelocity(NewVelocity);
+    if (APlayerInput::Get().IsPressedMouse(true) == true)
+    {
+        FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
+        FVector MousePos = APlayerInput::Get().GetMousePos();
+        FVector DeltaPos = MousePos - MousePrePos;
+        TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime;
+        TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime;
+        TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+        CameraTransform.SetRotation(TargetRotation);
+    }
+    Camera->SetActorTransform(CameraTransform); //임시용
 }
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)

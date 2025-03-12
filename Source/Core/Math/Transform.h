@@ -125,29 +125,31 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateRoll(InRotation.X);
-		RotatePitch(InRotation.Y);
 		RotateYaw(InRotation.Z);
+		RotatePitch(InRotation.X);
+		RotateRoll(InRotation.Y);
+		
 	}
 
 	void RotateYaw(float Angle)
 	{
 		FVector Axis = FVector(0, 0, 1);
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
+	}
 
 		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
-	}
 
 	void RotatePitch(float Angle)
 	{
-		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle),Rotation);
 	}
 
 	void RotateRoll(float Angle)
 	{
-		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
+	
 	}
 
 };
