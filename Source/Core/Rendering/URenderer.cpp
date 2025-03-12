@@ -6,6 +6,8 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+#define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
+
 void URenderer::Create(HWND hWindow)
 {
     CreateDeviceAndSwapChain(hWindow);
@@ -64,7 +66,7 @@ void URenderer::CreateShader()
 	if (ErrorMsg)
 	{
 		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-		ErrorMsg->Release();
+        SAFE_RELEASE(ErrorMsg);
 	}
 
     // 입력 레이아웃 정의 및 생성
@@ -76,9 +78,10 @@ void URenderer::CreateShader()
 
     Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
 
-    VertexShaderCSO->Release();
-    PixelShaderCSO->Release();
-    PickingShaderCSO->Release();
+
+    SAFE_RELEASE(VertexShaderCSO);
+    SAFE_RELEASE(PixelShaderCSO);
+    SAFE_RELEASE(PickingShaderCSO);
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
@@ -86,23 +89,9 @@ void URenderer::CreateShader()
 
 void URenderer::ReleaseShader()
 {
-    if (SimpleInputLayout)
-    {
-        SimpleInputLayout->Release();
-        SimpleInputLayout = nullptr;
-    }
-
-    if (SimplePixelShader)
-    {
-        SimplePixelShader->Release();
-        SimplePixelShader = nullptr;
-    }
-
-    if (SimpleVertexShader)
-    {
-        SimpleVertexShader->Release();
-        SimpleVertexShader = nullptr;
-    }
+    SAFE_RELEASE(SimpleInputLayout);
+    SAFE_RELEASE(SimplePixelShader);
+    SAFE_RELEASE(SimpleVertexShader);
 }
 
 void URenderer::CreateConstantBuffer()
@@ -134,23 +123,9 @@ void URenderer::CreateConstantBuffer()
 
 void URenderer::ReleaseConstantBuffer()
 {
-    if (ConstantBuffer)
-    {
-        ConstantBuffer->Release();
-        ConstantBuffer = nullptr;
-    }
-
-    if (ConstantPickingBuffer)
-    {
-        ConstantPickingBuffer->Release();
-        ConstantPickingBuffer = nullptr;
-    }
-
-    if (ConstantsDepthBuffer)
-    {
-        ConstantsDepthBuffer->Release();
-        ConstantsDepthBuffer = nullptr;
-    }
+    SAFE_RELEASE(ConstantBuffer);
+    SAFE_RELEASE(ConstantPickingBuffer);
+    SAFE_RELEASE(ConstantsDepthBuffer);
 }
 
 void URenderer::SwapBuffer() const
@@ -259,7 +234,7 @@ ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT 
 
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
 {
-    pBuffer->Release();
+    SAFE_RELEASE(pBuffer);
 }
 
 void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
@@ -286,11 +261,9 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 }
 
 
-ID3D11Device* URenderer::GetDevice() const
-{ return Device; }
+ID3D11Device* URenderer::GetDevice() const { return Device; }
 
-ID3D11DeviceContext* URenderer::GetDeviceContext() const
-{ return DeviceContext; }
+ID3D11DeviceContext* URenderer::GetDeviceContext() const { return DeviceContext; }
 
 void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
 {
@@ -345,24 +318,9 @@ void URenderer::ReleaseDeviceAndSwapChain()
     {
         DeviceContext->Flush(); // 남이있는 GPU 명령 실행
     }
-
-    if (SwapChain)
-    {
-        SwapChain->Release();
-        SwapChain = nullptr;
-    }
-
-    if (Device)
-    {
-        Device->Release();
-        Device = nullptr;
-    }
-
-    if (DeviceContext)
-    {
-        DeviceContext->Release();
-        DeviceContext = nullptr;
-    }
+    SAFE_RELEASE(SwapChain);
+    SAFE_RELEASE(Device);
+    SAFE_RELEASE(DeviceContext);
 }
 
 void URenderer::CreateFrameBuffer()
@@ -432,53 +390,18 @@ void URenderer::CreateDepthStencilState()
 
 void URenderer::ReleaseFrameBuffer()
 {
-    if (FrameBuffer)
-    {
-        FrameBuffer->Release();
-        FrameBuffer = nullptr;
-    }
-
-    if (FrameBufferRTV)
-    {
-        FrameBufferRTV->Release();
-        FrameBufferRTV = nullptr;
-    }
-
-    if (PickingFrameBuffer)
-    {
-		PickingFrameBuffer->Release();
-		PickingFrameBuffer = nullptr;
-    }
-
-    if (PickingFrameBufferRTV)
-    {
-		PickingFrameBufferRTV->Release();
-		PickingFrameBufferRTV = nullptr;
-    }
+    SAFE_RELEASE(FrameBuffer);
+    SAFE_RELEASE(FrameBufferRTV);
+    SAFE_RELEASE(PickingFrameBuffer);
+    SAFE_RELEASE(PickingFrameBufferRTV);
 }
 
 void URenderer::ReleaseDepthStencilBuffer()
 {
-    if (DepthStencilBuffer)
-    {
-        DepthStencilBuffer->Release();
-        DepthStencilBuffer = nullptr;
-    }
-    if (DepthStencilView)
-    {
-        DepthStencilView->Release();
-        DepthStencilView = nullptr;
-    }
-    if (DepthStencilState)
-    {
-        DepthStencilState->Release();
-        DepthStencilState = nullptr;
-    }
-    if (IgnoreDepthStencilState)
-    {
-        IgnoreDepthStencilState->Release();
-        IgnoreDepthStencilState = nullptr;
-    }
+    SAFE_RELEASE(DepthStencilBuffer);
+    SAFE_RELEASE(DepthStencilView);
+    SAFE_RELEASE(DepthStencilState);
+    SAFE_RELEASE(IgnoreDepthStencilState);
 }
 
 void URenderer::CreateRasterizerState()
@@ -493,11 +416,7 @@ void URenderer::CreateRasterizerState()
 
 void URenderer::ReleaseRasterizerState()
 {
-    if (RasterizerState)
-    {
-        RasterizerState->Release();
-        RasterizerState = nullptr;
-    }
+    SAFE_RELEASE(RasterizerState);
 }
 
 void URenderer::CreateBufferCache()
@@ -514,16 +433,8 @@ void URenderer::InitMatrix()
 
 void URenderer::ReleasePickingFrameBuffer()
 {
-	if (PickingFrameBuffer)
-	{
-		PickingFrameBuffer->Release();
-		PickingFrameBuffer = nullptr;
-	}
-	if (PickingFrameBufferRTV)
-	{
-		PickingFrameBufferRTV->Release();
-		PickingFrameBufferRTV = nullptr;
-	}
+    SAFE_RELEASE(PickingFrameBuffer);
+    SAFE_RELEASE(PickingFrameBufferRTV);
 }
 
 void URenderer::CreatePickingTexture(HWND hWnd)
@@ -686,7 +597,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(stagingTexture, 0);
-    stagingTexture->Release();
+    SAFE_RELEASE(stagingTexture);
 
     return color;
 }
@@ -751,5 +662,5 @@ void URenderer::RenderPickingTexture()
     ID3D11Texture2D* backBuffer;
     SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
-    backBuffer->Release();
+    SAFE_RELEASE(backBuffer);
 }

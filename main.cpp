@@ -12,7 +12,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	UNREFERENCED_PARAMETER(nShowCmd);
 
-
 	UEngine& Engine = UEngine::Get();
 	Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1280, 720);
 
