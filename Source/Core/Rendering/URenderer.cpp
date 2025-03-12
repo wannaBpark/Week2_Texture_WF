@@ -366,7 +366,7 @@ void URenderer::CreateDepthStencilState()
     D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
+    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
     // DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
     // DepthStencilDesc.StencilReadMask = 0xFF;
     // DepthStencilDesc.StencilWriteMask = 0xFF;
@@ -474,7 +474,7 @@ void URenderer::PreparePicking()
     // 렌더 타겟 바인딩
     DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+    //DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 
     DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
 }
