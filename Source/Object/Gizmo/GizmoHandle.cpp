@@ -19,7 +19,7 @@ AGizmoHandle::AGizmoHandle()
 	// x
 	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
 	XArrow->SetupAttachment(ZArrow);
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
+	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1))); // X축이 +가 앞
 	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(XArrow);
 
@@ -46,7 +46,9 @@ void AGizmoHandle::Tick(float DeltaTime)
 	{
 		FTransform GizmoTr = RootComponent->GetComponentTransform();
 		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		CylinderComponents[2]->GetComponentTransform().SetRotation(SelectedActor->GetActorTransform().GetRotation());
 		SetActorTransform(GizmoTr);
+		SetActorTransform(SelectedActor->GetActorTransform());
 	}
 
 	SetScaleByDistance();
