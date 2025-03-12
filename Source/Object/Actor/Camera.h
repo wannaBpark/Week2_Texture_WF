@@ -28,6 +28,8 @@ private:
     float Far;
     // 화면각
     float FieldOfView;
+    // orthographic 사용 시 view범위
+    float ViewportSize;
 
 public:
     const float MaxYDegree = 89.8f;
@@ -39,10 +41,12 @@ public:
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
     void SetFieldOfVew(float Fov);
+    void SetViewportSize(float inViewprotSize);
     void SetFar(float Far);
     void SetNear(float Near);
     
     float GetFieldOfView() const;
+    float GetViewportSize() const;
     float GetNear() const;
     float GetFar() const;
 

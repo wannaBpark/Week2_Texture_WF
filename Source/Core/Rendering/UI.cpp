@@ -243,6 +243,16 @@ void UI::RenderCameraSettings()
         }
     }
 
+    float ViewportSize = Camera->GetViewportSize();
+
+    if (IsOrthogonal) {
+        ImGui::PushItemWidth(168);
+        ImGui::SameLine();
+        ImGui::DragFloat("ViewportSize", &ViewportSize, 0.1f);
+        ImGui::PopItemWidth();
+        Camera->SetViewportSize(ViewportSize);
+    }
+
     float FOV = Camera->GetFieldOfView();
     if (ImGui::DragFloat("FOV", &FOV, 0.1f))
     {

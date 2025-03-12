@@ -11,6 +11,7 @@ ACamera::ACamera()
     Near = 0.1f;
     Far = 100.f;
     FieldOfView = 45.f;
+    ViewportSize = 10.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
     RootComponent = AddComponent<USceneComponent>();
@@ -23,6 +24,11 @@ ACamera::ACamera()
 void ACamera::SetFieldOfVew(float Fov)
 {
     FieldOfView = Fov;
+}
+
+void ACamera::SetViewportSize(float inViewprotSize)
+{
+    ViewportSize = inViewprotSize;
 }
 
 void ACamera::SetFar(float Far)
@@ -38,6 +44,11 @@ void ACamera::SetNear(float Near)
 float ACamera::GetFieldOfView() const
 {
     return  FieldOfView;
+}
+
+float ACamera::GetViewportSize() const
+{
+    return ViewportSize;
 }
 
 float ACamera::GetNear() const
