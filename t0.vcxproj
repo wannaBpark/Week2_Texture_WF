@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
     <ClCompile Include="Source\Object\Actor\Cone.cpp" />
@@ -204,6 +205,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EEnum.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="Source\Object\Actor\Camera.h" />
     <ClInclude Include="Source\Object\Actor\Cone.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />

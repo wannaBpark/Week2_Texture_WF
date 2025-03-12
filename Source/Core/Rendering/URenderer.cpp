@@ -18,6 +18,9 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
+
+    RTVs[0] = FrameBufferRTV;
+    RTVs[1] = PickingFrameBufferRTV;
     
     InitMatrix();
 }
@@ -30,6 +33,7 @@ void URenderer::Release()
     DeviceContext->OMSetRenderTargets(0, nullptr, DepthStencilView);
 
     ReleaseFrameBuffer();
+    ReleasePickingFrameBuffer();
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
 }
@@ -50,7 +54,7 @@ void URenderer::CreateShader()
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
 
-    ID3DBlob* PickingShaderCSO;
+    //ID3DBlob* PickingShaderCSO;
     
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
@@ -60,8 +64,8 @@ void URenderer::CreateShader()
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
 
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
-    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);
+    /*D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
+    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);*/
     
 	if (ErrorMsg)
 	{
@@ -81,7 +85,7 @@ void URenderer::CreateShader()
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
-    SAFE_RELEASE(PickingShaderCSO);
+    //SAFE_RELEASE(PickingShaderCSO);
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
@@ -137,8 +141,8 @@ void URenderer::Prepare() const
 {
     // 화면 지우기
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
+    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    // DeviceContext->
     
     // InputAssembler의 Vertex 해석 방식을 설정
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -151,8 +155,9 @@ void URenderer::Prepare() const
      * OutputMerger 설정
      * 렌더링 파이프라인의 최종 단계로써, 어디에 그릴지(렌더 타겟)와 어떻게 그릴지(블렌딩)를 지정
      */
-	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);    // DepthStencil 뷰 설정
+	DeviceContext->OMSetRenderTargets(2, RTVs, DepthStencilView);    // DepthStencil 뷰 설정
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 }
 
 void URenderer::PrepareShader() const
@@ -166,6 +171,10 @@ void URenderer::PrepareShader() const
     if (ConstantBuffer)
     {
         DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
+    }
+    if (ConstantPickingBuffer)
+    {
+        DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
     }
     if (ConstantsDepthBuffer)
     {
@@ -392,8 +401,8 @@ void URenderer::ReleaseFrameBuffer()
 {
     SAFE_RELEASE(FrameBuffer);
     SAFE_RELEASE(FrameBufferRTV);
-    SAFE_RELEASE(PickingFrameBuffer);
-    SAFE_RELEASE(PickingFrameBufferRTV);
+    //SAFE_RELEASE(PickingFrameBuffer);
+    //SAFE_RELEASE(PickingFrameBufferRTV);
 }
 
 void URenderer::ReleaseDepthStencilBuffer()
@@ -469,25 +478,25 @@ void URenderer::PrepareZIgnore()
     DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }
 
-void URenderer::PreparePicking()
-{
-    // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
-    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+//void URenderer::PreparePicking()
+//{
+//    // 렌더 타겟 바인딩
+//    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+//    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+//    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+//
+//    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
+//}
 
-    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
-}
-
-void URenderer::PreparePickingShader() const
-{
-    DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
-
-    if (ConstantPickingBuffer)
-    {
-        DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
-    }
-}
+//void URenderer::PreparePickingShader() const
+//{
+//    DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
+//
+//    if (ConstantPickingBuffer)
+//    {
+//        DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
+//    }
+//}
 
 void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
 {
@@ -526,7 +535,7 @@ void URenderer::UpdateConstantDepth(int Depth) const
 void URenderer::PrepareMain()
 {
 	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
-    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(2, RTVs, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
@@ -562,10 +571,10 @@ FVector4 URenderer::GetPixel(FVector MPos)
     srcBox.bottom = srcBox.top + 1; // 1픽셀 높이
     srcBox.front = 0;
     srcBox.back = 1;
-    FVector4 color {1, 1, 1, 1};
+    FVector4 uuid {1, 1, 1, 1};
 
     if (stagingTexture == nullptr)
-        return color;
+        return uuid;
 
     // 3. 특정 좌표만 복사
     DeviceContext->CopySubresourceRegion(
@@ -586,20 +595,19 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
     if (pixelData)
     {
-        color.X = static_cast<float>(pixelData[0]); // R
-        color.Y = static_cast<float>(pixelData[1]); // G
-        color.Z = static_cast<float>(pixelData[2]); // B
-        color.W = static_cast<float>(pixelData[3]); // A
+        uuid.X = static_cast<float>(pixelData[0]); // R
+        uuid.Y = static_cast<float>(pixelData[1]); // G
+        uuid.Z = static_cast<float>(pixelData[2]); // B
+        uuid.W = static_cast<float>(pixelData[3]); // A
     }
-
-    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
-              << " Z: " << color.Z << " A: " << color.W << "\n";
+    std::cout << "X: " << (int)uuid.X << " Y: " << (int)uuid.Y
+        << " Z: " << uuid.Z << " A: " << uuid.W << "\n";
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(stagingTexture, 0);
     SAFE_RELEASE(stagingTexture);
 
-    return color;
+    return uuid;
 }
 
 void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
@@ -649,6 +657,9 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
 
         ReleasePickingFrameBuffer();
 		CreatePickingTexture(UEngine::Get().GetWindowHandle());
+
+        RTVs[0] = FrameBufferRTV;
+        RTVs[1] = PickingFrameBufferRTV;
 
         // 뎁스 스텐실 버퍼를 다시 생성
         ReleaseDepthStencilBuffer();
