@@ -20,6 +20,7 @@ struct alignas(16) FMatrix
 	static FMatrix GetRotateMatrix(const FQuat& Q);
 	static FMatrix LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp);
 	static FMatrix PerspectiveFovLH(float FieldOfView, float AspectRatio, float NearPlane, float FarPlane);
+	static FMatrix OrthoForLH(float ViewWidth, float VeiwHeight, float NearPlane, float FarPlane);
 
 	FMatrix operator+(const FMatrix& Other) const;
 	FMatrix operator+=(const FMatrix& Other);

@@ -293,6 +293,23 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 	return Result;
 }
 
+FMatrix FMatrix::OrthoForLH(float ViewWidth, float VeiwHeight, float NearPlane, float FarPlane) 
+{
+	FMatrix Result;
+	Result.M[0][0] = 2 / ViewWidth;
+	Result.M[1][1] = 2 / VeiwHeight;
+	Result.M[2][2] = 1 / (FarPlane - NearPlane);
+	Result.M[3][2] = NearPlane / (NearPlane - FarPlane);
+	Result.M[3][3] = 1.0f;
+
+	// 일반적으로 left, right, top, bottom을 받는 경우와 비교하여
+	// ViewWidth = right - left;
+	// ViewHeight = top - bottom
+	// 으로 접근하여 작성하였습니다.
+	
+	return Result;
+}
+
 FVector FMatrix::GetTranslation() const
 {
 	return FVector(M[3][0], M[3][1], M[3][2]);
