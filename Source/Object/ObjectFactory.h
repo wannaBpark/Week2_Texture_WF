@@ -3,7 +3,7 @@
 #include "Core/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Debug/DebugConsole.h"
-
+#include "Core/HAL//StackAllocator.h"
 class UObject;
 
 class FObjectFactory
@@ -21,7 +21,8 @@ public:
         UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
 
         constexpr size_t ObjectSize = sizeof(T);
-        void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(T, ObjectSize);
+        //void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
+        void* RawMemory = (void*)FPlatformMemory::Malloct<T, EAT_Object>(ObjectSize);
 
         T* ObjectPtr = new (RawMemory) T();
         std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)

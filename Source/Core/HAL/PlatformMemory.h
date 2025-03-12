@@ -25,8 +25,7 @@ private:
     static std::atomic<uint64> ObjectAllocationCount;
     static std::atomic<uint64> ContainerAllocationBytes;
     static std::atomic<uint64> ContainerAllocationCount;
-    StackAllocator stackAllocator;
-
+    
     template <EAllocationType AllocType>
     static void IncrementStats(size_t Size);
 
@@ -38,7 +37,15 @@ public:
     static void* Malloc(size_t Size);
 
     template <typename T, EAllocationType AllocType>
-    T* FPlatformMemory::Malloc(T obj, size_t Size);
+    static T* Malloct(size_t Size)
+    {
+        T* Ptr = StackAllocator::GetInstance().newNode<T>();  // 메모리 할당
+        if (Ptr)
+        {
+            IncrementStats<AllocType>(Size);  // 메모리 할당 추적
+        }
+        return Ptr;
+    }
 
     template <EAllocationType AllocType>
     static void* AlignedMalloc(size_t Size, size_t Alignment);
@@ -54,6 +61,9 @@ public:
 
     template <EAllocationType AllocType>
     static uint64 GetAllocationCount();
+
+private:
+    StackAllocator stackAllocator;
 };
 
 
@@ -105,7 +115,6 @@ void FPlatformMemory::DecrementStats(size_t Size)
 template <EAllocationType AllocType>
 void* FPlatformMemory::Malloc(size_t Size)
 {
-    
     void* Ptr = std::malloc(Size);
     if (Ptr)
     {
@@ -114,16 +123,6 @@ void* FPlatformMemory::Malloc(size_t Size)
     return Ptr;
 }
 
-template <typename T, EAllocationType AllocType>
-T* FPlatformMemory::Malloc(T obj, size_t Size)
-{
-    T* Ptr = stackAllocator.newNode<T>();
-    if (Ptr)
-    {
-        IncrementStats<AllocType>(sizeof(T));
-    }
-    return Ptr;
-}
 
 template <EAllocationType AllocType>
 void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
