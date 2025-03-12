@@ -24,9 +24,14 @@ FVector4 APicker::EncodeUUID(unsigned int UUID)
     return color;
 }
 
-int APicker::DecodeUUID(FVector4 color)
+uint32_t APicker::DecodeUUID(FVector4 color)
 {
-    return (static_cast<unsigned int>(color.W)<<24) | (static_cast<unsigned int>(color.Z)<<16) | (static_cast<unsigned int>(color.Y)<<8) | (static_cast<unsigned int>(color.X));
+    uint32_t W = static_cast<uint32_t>(color.W) << 24;
+    uint32_t Z = static_cast<uint32_t>(color.Z) << 16;
+    uint32_t Y = static_cast<uint32_t>(color.Y) << 8;
+    uint32_t X = static_cast<uint32_t>(color.X);
+
+    return W | Z | Y | X;
 }
 
 void APicker::Tick(float DeltaTime)
@@ -73,7 +78,7 @@ void APicker::LateTick(float DeltaTime)
                 }
             }
         }
-        UE_LOG("Pick - UUID: %d", UUID);
+        UE_LOG("Pick - UUID: %u", UUID);
     }
 
     if (APlayerInput::Get().IsPressedMouse(false))

@@ -75,7 +75,7 @@ void UWorld::Render()
 	
 	if (APlayerInput::Get().GetMouseDown(false))
 	{
-		RenderPickingTexture(*Renderer);
+		//RenderPickingTexture(*Renderer);
 	}
 	
 	RenderMainTexture(*Renderer);
@@ -85,43 +85,47 @@ void UWorld::Render()
 
 }
 
-void UWorld::RenderPickingTexture(URenderer& Renderer)
-{
-	Renderer.PreparePicking();
-	Renderer.PreparePickingShader();
-
-	for (auto& RenderComponent : RenderComponents)
-	{
-		if (RenderComponent->GetOwner()->GetDepth() > 0)
-		{
-			continue;
-		}
-		uint32 UUID = RenderComponent->GetUUID();
-		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		RenderComponent->Render();
-	}
-
-	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
-	{
-		uint32 UUID = RenderComponent->GetUUID();
-		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		RenderComponent->Render();
-	}
-}
+//void UWorld::RenderPickingTexture(URenderer& Renderer)
+//{
+//	Renderer.PreparePicking();
+//	Renderer.PreparePickingShader();
+//
+//	for (auto& RenderComponent : RenderComponents)
+//	{
+//		if (RenderComponent->GetOwner()->GetDepth() > 0)
+//		{
+//			continue;
+//		}
+//		uint32 UUID = RenderComponent->GetUUID();
+		//RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+//		RenderComponent->Render();
+//	}
+//
+//	Renderer.PrepareZIgnore();
+//	for (auto& RenderComponent: ZIgnoreRenderComponents)
+//	{
+//		uint32 UUID = RenderComponent->GetUUID();
+//		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+//		uint32 depth = RenderComponent->GetOwner()->GetDepth();
+//		RenderComponent->Render();
+//	}
+//}
 
 void UWorld::RenderMainTexture(URenderer& Renderer)
 {
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
+
 	for (auto& RenderComponent : RenderComponents)
 	{
-		if (RenderComponent->GetOwner()->GetDepth() > 0)
+		uint32 depth = RenderComponent->GetOwner()->GetDepth();
+		if (depth > 0)
 		{
 			continue;
 		}
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
+
+		uint32 UUID = RenderComponent->GetUUID();
+		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
 		// RenderComponent->UpdateConstantDepth(Renderer, depth);
 		RenderComponent->Render();
 	}
@@ -129,7 +133,9 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.PrepareZIgnore();
 	for (auto& RenderComponent: ZIgnoreRenderComponents)
 	{
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
+		uint32 UUID = RenderComponent->GetUUID();
+		//uint32 depth = RenderComponent->GetOwner()->GetDepth();
+		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
 		RenderComponent->Render();
 	}
 }

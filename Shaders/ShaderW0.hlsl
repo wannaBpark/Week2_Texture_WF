@@ -31,8 +31,9 @@ struct PS_INPUT
 
 struct PS_OUTPUT
 {
-    float4 color : SV_TARGET;
+    float4 color : SV_TARGET0;
     float depth : SV_Depth;
+    float4 UUID : SV_TARGET1;
 };
 
 PS_INPUT mainVS(VS_INPUT input)
@@ -47,7 +48,7 @@ PS_INPUT mainVS(VS_INPUT input)
 }
 
 
-PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
+PS_OUTPUT mainPS(PS_INPUT input)
 {
     PS_OUTPUT output;
 
@@ -57,19 +58,20 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     // 색상 설정 (예: 흰색)
     output.color = input.color;
     output.depth = saturate(depth);
+    output.UUID = UUIDColor;
     // output.color = float4(depth, depth, depth, 1.0f);
     
     return output;
 }
 
-float4 outlinePS(PS_INPUT input) : SV_TARGET
-{
-    // Output the color directly
-    return float4(1.0f, 0.647f, 0.0f, 0.1f);
-}
+//float4 outlinePS(PS_INPUT input) : SV_TARGET
+//{
+//    // Output the color directly
+//    return float4(1.0f, 0.647f, 0.0f, 0.1f);
+//}
 
-PS_OUTPUT PickingPS(PS_INPUT input):SV_TARGET{
-    PS_OUTPUT output;
-    output.color = UUIDColor;
-    return output;
-}
+//PS_OUTPUT PickingPS(PS_INPUT input):SV_TARGET{
+//    PS_OUTPUT output;
+//    output.color = UUIDColor;
+//    return output;
+//}
