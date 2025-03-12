@@ -179,7 +179,24 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
-	
+    /**
+     * (상수) 버퍼를 새로운 bufferData 값으로 갱신합니다
+     * @param bufferData 갱신할 값
+     * @param pBuffer 갱신 대상 (상수) 버퍼 포인터
+     */
+    template <typename T_DATA>
+    void UpdateBuffer(const T_DATA& bufferData, ID3D11Buffer*& pBuffer) {
+
+        if (!pBuffer) {
+            std::cout << "UpdateBuffer() buffer was not initialized." << std::endl;
+        }
+
+        D3D11_MAPPED_SUBRESOURCE ms;
+        
+        DeviceContext->Map(pBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+        memcpy(ms.pData, &bufferData, sizeof(bufferData));
+        DeviceContext->Unmap(pBuffer, NULL);
+    }
 #pragma region picking
 protected:
 	// 피킹용 버퍼들
