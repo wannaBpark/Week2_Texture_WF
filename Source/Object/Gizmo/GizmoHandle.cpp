@@ -19,7 +19,7 @@ AGizmoHandle::AGizmoHandle()
 	// x
 	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
 	XArrow->SetupAttachment(ZArrow);
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
+	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
 	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(XArrow);
 
@@ -194,7 +194,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 			AT.SetPosition({ AP.X, AP.Y, Result.Z });
 			break;
 		case EGizmoType::Rotate:
-			AT.RotatePitch(-Result.Z);
+			AT.RotateYaw(-Result.Z);
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({0, 0, Result.Z * .1f });
