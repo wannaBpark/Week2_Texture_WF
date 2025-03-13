@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Actor.h"
 
@@ -10,7 +10,7 @@ public:
     ~APicker() = default;
     
     static FVector4 EncodeUUID(unsigned int UUID);
-    static int DecodeUUID(FVector4 color);
+    static uint32_t DecodeUUID(FVector4 color);
     
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
