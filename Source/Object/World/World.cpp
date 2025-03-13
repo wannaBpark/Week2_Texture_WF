@@ -10,6 +10,7 @@
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Cylinder.h"
+#include "Object/Actor/Circle.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
@@ -240,6 +241,10 @@ void UWorld::LoadWorld(const char* SceneName)
 		else if (ObjectInfo->ObjectType == "Cone")
 		{
 			Actor = SpawnActor<ACone>();
+		}
+		else if (ObjectInfo->ObjectType == "Circle")
+		{
+			Actor = SpawnActor<ACircle>();
 		}
 		
 		Actor->SetActorTransform(Transform);

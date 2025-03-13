@@ -66,6 +66,13 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		break;
 	}
+	case EPrimitiveType::EPT_Circle:
+	{
+		TArray<FVertexSimple> Vertices = CreateCircleVertices();
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+		break;
+	}
 	}
 
 	return BufferInfo(Buffer, Size, Topology);
@@ -148,3 +155,110 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 
 	return vertices;
 }
+
+TArray<FVertexSimple> FBufferCache::CreateCircleVertices()
+{
+    TArray<FVertexSimple> vertices;
+
+    int DISC_RESOLUTION = 128; // 원을 구성하는 정점 개수
+    float outerRadius = 1.0f;  // 외곽 반지름
+    float innerRadius = 0.9f;  // 내부 반지름
+    float height = 0.1f;       // 원기둥의 두께
+    float angleStep = 2.0f * PI / DISC_RESOLUTION;
+
+    // 위쪽 원 (Top) - CCW (반시계 방향)
+    for (int i = 0; i < DISC_RESOLUTION; ++i)
+    {
+        float angle = i * angleStep;
+        float nextAngle = (i + 1) * angleStep;
+
+        float x0 = cos(angle);
+        float z0 = sin(angle);
+        float x1 = cos(nextAngle);
+        float z1 = sin(nextAngle);
+
+        // 삼각형 1 (탑면)
+        vertices.Add({ x0 * outerRadius, height / 2, z0 * outerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x0 * innerRadius, height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x1 * outerRadius, height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+
+        // 삼각형 2 (탑면)
+        vertices.Add({ x0 * innerRadius, height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x1 * innerRadius, height / 2, z1 * innerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x1 * outerRadius, height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+    }
+
+    // 바닥면 (Bottom) - CW (시계 방향)
+    for (int i = 0; i < DISC_RESOLUTION; ++i)
+    {
+        float angle = i * angleStep;
+        float nextAngle = (i + 1) * angleStep;
+
+        float x0 = cos(angle);
+        float z0 = sin(angle);
+        float x1 = cos(nextAngle);
+        float z1 = sin(nextAngle);
+
+        // 삼각형 1 (바닥면)
+        vertices.Add({ x1 * outerRadius, -height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x0 * innerRadius, -height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x0 * outerRadius, -height / 2, z0 * outerRadius, 1, 1, 1, 1 });
+
+        // 삼각형 2 (바닥면)
+        vertices.Add({ x1 * outerRadius, -height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x1 * innerRadius, -height / 2, z1 * innerRadius, 1, 1, 1, 1 });
+        vertices.Add({ x0 * innerRadius, -height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+    }
+
+    // 측면 벽 추가 (외곽) - 시계 방향 (CW)
+    for (int i = 0; i < DISC_RESOLUTION; ++i)
+    {
+        float angle = i * angleStep;
+        float nextAngle = (i + 1) * angleStep;
+
+        float x0 = cos(angle);
+        float z0 = sin(angle);
+        float x1 = cos(nextAngle);
+        float z1 = sin(nextAngle);
+
+        // 삼각형 1 (외곽 벽면)
+        vertices.Add({ x0 * outerRadius, height / 2, z0 * outerRadius, 1, 1, 1, 1 });
+        
+        vertices.Add({ x1 * outerRadius, height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+		vertices.Add({ x0 * outerRadius, -height / 2, z0 * outerRadius, 1, 1, 1, 1 });
+
+        // 삼각형 2 (외곽 벽면)
+        vertices.Add({ x0 * outerRadius, -height / 2, z0 * outerRadius, 1, 1, 1, 1 });
+        
+        vertices.Add({ x1 * outerRadius, height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+		vertices.Add({ x1 * outerRadius, -height / 2, z1 * outerRadius, 1, 1, 1, 1 });
+    }
+
+    // 측면 벽 추가 (내부) - 반시계 방향 (CCW)
+    for (int i = 0; i < DISC_RESOLUTION; ++i)
+    {
+        float angle = i * angleStep;
+        float nextAngle = (i + 1) * angleStep;
+
+        float x0 = cos(angle);
+        float z0 = sin(angle);
+        float x1 = cos(nextAngle);
+        float z1 = sin(nextAngle);
+
+        // 삼각형 1 (내부 벽면)
+        vertices.Add({ x0 * innerRadius, height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+        
+        vertices.Add({ x0 * innerRadius, -height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+		vertices.Add({ x1 * innerRadius, height / 2, z1 * innerRadius, 1, 1, 1, 1 });
+
+        // 삼각형 2 (내부 벽면)
+        vertices.Add({ x0 * innerRadius, -height / 2, z0 * innerRadius, 1, 1, 1, 1 });
+        
+        vertices.Add({ x1 * innerRadius, -height / 2, z1 * innerRadius, 1, 1, 1, 1 });
+		vertices.Add({ x1 * innerRadius, height / 2, z1 * innerRadius, 1, 1, 1, 1 });
+    }
+
+    return vertices;
+}
+
+

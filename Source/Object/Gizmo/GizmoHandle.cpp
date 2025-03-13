@@ -1,5 +1,4 @@
 ﻿#include "GizmoHandle.h"
-
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
@@ -25,16 +24,39 @@ AGizmoHandle::AGizmoHandle()
 
 
 	// y
-	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
+	/**/UCylinderComp* YArrow = AddComponent<UCylinderComp>();
 	YArrow->SetupAttachment(ZArrow);
 	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
+
+	UCircleComp* ZCircle = AddComponent<UCircleComp>();
+	ZCircle->SetupAttachment(ZArrow);
+	ZCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	ZCircle->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	CircleComponents.Add(ZCircle);
+
+	// x
+	UCircleComp* XCircle = AddComponent<UCircleComp>();
+	XCircle->SetupAttachment(ZArrow);
+	XCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), FVector(1, 1, 1)));
+	XCircle->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	CircleComponents.Add(XCircle);
+
+	UCircleComp* YCircle = AddComponent<UCircleComp>();
+	YCircle->SetupAttachment(ZArrow);
+	YCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	YCircle->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	CircleComponents.Add(YCircle);
+
 	RootComponent = ZArrow;
 
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZCircle);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XCircle);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YCircle);
 
 	SetActive(false);
 }
@@ -114,6 +136,28 @@ void AGizmoHandle::Tick(float DeltaTime)
 		int type = static_cast<int>(GizmoType);
 		type = (type + 1) % static_cast<int>(EGizmoType::Max);
 		GizmoType = static_cast<EGizmoType>(type);
+		if (GizmoType == EGizmoType::Rotate)
+		{
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(true);
+			}
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(false);
+			}
+		}
+		else
+		{
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(true);
+			}
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(false);
+			}
+		}
 	}
 
 }
@@ -146,9 +190,41 @@ void AGizmoHandle::SetScaleByDistance()
 void AGizmoHandle::SetActive(bool bActive)
 {
 	bIsActive = bActive;
-	for (auto& Cylinder : CylinderComponents)
+	if (bIsActive)
 	{
-		Cylinder->SetCanBeRendered(bActive);
+		if (GizmoType == EGizmoType::Rotate)
+		{
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(bActive);
+			}
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(!bActive);
+			}
+		}
+		else
+		{
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(bActive);
+			}
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(!bActive);
+			}
+		}
+	}
+	else
+	{
+		for (auto& Cylinder : CylinderComponents)
+		{
+			Cylinder->SetCanBeRendered(false);
+		}
+		for (auto& Circle : CircleComponents)
+		{
+			Circle->SetCanBeRendered(false);
+		}
 	}
 }
 
