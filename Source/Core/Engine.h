@@ -53,6 +53,9 @@ public:
     int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
 
+    int GetWidthRatio() const { return WidthRatio; }
+    int GetHeightRatio() const { return HeightRatio; }
+
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();
@@ -84,6 +87,9 @@ private:
 
     int ScreenWidth = 0;
     int ScreenHeight = 0;
+
+    float WidthRatio = 1.0f;
+    float HeightRatio = 1.0f;
 
 private:
 	std::unique_ptr<URenderer> Renderer;

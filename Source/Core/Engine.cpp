@@ -1,6 +1,7 @@
 ﻿#include "Engine.h"
 
 #include <iostream>
+#include <windows.h>
 #include "Object/ObjectFactory.h"
 #include "Object/World/World.h"
 #include "Debug/DebugConsole.h"
@@ -81,8 +82,7 @@ void UEngine::Initialize(
 
     InitWorld();
 
-    InitializedScreenWidth = ScreenWidth;
-    InitializedScreenHeight = ScreenHeight;
+    
     
     ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
@@ -194,6 +194,15 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
         nullptr, nullptr, WindowInstance, nullptr
     );
 
+    RECT windowRect;
+    if (GetWindowRect(WindowHandle, &windowRect)) 
+    {
+        InitializedScreenWidth = windowRect.right - windowRect.left;
+        InitializedScreenHeight = windowRect.bottom - windowRect.top;
+    }
+    
+    
+
     // TODO: 전체화면 구현
     if (ScreenMode != EScreenMode::Windowed)
     {
@@ -254,6 +263,9 @@ void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 {
 	ScreenWidth = InScreenWidth;
 	ScreenHeight = InScreenHeight;
+
+    WidthRatio = static_cast<float>(ScreenWidth) / static_cast<float>(InitializedScreenWidth);
+    HeightRatio = static_cast<float>(ScreenHeight) / static_cast<float>(InitializedScreenHeight);
 
     if(Renderer)
     {

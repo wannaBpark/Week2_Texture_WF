@@ -1,4 +1,4 @@
-// dear imgui, v1.91.8 WIP
+﻿// dear imgui, v1.91.8 WIP
 // (drawing and font code)
 
 /*
@@ -39,6 +39,9 @@ Index of this file:
 #endif
 
 #include <stdio.h>      // vsnprintf, sscanf, printf
+
+#include "Core/Engine.h"
+#include "Debug/DebugConsole.h"
 
 // Visual Studio warnings
 #ifdef _MSC_VER
@@ -4135,6 +4138,14 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
         return;
 
     const float scale = size / FontSize;
+    
+    (float)UEngine::Get().GetWidthRatio();
+
+    /*const float scale_x = scale * (float)UEngine::Get().GetWidthRatio();
+    const float scale_y = scale * (float)UEngine::Get().GetHeightRatio();*/
+    const float scale_x = scale * 0.8f;
+    const float scale_y = scale;
+
     const float line_height = FontSize * scale;
     const float origin_x = x;
     const bool word_wrap_enabled = (wrap_width > 0.0f);
@@ -4238,10 +4249,10 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
         if (glyph->Visible)
         {
             // We don't do a second finer clipping test on the Y axis as we've already skipped anything before clip_rect.y and exit once we pass clip_rect.w
-            float x1 = x + glyph->X0 * scale;
-            float x2 = x + glyph->X1 * scale;
-            float y1 = y + glyph->Y0 * scale;
-            float y2 = y + glyph->Y1 * scale;
+            float x1 = x + glyph->X0 * scale_x;
+            float x2 = x + glyph->X1 * scale_x;
+            float y1 = y + glyph->Y0 * scale_y;
+            float y2 = y + glyph->Y1 * scale_y;
             if (x1 <= clip_rect.z && x2 >= clip_rect.x)
             {
                 // Render a character
