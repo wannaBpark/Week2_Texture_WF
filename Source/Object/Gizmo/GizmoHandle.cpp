@@ -1,5 +1,4 @@
 ﻿#include "GizmoHandle.h"
-
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
@@ -31,7 +30,7 @@ AGizmoHandle::AGizmoHandle()
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 	RootComponent = ZArrow;
-	
+
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
@@ -39,18 +38,21 @@ AGizmoHandle::AGizmoHandle()
 	SetActive(false);
 }
 
+
+
 void AGizmoHandle::Tick(float DeltaTime)
 {
-	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
+	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
 	if (SelectedActor != nullptr && bIsActive)
 	{
-		FTransform GizmoTr = RootComponent->GetComponentTransform();
-		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		SetActorTransform(SelectedActor->GetActorTransform());
+		FTransform GizmoTr = RootComponent->GetRelativeTransform();
+		GizmoTr.SetScale(1, 1, 1);
 		SetActorTransform(GizmoTr);
 	}
 
 	SetScaleByDistance();
-	
+
 	AActor::Tick(DeltaTime);
 
 	if (SelectedAxis != ESelectedAxis::None)
@@ -61,20 +63,20 @@ void AGizmoHandle::Tick(float DeltaTime)
 			POINT pt;
 			GetCursorPos(&pt);
 			ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-			
+
 			RECT Rect;
 			GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
 			int ScreenWidth = Rect.right - Rect.left;
 			int ScreenHeight = Rect.bottom - Rect.top;
-			
+
 			// 커서 위치를 NDC로 변경
 			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
 			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
-			
+
 			// Projection 공간으로 변환
-			FVector4 RayOrigin {PosX, PosY, 0.0f, 1.0f};
-			FVector4 RayEnd {PosX, PosY, 1.0f, 1.0f};
-			
+			FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
+			FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
+
 			// View 공간으로 변환
 			FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
 			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
@@ -82,7 +84,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd = InvProjMat.TransformVector4(RayEnd);
 			RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
 			RayEnd.W = 1;
-			
+
 			// 마우스 포인터의 월드 위치와 방향
 			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
@@ -90,23 +92,23 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd = InvViewMat.TransformVector4(RayEnd);
 			RayEnd /= RayEnd.W = 1;
 			FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
-	
+
 			// 액터와의 거리
 			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
-			
+
 			// Ray 방향으로 Distance만큼 재계산
 			FVector Result = RayOrigin + RayDir * Distance;
-	
+
 			FTransform AT = Actor->GetActorTransform();
 
 			DoTransform(AT, Result, Actor);
-			
+
 		}
 	}
 
 	if (APlayerInput::Get().GetKeyDown(EKeyCode::Space))
 	{
- 		int type = static_cast<int>(GizmoType);
+		int type = static_cast<int>(GizmoType);
 		type = (type + 1) % static_cast<int>(EGizmoType::Max);
 		GizmoType = static_cast<EGizmoType>(type);
 	}
@@ -116,12 +118,12 @@ void AGizmoHandle::Tick(float DeltaTime)
 void AGizmoHandle::SetScaleByDistance()
 {
 	FTransform MyTransform = GetActorTransform();
-	
+
 	// 액터의 월드 위치
 	FVector actorWorldPos = MyTransform.GetPosition();
 
 	FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
-	
+
 	// 카메라의 월드 위치
 	FVector cameraWorldPos = CameraTransform.GetPosition();
 
@@ -152,55 +154,62 @@ const char* AGizmoHandle::GetTypeName()
 	return "GizmoHandle";
 }
 
-void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
+void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
-	const FVector& AP = AT.GetPosition();
+    // 마우스 입력 위치(`Result`)를 로컬 공간 기준으로 변환
+    FVector LocalDelta = AT.GetMatrix().Inverse().TransformVector(Result - AT.GetPosition());
 
-	if (SelectedAxis == ESelectedAxis::X)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ Result.X, AP.Y, AP.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotatePitch(Result.X);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
-			break;
-		}
-	}
-	else if (SelectedAxis == ESelectedAxis::Y)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, Result.Y, AP.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotateRoll(Result.Y);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({ 0, Result.Y * .1f, 0 });
-			break;
-		}
-	}
-	else if (SelectedAxis == ESelectedAxis::Z)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, AP.Y, Result.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotateYaw(-Result.Z);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({0, 0, Result.Z * .1f });
-			break;
-		}
-	}
-	Actor->SetActorTransform(AT);
+    if (SelectedAxis == ESelectedAxis::X)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.MoveLocal(FVector(LocalDelta.X, 0, 0));
+            break;
+        case EGizmoType::Rotate:
+            AT.RotateRoll(LocalDelta.X);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ LocalDelta.X * .1f, 0, 0 });
+            break;
+        }
+    }
+    else if (SelectedAxis == ESelectedAxis::Y)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.MoveLocal(FVector(0, LocalDelta.Y, 0));
+            break;
+        case EGizmoType::Rotate:
+            AT.RotatePitch(LocalDelta.Y);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ 0, LocalDelta.Y * .1f, 0 });
+            break;
+        }
+    }
+    else if (SelectedAxis == ESelectedAxis::Z)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.MoveLocal(FVector(0, 0, LocalDelta.Z));
+            break;
+        case EGizmoType::Rotate:
+            AT.RotateYaw(-LocalDelta.Z);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ 0, 0, LocalDelta.Z * .1f });
+            break;
+        }
+    }
+
+    Actor->SetActorTransform(AT);
+	FVector front = Actor->GetActorTransform().GetForward();
+    UE_LOG("Local Move: %lf %lf %lf", front.X, front.Y, front.Z);
 }
+
+
+
 
