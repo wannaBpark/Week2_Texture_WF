@@ -29,7 +29,7 @@ BufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
 
 BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 {
-	ID3D11Buffer* Buffer = nullptr;
+	ComPtr<ID3D11Buffer> Buffer = nullptr;
 	int Size = 0;
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -66,9 +66,14 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		break;
 	}
+
 	}
 
-	return BufferInfo(Buffer, Size, Topology);
+	// 현재 VertexBuffer는 map에 존재하지 않으므로
+	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
+	
+
+	return BufferInfo(Buffer.Get(), Size, Topology);
 }
 
 

@@ -15,6 +15,7 @@ public:
 	BufferInfo(ID3D11Buffer* InBuffer, int BufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology)
 	{
 		Buffer = InBuffer;
+		//InBuffer.CopyTo(Buffer.GetAddressOf());
 		Size = BufferSize;
 		Topology = InTopology;
 	}
