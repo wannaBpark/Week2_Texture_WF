@@ -14,6 +14,9 @@ struct FVector
 public:
     static FVector Zero() { return {0, 0, 0}; }
     static FVector One() { return {1, 1, 1}; }
+    static FVector Forward() { return { 1,0,0 }; }
+    static FVector Up() { return { 0,0,1 }; }
+    static FVector Right() { return { 0,1,0 }; }
 
     static float DotProduct(const FVector& A, const FVector& B);
     static FVector CrossProduct(const FVector& A, const FVector& B);
@@ -209,4 +212,12 @@ struct alignas(16) FVector4 : public FVector
         : FVector(InX, InY, InZ), W(InW)
     {
     }
+
+    FVector4& operator/=(float Scalar);
 };
+
+inline FVector4& FVector4::operator/=(float Scalar)
+{
+    X /= Scalar; Y /= Scalar; Z /= Scalar; W /= Scalar;
+    return *this;
+}

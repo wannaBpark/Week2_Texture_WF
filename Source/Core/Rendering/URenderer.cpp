@@ -545,6 +545,44 @@ void URenderer::PrepareMainShader()
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
+FVector URenderer::GetRayDirectionFromClick(FVector MPos)
+{
+
+    // 1. 화면 좌표를 NDC 좌표로 변환 (-1 ~ 1 범위)
+    float ndcX = (2.0f * MPos.X / ViewportInfo.Width) - 1.0f;
+    float ndcY = 1.0f - (2.0f * MPos.Y / ViewportInfo.Height); // 화면 좌표계는 아래로 증가하므로 반전
+
+    // 2. NDC 좌표로 근거리 및 원거리 클립 공간의 점을 생성
+    FVector4 nearPoint = FVector4(ndcX, ndcY, 0.0f, 1.0f);
+    FVector4 farPoint = FVector4(ndcX, ndcY, 1.0f, 1.0f);
+
+    // 3. 투영 및 뷰 변환 역행렬 계산
+    FMatrix invProjection = ProjectionMatrix.Inverse();
+    FMatrix invView = ViewMatrix.Inverse();
+
+    // 4. NDC 좌표를 뷰 공간으로 변환
+    FVector4 nearPointView = invProjection.TransformVector(nearPoint);
+    FVector4 farPointView = invProjection.TransformVector(farPoint);
+
+    // 원근 나눗셈(w로 나누기)
+    nearPointView /= nearPointView.W;
+    farPointView /= farPointView.W;
+
+    // 5. 뷰 공간의 점을 월드 공간으로 변환
+    FVector4 nearPointWorld = invView.TransformVector(nearPointView);
+    FVector4 farPointWorld = invView.TransformVector(farPointView);
+
+    // 6. 카메라 위치 추출 (뷰 행렬의 역행렬의 마지막 행은 월드 공간에서의 카메라 위치)
+    FVector cameraPosition;
+    invView.GetTranslateMatrix(cameraPosition);
+
+    // 7. 카메라 위치에서 원거리 지점으로의 방향 벡터 계산 및 정규화
+    FVector rayDirection = farPointWorld - cameraPosition;
+    rayDirection.Normalize();
+
+    return rayDirection;
+}
+
 FVector4 URenderer::GetPixel(FVector MPos)
 {
     MPos.X = FMath::Clamp(MPos.X, 0.0f, ViewportInfo.Width);

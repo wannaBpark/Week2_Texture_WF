@@ -216,14 +216,13 @@ public:
     void ReleasePickingFrameBuffer();
     void CreatePickingTexture(HWND hWnd);
     void PrepareZIgnore();
-    //void PreparePicking();
-	//void PreparePickingShader() const;
 	void UpdateConstantPicking(FVector4 UUIDColor) const;
     void UpdateConstantDepth(int Depth) const;
 
     void PrepareMain();
 	void PrepareMainShader();
 
+    FVector GetRayDirectionFromClick(FVector MPos);
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();

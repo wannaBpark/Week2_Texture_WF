@@ -4,6 +4,12 @@
 
 class USphereCollider : public ICollider
 {
+public:
+	USphereCollider() {};
+	FVector GetCenter() const;
+	inline FVector GetOffset() const { return offset; } void SetOffset(FVector value) { offset = value; }
+	inline float GetRadius() const { return radius; } void SetRadius(float value) { radius = value; }
+
 	bool CheckCollision(const ICollider& other) const override {
 		return other.CheckCollision(*this);
 	}
@@ -17,5 +23,8 @@ class USphereCollider : public ICollider
 	virtual bool CheckCollision(const class USphereCollider& sphere) const {
 		return CollisionSystem::SphereToSphere(*this, sphere);
 	}
+private:
+	FVector offset;
+	float radius;
 };
 

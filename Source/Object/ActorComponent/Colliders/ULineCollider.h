@@ -4,6 +4,9 @@
 
 class ULineCollider : public ICollider
 {
+public:
+	inline FVector GetStart() const { return start; }
+	inline FVector GetEnd() const { return end; }
 	bool CheckCollision(const ICollider& other) const override {
 		return other.CheckCollision(*this);
 	}
@@ -17,5 +20,15 @@ class ULineCollider : public ICollider
 	virtual bool CheckCollision(const class USphereCollider& sphere) const {
 		return CollisionSystem::LineToSphere(*this, sphere);
 	}
+
+	inline FVector Dir() const {
+		FVector result = end - start;
+		result.Normalize();
+		return result;
+	}
+
+private:
+	FVector start;
+	FVector end;
 };
 

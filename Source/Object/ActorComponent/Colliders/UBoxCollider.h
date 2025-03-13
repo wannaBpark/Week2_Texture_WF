@@ -4,6 +4,11 @@
 
 class UBoxCollider : public ICollider
 {
+public:
+	FVector GetCenter() const;
+	inline FVector GetOffset() const { return offset; }
+	inline FVector GetScale() const { return scale; }
+
 	bool CheckCollision(const ICollider& other) const override {
 		return other.CheckCollision(*this);
 	}
@@ -17,5 +22,8 @@ class UBoxCollider : public ICollider
 	virtual bool CheckCollision(const class USphereCollider& sphere) const {
 		return CollisionSystem::BoxToSphere(*this, sphere);
 	}
+private:
+	FVector offset;
+	FVector scale;
 };
 

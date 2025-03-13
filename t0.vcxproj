@@ -164,7 +164,6 @@
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
-    <ClCompile Include="Source\Object\ActorComponent\Colliders\ULineCollider.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\Colliders\UBoxCollider.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\Colliders\ICollider.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\Colliders\CollisionSystem.cpp" />
@@ -203,6 +202,7 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
     <ClCompile Include="Source\Object\World\World.cpp" />
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
+    <ClCompile Include="URaycastSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -275,6 +275,8 @@
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
     <ClInclude Include="Source\Object\World\World.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
+    <ClInclude Include="UColliders.h" />
+    <ClInclude Include="URaycastSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

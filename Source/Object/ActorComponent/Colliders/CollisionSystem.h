@@ -9,6 +9,7 @@ class USphereCollider;
 class CollisionSystem {
 private:
     // 실제 충돌 로직을 구현하는 정적 메서드들
+    // TODO: point는 라인의 dir가 일정 길이 이하일 때로
     static bool LineToLine(const ULineCollider& a, const ULineCollider& b);
     static bool LineToBox(const ULineCollider& a, const UBoxCollider& b);
     static bool LineToSphere(const ULineCollider& a, const USphereCollider& b);

@@ -11,6 +11,8 @@
 #include "Object/Actor/Arrow.h"
 #include "Object/Actor/Picker.h"
 
+#include "Object/ActorComponent/Colliders/ICollider.h"
+
 class AActor;
 
 
@@ -43,6 +45,11 @@ public:
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
 	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
+
+	TArray<ICollider*> GetCollidrs() const { return Colliders; }
+	void AddColliderComponent(ICollider* InComponent) { Colliders.Add(InComponent); }
+	void RemoveColliderComponet(ICollider* InComponent) { Colliders.Remove(InComponent); }
+	bool ContainsColliderComponent(ICollider* InComponent) { return Colliders.Find(InComponent) != -1; }
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
@@ -58,6 +65,7 @@ public:
 protected:
 	TArray<AActor*> Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
+	TArray<ICollider*> Colliders;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
