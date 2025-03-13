@@ -18,7 +18,8 @@
  * - IndexSize = 32 -> Type = int32
  * - IndexSize = 64 -> Type = int64
  * 
- * 지원되지 않는 IndexSize를 전달하면 컴파일 타임에 static_assert를 통해 에러를 발생시킵니다.
+ * 지원되지 않는 IndexSize를 전달하면 컴파일 타임에 
+ _assert를 통해 에러를 발생시킵니다.
  */
 template <int IndexSize>
 struct TBitsToSizeType

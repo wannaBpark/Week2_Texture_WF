@@ -22,7 +22,7 @@ private:
     size_t m_freeBytes;           
     void* m_pFreeSlots;           
 
-    static const size_t cbChunkAlloc = 0x10000000;
+    static const size_t cbChunkAlloc{ 0x10000000 };
     static const size_t cbChunkPayload = cbChunkAlloc - sizeof(CMemChunk);
 
     void* Allocate(size_t sz);

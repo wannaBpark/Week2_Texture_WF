@@ -7,7 +7,7 @@ template <typename Derived>
 class TSingleton
 {
 private:
-    static Derived* Instance;
+    static inline Derived* Instance{ nullptr };
     TSingleton() = default;
 
     friend Derived;
@@ -42,5 +42,5 @@ Derived& TSingleton<Derived>::Get()
     return *Instance;
 }
 
-template <typename Derived>
-Derived* TSingleton<Derived>::Instance = nullptr;
+//template <typename Derived>
+//Derived* TSingleton<Derived>::Instance = nullptr;

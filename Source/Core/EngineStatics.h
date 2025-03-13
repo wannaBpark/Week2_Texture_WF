@@ -10,5 +10,5 @@ public:
         return NextUUID++;
     }
 
-    static uint32 NextUUID;
+    static inline uint32 NextUUID{ 0 };
 };

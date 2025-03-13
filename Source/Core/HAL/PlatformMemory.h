@@ -21,10 +21,10 @@ enum EAllocationType : uint8
 struct FPlatformMemory
 {
 private:
-    static std::atomic<uint64> ObjectAllocationBytes;
-    static std::atomic<uint64> ObjectAllocationCount;
-    static std::atomic<uint64> ContainerAllocationBytes;
-    static std::atomic<uint64> ContainerAllocationCount;
+    static inline std::atomic<uint64> ObjectAllocationBytes{ 0 };           // 기존 : static 변수는 cpp, 또는 헤더 파일 밖에서 초기화해야 했음
+    static inline std::atomic<uint64> ObjectAllocationCount{ 0 };           // 변경 : 클래스 헤더에서 초기화 가능한 inline 멤버 변수
+    static inline std::atomic<uint64> ContainerAllocationBytes{ 0 };
+    static inline std::atomic<uint64> ContainerAllocationCount{ 0 };
     
     template <EAllocationType AllocType>
     static void IncrementStats(size_t Size);
@@ -35,17 +35,6 @@ private:
 public:
     template <EAllocationType AllocType>
     static void* Malloc(size_t Size);
-
-    template <typename T, EAllocationType AllocType>
-    static T* Malloct(size_t Size)
-    {
-        T* Ptr = StackAllocator::GetInstance().newNode<T>();  // 메모리 할당
-        if (Ptr)
-        {
-            IncrementStats<AllocType>(Size);  // 메모리 할당 추적
-        }
-        return Ptr;
-    }
 
     template <EAllocationType AllocType>
     static void* AlignedMalloc(size_t Size, size_t Alignment);
@@ -64,6 +53,25 @@ public:
 
 private:
     StackAllocator stackAllocator;
+
+public:
+    /**
+    * UObject를 생성합니다.
+    * @tparam T UObject를 상속받은 클래스
+    * @param  AllocType 생성하고자 하는 유형 (보통 Object)
+    * @return StackAllocator를 통해 [이미] 할당된 메모리의 head
+    */
+
+    template <typename T, EAllocationType AllocType>
+    static T* Malloc(size_t Size)
+    {
+        T* Ptr = StackAllocator::GetInstance().newNode<T>();  // 메모리 할당
+        if (Ptr)
+        {
+            IncrementStats<AllocType>(Size);  // 메모리 할당 추적
+        }
+        return Ptr;
+    }
 };
 
 
@@ -122,7 +130,6 @@ void* FPlatformMemory::Malloc(size_t Size)
     }
     return Ptr;
 }
-
 
 template <EAllocationType AllocType>
 void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
