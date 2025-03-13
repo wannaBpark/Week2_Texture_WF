@@ -13,7 +13,7 @@ protected:
 	FQuat Rotation;
 	FVector Scale;
 	int Depth;
-	
+
 public:
 	FTransform()
 		: Position(FVector(0, 0, 0))
@@ -35,19 +35,19 @@ public:
 		, Scale(InScale)
 	{
 	}
-	        
+
 	inline FMatrix GetViewMatrix() const
 	{
 		return FMatrix::LookAtLH(Position, Position + GetForward(), GetUp());
 	}
-	
+
 	inline virtual void SetPosition(const FVector& InPosition)
 	{
 		Position = InPosition;
 	}
 	inline virtual void SetPosition(float x, float y, float z)
 	{
-		Position = {x, y, z};
+		Position = { x, y, z };
 	}
 	inline virtual void SetRotation(const FVector& InRotation)
 	{
@@ -69,13 +69,13 @@ public:
 	}
 	inline void SetScale(float x, float y, float z)
 	{
-		Scale = {x, y, z};
+		Scale = { x, y, z };
 	}
 	FVector GetPosition() const
 	{
 		return Position;
 	}
-	FQuat GetRotation() const 
+	FQuat GetRotation() const
 	{
 		return Rotation;
 	}
@@ -85,7 +85,7 @@ public:
 		return Scale;
 	}
 
-	FMatrix GetMatrix() const 
+	FMatrix GetMatrix() const
 	{
 		return FMatrix::GetScaleMatrix(Scale.X, Scale.Y, Scale.Z)
 			* FMatrix::GetRotateMatrix(Rotation)
@@ -100,8 +100,8 @@ public:
 		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
 		FVector Forward = FVector(
 			RotationMatrix.M[0][0],
-			RotationMatrix.M[1][0],
-			RotationMatrix.M[2][0]
+			-RotationMatrix.M[1][0],
+			-RotationMatrix.M[2][0]
 		);
 
 		return Forward.GetSafeNormal();
@@ -112,7 +112,7 @@ public:
 		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
 	}
 
-	FVector GetUp() const{
+	FVector GetUp() const {
 		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
 
 	}
@@ -125,31 +125,38 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
+		RotateRoll(InRotation.X);
+		RotatePitch(InRotation.Y);
 		RotateYaw(InRotation.Z);
-		RotatePitch(InRotation.X);
-		RotateRoll(InRotation.Y);
-		
 	}
 
 	void RotateYaw(float Angle)
 	{
 		FVector Axis = FVector(0, 0, 1);
-		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
-	}
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 
 		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
+	}
 
 	void RotatePitch(float Angle)
 	{
-		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle),Rotation);
+		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 	}
 
 	void RotateRoll(float Angle)
 	{
-		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
-	
+		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
+		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
 	}
+
+	void MoveLocal(const FVector& LocalDelta)
+	{
+		Position += GetForward() * LocalDelta.X;
+		Position += GetRight() * LocalDelta.Y;
+		Position += GetUp() * LocalDelta.Z;
+	}
+
+
 
 };

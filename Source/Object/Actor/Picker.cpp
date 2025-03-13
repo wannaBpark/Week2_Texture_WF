@@ -6,6 +6,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "ImGui/imgui.h"
 
 APicker::APicker()
 {    
@@ -43,7 +44,7 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if(APlayerInput::Get().GetMouseDown(false))
+    if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt;
         GetCursorPos(&pt);

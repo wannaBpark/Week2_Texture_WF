@@ -223,39 +223,41 @@ FMatrix FMatrix::GetScaleMatrix(const FVector& InScale)
 
 FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
 {
-	// 쿼터니언 요소 추출
-	const float x = Q.X, y = Q.Y, z = Q.Z, w = Q.W;
+    // 쿼터니언 요소 추출
+    const float x = Q.X, y = Q.Y, z = Q.Z, w = Q.W;
 
-	// 중간 계산값
-	const float xx = x * x, yy = y * y, zz = z * z;
-	const float xy = x * y, xz = x * z, yz = y * z;
-	const float wx = w * x, wy = w * y, wz = w * z;
+    // 중간 계산값
+    const float xx = x * x, yy = y * y, zz = z * z;
+    const float xy = x * y, xz = x * z, yz = y * z;
+    const float wx = w * x, wy = w * y, wz = w * z;
 
-	// 회전 행렬 구성
-	FMatrix Result;
+    // X, Y 축 회전 방향 반전 (부호 반전)
+    FMatrix Result;
 
-	Result.M[0][0] = 1.0f - 2.0f * (yy + zz);
-	Result.M[0][1] = 2.0f * (xy - wz);
-	Result.M[0][2] = 2.0f * (xz + wy);
-	Result.M[0][3] = 0.0f;
+    Result.M[0][0] = 1.0f - 2.0f * (yy + zz);
+    Result.M[1][0] = -2.0f * (xy - wz); // Y 축 반전
+    Result.M[2][0] = -2.0f * (xz + wy); // X 축 반전
+    Result.M[3][0] = 0.0f;
 
-	Result.M[1][0] = 2.0f * (xy + wz);
-	Result.M[1][1] = 1.0f - 2.0f * (xx + zz);
-	Result.M[1][2] = 2.0f * (yz - wx);
-	Result.M[1][3] = 0.0f;
+    Result.M[0][1] = -2.0f * (xy + wz); // Y 축 반전
+    Result.M[1][1] = 1.0f - 2.0f * (xx + zz);
+    Result.M[2][1] = -2.0f * (yz - wx); // X 축 반전
+    Result.M[3][1] = 0.0f;
 
-	Result.M[2][0] = 2.0f * (xz - wy);
-	Result.M[2][1] = 2.0f * (yz + wx);
-	Result.M[2][2] = 1.0f - 2.0f * (xx + yy);
-	Result.M[2][3] = 0.0f;
+    Result.M[0][2] = -2.0f * (xz - wy); // X 축 반전
+    Result.M[1][2] = -2.0f * (yz + wx); // Y 축 반전
+    Result.M[2][2] = 1.0f - 2.0f * (xx + yy);
+    Result.M[3][2] = 0.0f;
 
-	Result.M[3][0] = 0.0f;
-	Result.M[3][1] = 0.0f;
-	Result.M[3][2] = 0.0f;
-	Result.M[3][3] = 1.0f; // 4x4 행렬이므로 마지막 값은 1
+    Result.M[0][3] = 0.0f;
+    Result.M[1][3] = 0.0f;
+    Result.M[2][3] = 0.0f;
+    Result.M[3][3] = 1.0f;
 
-	return Result;
+    return Result;
 }
+
+
 /// <summary>
 /// 뷰 변환 행렬을 생성합니다.
 /// </summary>
@@ -290,23 +292,6 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 	Result.M[2][3] = 1.0f;
 	Result.M[3][2] = -NearPlane * FarPlane / (FarPlane - NearPlane);
 	Result.M[3][3] = 0.0f;
-	return Result;
-}
-
-FMatrix FMatrix::OrthoForLH(float ViewWidth, float VeiwHeight, float NearPlane, float FarPlane) 
-{
-	FMatrix Result;
-	Result.M[0][0] = 2 / ViewWidth;
-	Result.M[1][1] = 2 / VeiwHeight;
-	Result.M[2][2] = 1 / (FarPlane - NearPlane);
-	Result.M[3][2] = NearPlane / (NearPlane - FarPlane);
-	Result.M[3][3] = 1.0f;
-
-	// 일반적으로 left, right, top, bottom을 받는 경우와 비교하여
-	// ViewWidth = right - left;
-	// ViewHeight = top - bottom
-	// 으로 접근하여 작성하였습니다.
-	
 	return Result;
 }
 
@@ -347,4 +332,29 @@ FTransform FMatrix::GetTransform() const
 {
 	FQuat RotationQuat = FQuat::MakeFromRotationMatrix(*this);
 	return FTransform(GetTranslation(), RotationQuat, GetScale());
+}
+
+FVector FMatrix::TransformVector(const FVector& Vector) const
+{
+	return {
+		Vector.X * M[0][0] + Vector.Y * M[1][0] + Vector.Z * M[2][0],
+		Vector.X * M[0][1] + Vector.Y * M[1][1] + Vector.Z * M[2][1],
+		Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2]
+	};
+}
+FMatrix FMatrix::OrthoForLH(float ViewWidth, float VeiwHeight, float NearPlane, float FarPlane)
+{
+	FMatrix Result;
+	Result.M[0][0] = 2 / ViewWidth;
+	Result.M[1][1] = 2 / VeiwHeight;
+	Result.M[2][2] = 1 / (FarPlane - NearPlane);
+	Result.M[3][2] = NearPlane / (NearPlane - FarPlane);
+	Result.M[3][3] = 1.0f;
+
+	// 일반적으로 left, right, top, bottom을 받는 경우와 비교하여
+	// ViewWidth = right - left;
+	// ViewHeight = top - bottom
+	// 으로 접근하여 작성하였습니다.
+
+	return Result;
 }
