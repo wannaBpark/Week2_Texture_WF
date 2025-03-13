@@ -159,20 +159,30 @@ const char* AGizmoHandle::GetTypeName()
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
-	const FVector& AP = AT.GetPosition();
+	FVector WorldPos = AT.GetPosition();  // 현재 오브젝트의 월드 위치
+	FVector WorldDelta = Result - WorldPos;  // 이동할 월드 기준 벡터
+
+	// 월드 벡터를 로컬 벡터로 변환
+	FVector LocalDelta;
+	LocalDelta.X = FVector::DotProduct(WorldDelta, AT.GetForward());  // 로컬 X축 이동량
+	LocalDelta.Y = FVector::DotProduct(WorldDelta, AT.GetRight());    // 로컬 Y축 이동량
+	LocalDelta.Z = FVector::DotProduct(WorldDelta, AT.GetUp());       // 로컬 Z축 이동량
+	
+
+	float MoveSpeedFactor = 0.1f;  // 이동 속도 조절
 
 	if (SelectedAxis == ESelectedAxis::X)
 	{
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ Result.X, AP.Y, AP.Z });
+			AT.MoveLocal(FVector(LocalDelta.X * MoveSpeedFactor, 0, 0));
 			break;
 		case EGizmoType::Rotate:
 			AT.RotateRoll(Result.X);
 			break;
 		case EGizmoType::Scale:
-			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
+			AT.AddScale({ Result.X * 0.1f, 0, 0 });
 			break;
 		}
 	}
@@ -181,13 +191,13 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, Result.Y, AP.Z });
+			AT.MoveLocal(FVector(0, LocalDelta.Y * MoveSpeedFactor, 0));
 			break;
 		case EGizmoType::Rotate:
 			AT.RotatePitch(Result.Y);
 			break;
 		case EGizmoType::Scale:
-			AT.AddScale({ 0, Result.Y * .1f, 0 });
+			AT.AddScale({ 0, Result.Y * 0.1f, 0 });
 			break;
 		}
 	}
@@ -196,22 +206,25 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, AP.Y, Result.Z });
+			AT.MoveLocal(FVector(0, 0, LocalDelta.Z * MoveSpeedFactor));
 			break;
 		case EGizmoType::Rotate:
 			AT.RotateYaw(-Result.Z);
 			break;
 		case EGizmoType::Scale:
-			AT.AddScale({ 0, 0, Result.Z * .1f });
+			AT.AddScale({ 0, 0, Result.Z * 0.1f });
 			break;
 		}
 	}
+
 	Actor->SetActorTransform(AT);
+
 	FVector front = Actor->GetActorTransform().GetForward();
 	UE_LOG("Local front: %lf %lf %lf", front.X, front.Y, front.Z);
-	FVector right = Actor->GetActorTransform().GetRight();
+	FVector right = Actor->GetActorTransform().GetLocalRight();
 	UE_LOG("Local right: %lf %lf %lf", right.X, right.Y, right.Z);
-	FVector Up = Actor->GetActorTransform().GetUp();
-	UE_LOG("Local Up: %lf %lf %lf", Up.X, Up.Y, Up.Z);
+	FVector up = Actor->GetActorTransform().GetLocalUp();
+	UE_LOG("Local up: %lf %lf %lf", up.X, up.Y, up.Z);
 }
+
 

@@ -100,8 +100,8 @@ public:
 		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
 		FVector Forward = FVector(
 			RotationMatrix.M[0][0],
-			-RotationMatrix.M[1][0],
-			-RotationMatrix.M[2][0]
+			RotationMatrix.M[1][0],
+			RotationMatrix.M[2][0]
 		);
 
 		return Forward.GetSafeNormal();
@@ -115,6 +115,33 @@ public:
 	FVector GetUp() const {
 		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
 
+	}
+
+
+	FVector GetLocalRight() const
+	{
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
+
+		FVector Right = FVector(
+			RotationMatrix.M[0][1],  // 첫 번째 열이 Right 벡터
+			RotationMatrix.M[1][1],
+			RotationMatrix.M[2][1]
+		);
+
+		return Right.GetSafeNormal();
+	}
+
+	FVector GetLocalUp() const
+	{
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
+
+		FVector up = FVector(
+			RotationMatrix.M[0][2],  // 첫 번째 열이 Right 벡터
+			RotationMatrix.M[1][2],
+			RotationMatrix.M[2][2]
+		);
+
+		return up.GetSafeNormal();
 	}
 
 	void Translate(const FVector& InTranslation)
@@ -152,10 +179,16 @@ public:
 
 	void MoveLocal(const FVector& LocalDelta)
 	{
-		Position += GetForward() * LocalDelta.X;
-		Position += GetRight() * LocalDelta.Y;
-		Position += GetUp() * LocalDelta.Z;
+		// 현재 변환 행렬 (Scale * Rotation * Translation)
+		FMatrix TransformMatrix = GetMatrix();
+
+		// 로컬 이동 벡터를 월드 이동 벡터로 변환
+		FVector WorldDelta = TransformMatrix.TransformVector(LocalDelta);
+
+		// 최종적으로 이동 적용
+		Position += WorldDelta;
 	}
+
 
 
 
