@@ -12,13 +12,17 @@ void USceneComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FMatrix USceneComponent::GetRelativeTransformMatrix() const
+{
+	return this->RelativeTransform.GetMatrix();
+}
 // 내 월드 트랜스폼 반환
-const FTransform USceneComponent::GetWorldTransform()
+const FTransform USceneComponent::GetComponentTransform()
 {
 	if (Parent)
 	{
 		// 부모가 있을 경우 부모 월드 * 내 로컬
-		FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+		FMatrix ParentWorld = Parent->GetComponentTransform().GetMatrix();
 		FMatrix MyLocal = RelativeTransform.GetMatrix();
 
 		FMatrix NewMatrix = MyLocal * ParentWorld;
@@ -28,12 +32,26 @@ const FTransform USceneComponent::GetWorldTransform()
 	return RelativeTransform;
 }
 
+const FMatrix USceneComponent::GetComponentTransformMatrix()
+{
+	if (Parent)
+	{
+		// 부모가 있을 경우 부모 월드 * 내 로컬
+		FMatrix ParentWorld = Parent->GetComponentTransformMatrix();
+		FMatrix MyLocal = RelativeTransform.GetMatrix();
+
+		FMatrix NewMatrix = MyLocal * ParentWorld;
+		return NewMatrix;
+	}
+
+	return GetRelativeTransformMatrix();
+}
+
 void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
 	// 내 로컬 트랜스폼 갱신
 	RelativeTransform = InTransform;
-	FVector Rot = RelativeTransform.GetRotation().GetEuler();
-
+	//FVector Rot = RelativeTransform.GetRotation().GetEuler();
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -51,7 +69,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	{
 		Parent = InParent;
 		InParent->Children.Add(this);
-		ApplyParentWorldTransform(InParent->GetWorldTransform());
+		//ApplyParentWorldTransform(InParent->GetWorldTransform());
 	}
 	else
 	{
@@ -59,6 +77,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	}
 }
 
+/*
 void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
 {
 	FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
@@ -69,3 +88,4 @@ void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTra
 	// 내 로컬 트랜스폼 갱신
 	SetRelativeTransform(NewMatrix.GetTransform());
 }
+*/
