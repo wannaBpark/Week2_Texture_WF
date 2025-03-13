@@ -22,9 +22,10 @@ public:
 
         constexpr size_t ObjectSize = sizeof(T);
         //void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);            // 기존 할당 방식 : 생성시마다 malloc
-        void* RawMemory = (void*)FPlatformMemory::Malloc<T, EAT_Object>(ObjectSize);    // StackAllocator : 이미 malloc 완료, 일부분을 떼어줌
+        //void* RawMemory = (void*)FPlatformMemory::Malloc<T, EAT_Object>(ObjectSize);    // StackAllocator : 이미 malloc 완료, 일부분을 떼어줌
 
-        T* ObjectPtr = new (RawMemory) T();
+        //T* ObjectPtr = new (RawMemory) T();
+        T* ObjectPtr = FPlatformMemory::Malloc<T, EAT_Object>(ObjectSize);
         std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
         {
             Obj->~T();
