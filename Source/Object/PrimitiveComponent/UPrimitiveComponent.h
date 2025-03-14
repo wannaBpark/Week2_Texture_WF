@@ -68,6 +68,9 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
+		//
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
@@ -84,6 +87,9 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
+		//
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
@@ -100,6 +106,8 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
@@ -117,6 +125,7 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
 		// shader 관련 index 지정 필요
 		// 
 	}
@@ -136,6 +145,8 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
 	}
 	virtual ~UCylinderComp() = default;
 	EPrimitiveType GetType() override
@@ -152,6 +163,8 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
 	EPrimitiveType GetType() override

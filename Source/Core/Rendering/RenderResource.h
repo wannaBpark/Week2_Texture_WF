@@ -15,6 +15,7 @@ struct FRenderResource {
 		uint32 numVertices = 0;					// Draw (numVertices, ...) 
 		//uint32 numIndices;						// Draw Indexed (numIndices, ...)
 	//};
+	uint32 Stride				   { 0 };
 	uint32 VertexShaderIndex       { 0 };
 	uint32 PixelShaderIndex        { 0 };
 	uint32 VertexConstantIndex     { 0 };

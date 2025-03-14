@@ -214,14 +214,12 @@ void URenderer::PrepareShader() const
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
-    auto& [Type, ILType, Topology, numVertices,VS, PS, VC, PC, GS, SRVs] = RenderResource;
+    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, SRVs] = RenderResource;
     RenderResource.Topology = TopologyMap[Type];
     RenderResource.numVertices = VertexCountMap[Type];
 
-    assert(ShaderMapVS[VS].Get() != nullptr);
-    assert(ShaderMapPS[PS].Get() != nullptr);
-    assert(InputLayoutMap[ILType] != nullptr);
-    assert(TopologyMap.find(Type) != TopologyMap.end());
+    assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
+    assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
     assert(VertexCountMap.find(Type) != VertexCountMap.end());
 
     if (CurrentTopology != Topology)
@@ -231,7 +229,6 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     }
     DeviceContext->VSSetShader(ShaderMapVS[VS].Get(), nullptr, 0);
     DeviceContext->PSSetShader(ShaderMapPS[PS].Get(), nullptr, 0);
-    DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
 
     /* Vertex Shader의 상수 버퍼 */   
     if (ConstantBufferMap.find(VC) != ConstantBufferMap.end())
@@ -256,12 +253,9 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
     }
-    /*ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetComponentTransformMatrix(), 
-        PrimitiveComp->GetCustomColor(), 
-        PrimitiveComp->IsUseVertexColor()
-    };*/
 
+    this->Stride = stride;
+    DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
     RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
 
@@ -273,6 +267,14 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices)
     DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
 
     DeviceContext->Draw(numVertices, 0);
+}
+
+void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer* pIndexBuffer, UINT numIndices) const
+{
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
+    DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->Draw(numIndices, 0);
 }
 
 ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
