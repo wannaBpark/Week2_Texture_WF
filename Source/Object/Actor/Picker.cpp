@@ -48,7 +48,7 @@ void APicker::LateTick(float DeltaTime)
     AActor::LateTick(DeltaTime);
 
     if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
-        POINT pt;//TODO 하나로 합치기
+        POINT pt;//TODO: 하나로 합치기 마우스 위치 받아오는 작업 합치기
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
@@ -61,10 +61,33 @@ void APicker::LateTick(float DeltaTime)
         FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
         FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
         URaycastSystem::Raycast(location, dir, 100, result);
-        UE_LOG("result: %d", result.bBlockingHit);
+
+        UActorComponent* PickedComponent = nullptr;
+        if(result.bBlockingHit)
+            PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(result.hitObject->GetUUID());
+
+        if (PickedComponent != nullptr)
+        {
+            AActor* PickedActor = PickedComponent->GetOwner();
+
+            if (PickedActor == nullptr) return;
+            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+            {
+                if (PickedActor == FEditorManager::Get().GetSelectedActor())
+                {
+                    FEditorManager::Get().SelectActor(nullptr);
+                }
+                else
+                {
+                    FEditorManager::Get().SelectActor(PickedActor);
+                }
+            }
+            UE_LOG("Pick - UUID: %u", result.hitObject->GetUUID());
+        }
+
     }
 
-    if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
+    /*if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt;
         GetCursorPos(&pt);
@@ -100,7 +123,7 @@ void APicker::LateTick(float DeltaTime)
             }
         }
         UE_LOG("Pick - UUID: %u", UUID);
-    }
+    }*/
 
     if (APlayerInput::Get().IsPressedMouse(false))
     {
