@@ -1,6 +1,5 @@
 // stb_image.h 헤더 오류 픽싱용 매크로
 #define _CRT_SECURE_NO_WARNINGS // stb_image_write compile error fix
-#include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 
 #include "URenderer.h"
 #include <d3dcompiler.h>
@@ -15,6 +14,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image.h"
 #include "stb_image_write.h"
+
+#include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
@@ -169,9 +170,12 @@ void URenderer::CreateTexturesSamplers()
 
     SamplerMap.insert({ 0, SamplerState });
 
-    CreateTextureSRV("box.jpg");
+    //CreateTextureSRV(L"../../../Textures/box.dds");
+    //CreateTextureSRV(L"../../../Textures/bg5.dds");
     CreateTextureSRV("bg5.png");
-    //CreateTextureSRV("box2.png");
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/cat0.dds");
 }
 
 void URenderer::ReleaseTexturesSamplers()
@@ -302,7 +306,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 ShaderResourceView */
     if (SRVs.has_value())
     {
-        UE_LOG("SRVlength : %d", SRVs->size());
+        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -312,7 +316,17 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             }
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
-        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                               // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
+        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
+        // 샘플러 설정 추가
+        ID3D11SamplerState* sampler = SamplerMap[0].Get();
+        if (sampler)
+        {
+            DeviceContext->PSSetSamplers(0, 1, &sampler);
+        }
+        else
+        {
+            UE_LOG("Warning: Sampler at slot 0 is NULL.");
+        }
     }
 
     this->Stride = stride;
@@ -816,89 +830,75 @@ void URenderer::RenderPickingTexture()
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     SAFE_RELEASE(backBuffer);
 }
-//
-//void URenderer::CreateTextureSRV(const std::string& filename)
-//{
-//    // 지역 변수로 우선 선언
-//    ID3D11Texture2D* Texture;
-//    ID3D11ShaderResourceView* SRV;
-//    int Width, Height, Channels;
-//
-//    std::string path = "./Textures/" + filename;
-//    unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
-//
-//    assert(Channels == 4);
-//
-//    std::vector<uint8_t> image;
-//
-//    image.resize(Width * Height * Channels);
-//    memcpy(image.data(), img, image.size() * sizeof(uint8_t));
-//    //for (size_t i = 0; i < Width * Height * Channels; i++) {
-//    //    image[i] = img[i]; // 8비트 → 16비트 변환
-//    //}
-//    stbi_image_free(img);
-//
-//    // Create texture.
-//    D3D11_TEXTURE2D_DESC txtDesc = {};
-//    txtDesc.Width = Width;
-//    txtDesc.Height = Height;
-//    txtDesc.MipLevels = txtDesc.ArraySize = 1;
-//    txtDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;        // 8비트씩 unsigned norm
-//    txtDesc.SampleDesc.Count = 1;
-//    txtDesc.Usage = D3D11_USAGE_IMMUTABLE;              // 한 번 읽고 수정 X
-//    txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;     // Shader Resource 플래그
-//
-//    // Fill in the subresource data.
-//    D3D11_SUBRESOURCE_DATA InitData;
-//    InitData.pSysMem = image.data();
-//    InitData.SysMemPitch = txtDesc.Width * sizeof(uint8_t) * Channels;     // SysMemPitch : 한 행의 바이트 크기
-//    // InitData.SysMemSlicePitch = 0;
-//
-//    // ID3D11Device* pd3dDevice; // Don't forget to initialize this
-//    // TODO: You should really consider using a COM smart-pointer like
-//    // Microsoft::WRL::ComPtr instead
-//
-//    Device->CreateTexture2D(&txtDesc, &InitData, &Texture);                     // 텍스처, 텍스처 리소스뷰 생성
-//    Device->CreateShaderResourceView(Texture, nullptr, &SRV);
-//
-//    // 실제로 접근 가능한 map으로 삽입
-//    uint32 idx = ShaderResourceViewMap.size();
-//    ShaderResourceViewMap.insert({ idx, SRV });
-//}
 
 void URenderer::CreateTextureSRV(const std::string& filename)
 {
-    using namespace DirectX;
-
-    ComPtr<ID3D11ShaderResourceView> SRV;
-    ComPtr<ID3D11Resource> TextureResource; // Texture도 받아야 함
+    // 지역 변수로 우선 선언
+    ID3D11Texture2D* Texture;
+    ID3D11ShaderResourceView* SRV;
+    int Width, Height, Channels;
 
     std::string path = "./Textures/" + filename;
+    unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
 
+    assert(Channels == 4);
 
-    ComPtr<ID3D11ShaderResourceView> SRV;
-    HRESULT hr = DirectX::CreateDDSTextureFromFileEx(
-        Device,                               // D3D11 디바이스
-        std::wstring(path.begin(), path.end()).c_str(),   // wstring 변환
-        0,                                    // MaxSize (0이면 기본 설정)
-        D3D11_USAGE_DEFAULT,                  // 텍스처 사용 방식
-        D3D11_BIND_SHADER_RESOURCE,           // 바인드 플래그 (셰이더 리소스)
-        0,                                    // CPU 접근 권한 (읽기/쓰기 없음)
-        D3D11_RESOURCE_MISC_NONE,             // MiscFlags 없음
-        false,                                // sRGB 변환 여부 (false)
-        nullptr,                              // Texture2D (필요할 경우 받을 수 있음)
-        SRV.ReleaseAndGetAddressOf()          // Shader Resource View를 생성하여 저장
-    );
+    std::vector<uint8_t> image;
 
-    if (FAILED(hr))
-    {
-        UE_LOG("Failed to load texture: %s", filename.c_str());
-        return;
-    }
+    image.resize(Width * Height * Channels);
+    memcpy(image.data(), img, image.size() * sizeof(uint8_t));
+    //for (size_t i = 0; i < Width * Height * Channels; i++) {
+    //    image[i] = img[i]; // 8비트 → 16비트 변환
+    //}
+    stbi_image_free(img);
 
-    // ShaderResourceViewMap에 추가
-    uint32_t idx = ShaderResourceViewMap.size();
+    // Create texture.
+    D3D11_TEXTURE2D_DESC txtDesc = {};
+    txtDesc.Width = Width;
+    txtDesc.Height = Height;
+    txtDesc.MipLevels = txtDesc.ArraySize = 1;
+    txtDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;        // 8비트씩 unsigned norm
+    txtDesc.SampleDesc.Count = 1;
+    txtDesc.Usage = D3D11_USAGE_IMMUTABLE;              // 한 번 읽고 수정 X
+    txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;     // Shader Resource 플래그
+
+    // Fill in the subresource data.
+    D3D11_SUBRESOURCE_DATA InitData;
+    InitData.pSysMem = image.data();
+    InitData.SysMemPitch = txtDesc.Width * sizeof(uint8_t) * Channels;     // SysMemPitch : 한 행의 바이트 크기
+    // InitData.SysMemSlicePitch = 0;
+
+    // ID3D11Device* pd3dDevice; // Don't forget to initialize this
+    // TODO: You should really consider using a COM smart-pointer like
+    // Microsoft::WRL::ComPtr instead
+
+    Device->CreateTexture2D(&txtDesc, &InitData, &Texture);                     // 텍스처, 텍스처 리소스뷰 생성
+    Device->CreateShaderResourceView(Texture, nullptr, &SRV);
+
+    // 실제로 접근 가능한 map으로 삽입
+    uint32 idx = ShaderResourceViewMap.size();
     ShaderResourceViewMap.insert({ idx, SRV });
-
-    UE_LOG("Successfully loaded texture: %s", filename.c_str());
 }
+//
+//void URenderer::CreateTextureSRV(const wchar_t* filename)
+//{
+//    using namespace DirectX;
+//
+//    ComPtr<ID3D11ShaderResourceView> SRV;
+//    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+//
+//    auto hr = CreateDDSTextureFromFileEx(Device, filename, 0, D3D11_USAGE_DEFAULT, 
+//        D3D11_BIND_SHADER_RESOURCE, 0, 0, DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+//
+//    if (FAILED(hr))
+//    {
+//        UE_LOG("Failed to load texture");
+//        return;
+//    }
+//    assert(SRV.Get() != nullptr);
+//    // ShaderResourceViewMap에 추가
+//    uint32_t idx = ShaderResourceViewMap.size();
+//    ShaderResourceViewMap.insert({ idx, SRV });
+//
+//    UE_LOG("Successfully loaded texture");
+//}
