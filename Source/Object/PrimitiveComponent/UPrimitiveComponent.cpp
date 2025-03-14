@@ -10,7 +10,8 @@ void UPrimitiveComponent::BeginPlay()
 
 void UPrimitiveComponent::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime); 
+	Super::Tick(DeltaTime);
+
 }
 
 void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const FVector4 UUIDColor)const
@@ -23,7 +24,7 @@ void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const i
 	Renderer.UpdateConstantDepth(Depth);
 }
 
-void UPrimitiveComponent::Render()
+void UPrimitiveComponent::Render() // 오버라이딩 필요
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	if (Renderer == nullptr || !bCanBeRendered)
@@ -42,10 +43,36 @@ void UPrimitiveComponent::Render()
 			bUseVertexColor = true;
 		}
 	}
-	Renderer->RenderPrimitive(this);
+	//Renderer->RenderPrimitive(this); // 실제 렌더링 요청 수행
+	
+	this->UpdateConstantData(Renderer);
+	Renderer->RenderPrimitive(this, this->RenderResource);
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
 	World->AddRenderComponent(this);
+}
+
+void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
+{
+	ConstantUpdateInfo UpdateInfo{
+		this->GetWorldTransform(),
+		this->GetCustomColor(),
+		this->IsUseVertexColor()
+	};
+
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());
+
+
+	ConstantData.MVP = MVP;
+	ConstantData.Color = UpdateInfo.Color;
+	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
+	
+
+	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }

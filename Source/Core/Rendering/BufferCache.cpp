@@ -29,46 +29,52 @@ BufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
 
 BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 {
-	ID3D11Buffer* Buffer = nullptr;
+	ComPtr<ID3D11Buffer> Buffer = nullptr;
 	int Size = 0;
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	switch (Type)
 	{
-	case EPrimitiveType::EPT_Line:
+		using enum EPrimitiveType; // [C++ 20] 범위있는 열거형의 이름 없이 열거자를 유효범위내 사용
+	case EPT_Line:
 		Size = std::size(LineVertices);
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(LineVertices, sizeof(FVertexSimple) * Size);
 		Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 		break;
-	case EPrimitiveType::EPT_Triangle:
+	case EPT_Triangle:
 		Size = std::size(TriangleVertices);
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(TriangleVertices, sizeof(FVertexSimple) * Size);
 		break;
-	case EPrimitiveType::EPT_Cube:
+	case EPT_Cube:
 		Size = std::size(CubeVertices);
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(CubeVertices, sizeof(FVertexSimple) * Size);
 		break;
-	case EPrimitiveType::EPT_Sphere:
+	case EPT_Sphere:
 		Size = std::size(SphereVertices);
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(SphereVertices, sizeof(FVertexSimple) * Size);
 		break;
-	case EPrimitiveType::EPT_Cylinder:
+	case EPT_Cylinder:
 	{
 		TArray<FVertexSimple> Vertices = CreateCylinderVertices();
 		Size = Vertices.Num();
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		break;
 	}
-	case EPrimitiveType::EPT_Cone:
+	case EPT_Cone:
 	{
 		TArray<FVertexSimple> Vertices = CreateConeVertices();
 		Size = Vertices.Num();
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		break;
 	}
+
 	}
 
-	return BufferInfo(Buffer, Size, Topology);
+	// 현재 VertexBuffer는 map에 존재하지 않으므로
+	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
+	
+
+	return BufferInfo(Buffer.Get(), Size, Topology);
 }
 
 

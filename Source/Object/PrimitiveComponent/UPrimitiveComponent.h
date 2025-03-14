@@ -5,12 +5,16 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
 
+#include "Core/Rendering/RenderResource.h"
 
-class UPrimitiveComponent : public USceneComponent
+/* 
+* NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
+*/
+class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
 	using Super = USceneComponent;
 public:
-	UPrimitiveComponent() = default;
+	UPrimitiveComponent() { };
 	virtual ~UPrimitiveComponent() = default;
 
 public:
@@ -19,6 +23,7 @@ public:
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render();
+	void UpdateConstantData(URenderer*& Renderer);
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
@@ -50,6 +55,9 @@ protected:
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+public:
+	FRenderResource RenderResource;
+	FConstants ConstantData;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -59,6 +67,7 @@ public:
 	UCubeComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
@@ -74,6 +83,7 @@ public:
 	USphereComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
@@ -89,6 +99,7 @@ public:
 	UTriangleComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
@@ -105,6 +116,9 @@ public:
 	ULineComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		// shader 관련 index 지정 필요
+		// 
 	}
 	virtual ~ULineComp() = default;
 	EPrimitiveType GetType() override
@@ -121,6 +135,7 @@ public:
 	UCylinderComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
 	}
 	virtual ~UCylinderComp() = default;
 	EPrimitiveType GetType() override
@@ -136,6 +151,7 @@ public:
 	UConeComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
 	}
 	virtual ~UConeComp() = default;
 	EPrimitiveType GetType() override
