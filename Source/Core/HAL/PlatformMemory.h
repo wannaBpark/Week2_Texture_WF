@@ -3,6 +3,9 @@
 #include <iostream>
 
 #include "Core/HAL/PlatformType.h"
+#include "Core/HAL/StackAllocator.h"
+
+#include "StackAllocator.h"
 
 enum EAllocationType : uint8
 {
@@ -18,11 +21,11 @@ enum EAllocationType : uint8
 struct FPlatformMemory
 {
 private:
-    static std::atomic<uint64> ObjectAllocationBytes;
-    static std::atomic<uint64> ObjectAllocationCount;
-    static std::atomic<uint64> ContainerAllocationBytes;
-    static std::atomic<uint64> ContainerAllocationCount;
-
+    static inline std::atomic<uint64> ObjectAllocationBytes{ 0 };           // 기존 : static 변수는 cpp, 또는 헤더 파일 밖에서 초기화해야 했음
+    static inline std::atomic<uint64> ObjectAllocationCount{ 0 };           // 변경 : 클래스 헤더에서 초기화 가능한 inline 멤버 변수
+    static inline std::atomic<uint64> ContainerAllocationBytes{ 0 };
+    static inline std::atomic<uint64> ContainerAllocationCount{ 0 };
+    
     template <EAllocationType AllocType>
     static void IncrementStats(size_t Size);
 
@@ -47,6 +50,28 @@ public:
 
     template <EAllocationType AllocType>
     static uint64 GetAllocationCount();
+
+private:
+    StackAllocator stackAllocator;
+
+public:
+    /**
+    * UObject를 생성합니다.
+    * @tparam T UObject를 상속받은 클래스
+    * @param  AllocType 생성하고자 하는 유형 (보통 Object)
+    * @return StackAllocator를 통해 [이미] 할당된 메모리의 head
+    */
+
+    template <typename T, EAllocationType AllocType>
+    static T* Malloc(size_t Size)
+    {
+        T* Ptr = StackAllocator::GetInstance().newNode<T>();  // 메모리 할당
+        if (Ptr)
+        {
+            IncrementStats<AllocType>(Size);  // 메모리 할당 추적
+        }
+        return Ptr;
+    }
 };
 
 
@@ -120,11 +145,11 @@ void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
 template <EAllocationType AllocType>
 void FPlatformMemory::Free(void* Address, size_t Size)
 {
-    if (Address)
+    /*if (Address)
     {
         DecrementStats<AllocType>(Size);
         std::free(Address);
-    }
+    }*/
 }
 
 template <EAllocationType AllocType>

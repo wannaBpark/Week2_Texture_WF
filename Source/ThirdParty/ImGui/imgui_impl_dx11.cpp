@@ -1,4 +1,4 @@
-// dear imgui: Renderer Backend for DirectX11
+﻿// dear imgui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
 // Implemented features:
@@ -459,7 +459,8 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
 
     // Create the pixel shader
     {
-        static const char* pixelShader =
+        
+        const char* pixelShader =
             "struct PS_INPUT\
             {\
             float4 pos : SV_POSITION;\
