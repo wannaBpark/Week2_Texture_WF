@@ -56,8 +56,14 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
-	ConstantUpdateInfo UpdateInfo{
+	/*ConstantUpdateInfo UpdateInfo{
 		this->GetComponentTransform(),
+		this->GetCustomColor(),
+		this->IsUseVertexColor()
+	};*/
+
+	ConstantUpdateInfo UpdateInfo{
+		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
 		this->IsUseVertexColor()
 	};
@@ -65,7 +71,7 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());
+		* FMatrix::Transpose(UpdateInfo.TransformMatrix);
 
 
 	ConstantData.MVP = MVP;

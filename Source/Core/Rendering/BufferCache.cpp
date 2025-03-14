@@ -72,6 +72,8 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 
 	// 현재 VertexBuffer는 map에 존재하지 않으므로
 	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
+	UEngine::Get().GetRenderer()->VertexCountMap.insert({ Type, Size });
+	UEngine::Get().GetRenderer()->TopologyMap.insert({ Type, Topology });
 	
 
 	return BufferInfo(Buffer.Get(), Size, Topology);

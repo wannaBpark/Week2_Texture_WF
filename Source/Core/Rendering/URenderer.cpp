@@ -215,12 +215,14 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
     auto& [Type, ILType, Topology, numVertices,VS, PS, VC, PC, GS, SRVs] = RenderResource;
-    RenderResource.Topology = Info.GetTopology();
-    RenderResource.numVertices = Info.GetSize();
+    RenderResource.Topology = TopologyMap[Type];
+    RenderResource.numVertices = VertexCountMap[Type];
 
     assert(ShaderMapVS[VS].Get() != nullptr);
     assert(ShaderMapPS[PS].Get() != nullptr);
     assert(InputLayoutMap[ILType] != nullptr);
+    assert(TopologyMap.find(Type) != TopologyMap.end());
+    assert(VertexCountMap.find(Type) != VertexCountMap.end());
 
     if (CurrentTopology != Topology)
     {
@@ -254,11 +256,11 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
     }
-    ConstantUpdateInfo UpdateInfo{ 
+    /*ConstantUpdateInfo UpdateInfo{ 
         PrimitiveComp->GetComponentTransformMatrix(), 
         PrimitiveComp->GetCustomColor(), 
         PrimitiveComp->IsUseVertexColor()
-    };
+    };*/
 
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
     RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
