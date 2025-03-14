@@ -23,6 +23,8 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     //output.normal = input.normal;
     //output.texcoord = input.texcoord;
     float3 color = g_texture0.Sample(g_sampler, input.texcoord).rgb;
+    float avg = (color.r + color.g + color.b) / 3.0f;
+    clip(avg < 0.1f ? -1 : 1);
     output.color = float4(color, 1.0f);
     //output.color = input.color;
 
