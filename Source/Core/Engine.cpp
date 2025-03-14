@@ -1,4 +1,4 @@
-#include "Engine.h"
+﻿#include "Engine.h"
 
 #include <iostream>
 #include "Object/ObjectFactory.h"
@@ -10,7 +10,6 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Actor/Sphere.h"
 #include "Static/FEditorManager.h"
-
 
 class AArrow;
 class APicker;

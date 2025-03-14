@@ -1,7 +1,4 @@
-// stb_image.h 헤더 오류 픽싱용 매크로
-#define _CRT_SECURE_NO_WARNINGS // stb_image_write compile error fix
-
-#include "URenderer.h"
+﻿#include "URenderer.h"
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Transform.h"
@@ -9,13 +6,6 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
-// 아래는 Texture에 쓸 이미지 로딩용
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "ThirdParty/stb-master/stb_image.h";
-#include "ThirdParty/stb-master/stb_image_write.h";
-
-//#include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
@@ -25,7 +15,6 @@ void URenderer::Create(HWND hWindow)
     CreateFrameBuffer();
     CreateRasterizerState();
     CreateBufferCache();
-    CreateTexturesSamplers();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
 
@@ -64,13 +53,8 @@ void URenderer::CreateShader()
          *   - SIZE_T GetBufferSize
          *     - 버퍼의 크기(바이트 갯수)를 돌려준다
          */
-    ID3D11VertexShader* PosTexVertexShader;
-    ID3D11PixelShader* PosTexPixelShader;
-    ID3D11InputLayout* PosTexInputLayout;
     ID3DBlob* VertexShaderCSO;
-    ID3DBlob* PosTexVertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
-    ID3DBlob* PosTexPixelShaderCSO;
 
     //ID3DBlob* PickingShaderCSO;
     
@@ -82,40 +66,24 @@ void URenderer::CreateShader()
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
     
-    if (ErrorMsg)
-    {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-    auto it = InputLayouts.find(InputLayoutType::POSCOLOR);
-    Device->CreateInputLayout(it->second.data(), it->second.size(), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
+    /*D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
+    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);*/
 
-
-    /* Position Color Normal Texcoord Inputlayout, shader */
-    D3DCompileFromFile(L"Shaders/PosTexVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &PosTexVertexShaderCSO, &ErrorMsg);
-    //UE_LOG("%s ", (char*)ErrorMsg->GetBufferPointer());
-    if (FAILED(Device->CreateVertexShader(PosTexVertexShaderCSO->GetBufferPointer(), PosTexVertexShaderCSO->GetBufferSize(), nullptr, &PosTexVertexShader))) {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-
-    D3DCompileFromFile(L"Shaders/PosTexPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PosTexPixelShaderCSO, &ErrorMsg);
-    if (FAILED(Device->CreatePixelShader(PosTexPixelShaderCSO->GetBufferPointer(), PosTexPixelShaderCSO->GetBufferSize(), nullptr, &PosTexPixelShader))) {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-   
-    it = InputLayouts.find(InputLayoutType::POSCOLORNORMALTEX);
-    Device->CreateInputLayout(it->second.data(), it->second.size(), PosTexVertexShaderCSO->GetBufferPointer(), PosTexVertexShaderCSO->GetBufferSize(), &PosTexInputLayout);
     
+	if (ErrorMsg)
+	{
+		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        SAFE_RELEASE(ErrorMsg);
+	}
+
+    auto it = InputLayouts.find(InputLayoutType::POSCOLOR);
+
+    Device->CreateInputLayout(it->second.data(), it->second.size(), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
     //Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
 
     ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
-    ShaderMapVS.insert({ 1, PosTexVertexShader});
     ShaderMapPS.insert({ 0, SimplePixelShader });
-    ShaderMapPS.insert({ 1, PosTexPixelShader });
     InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
-    InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
@@ -151,35 +119,6 @@ void URenderer::ReleaseConstantBuffer()
     SAFE_RELEASE(ConstantBuffer);
     SAFE_RELEASE(ConstantPickingBuffer);
     SAFE_RELEASE(ConstantsDepthBuffer);
-}
-
-void URenderer::CreateTexturesSamplers()
-{
-    ComPtr<ID3D11SamplerState> SamplerState;
-    D3D11_SAMPLER_DESC sampDesc;
-    ZeroMemory(&sampDesc, sizeof(sampDesc));
-    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    sampDesc.MinLOD = 0;
-    sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    Device->CreateSamplerState(&sampDesc, SamplerState.GetAddressOf());
-
-    SamplerMap.insert({ 0, SamplerState });
-
-    //CreateTextureSRV(L"../../../Textures/box.dds");
-    //CreateTextureSRV(L"../../../Textures/bg5.dds");
-    CreateTextureSRV("bg5.png");
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/cat0.dds");
-}
-
-void URenderer::ReleaseTexturesSamplers()
-{
 }
 
 void URenderer::SwapBuffer() const
@@ -275,15 +214,13 @@ void URenderer::PrepareShader() const
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
-    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
+    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, SRVs] = RenderResource;
     RenderResource.Topology = TopologyMap[Type];
-    RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
+    RenderResource.numVertices = VertexCountMap[Type];
 
     assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
     assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
     assert(VertexCountMap.find(Type) != VertexCountMap.end());
-    assert(VertexBufferMap.find(Type) != VertexBufferMap.end());
-    if (bUseIndexBuffer == true ) assert(IndexBufferMap.find(Type) != IndexBufferMap.end());
 
     if (CurrentTopology != Topology)
     {
@@ -304,9 +241,8 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
     }
     /* Pixel Shader의 ShaderResourceView */
-    if (SRVs.has_value())
+    if (SRVs && !SRVs->empty())
     {
-        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -316,27 +252,12 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             }
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
-        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
-        // 샘플러 설정 추가
-        ID3D11SamplerState* sampler = SamplerMap[0].Get();
-        if (sampler)
-        {
-            DeviceContext->PSSetSamplers(0, 1, &sampler);
-        }
-        else
-        {
-            UE_LOG("Warning: Sampler at slot 0 is NULL.");
-        }
     }
 
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
-    if (bUseIndexBuffer == true) {
-        RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
-    } else {
-        RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
-    }
+    RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
 
 }
 
@@ -353,7 +274,26 @@ void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-    DeviceContext->DrawIndexed(numIndices, 0, 0);
+    DeviceContext->Draw(numIndices, 0);
+}
+
+ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
+{
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = Vertices;
+
+    ID3D11Buffer* VertexBuffer;
+    const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+    if (FAILED(Result))
+    {
+        return nullptr;
+    }
+    return VertexBuffer;
 }
 
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
@@ -532,9 +472,8 @@ void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+   // RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
-    //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
@@ -556,7 +495,6 @@ void URenderer::InitMatrix()
 	ViewMatrix = FMatrix::Identity();
 	ProjectionMatrix = FMatrix::Identity();
 }
-
 
 void URenderer::ReleasePickingFrameBuffer()
 {
@@ -830,75 +768,3 @@ void URenderer::RenderPickingTexture()
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     SAFE_RELEASE(backBuffer);
 }
-
-void URenderer::CreateTextureSRV(const std::string& filename)
-{
-    // 지역 변수로 우선 선언
-    ID3D11Texture2D* Texture;
-    ID3D11ShaderResourceView* SRV;
-    int Width, Height, Channels;
-
-    std::string path = "./Textures/" + filename;
-    unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
-
-    assert(Channels == 4);
-
-    std::vector<uint8_t> image;
-
-    image.resize(Width * Height * Channels);
-    memcpy(image.data(), img, image.size() * sizeof(uint8_t));
-    //for (size_t i = 0; i < Width * Height * Channels; i++) {
-    //    image[i] = img[i]; // 8비트 → 16비트 변환
-    //}
-    stbi_image_free(img);
-
-    // Create texture.
-    D3D11_TEXTURE2D_DESC txtDesc = {};
-    txtDesc.Width = Width;
-    txtDesc.Height = Height;
-    txtDesc.MipLevels = txtDesc.ArraySize = 1;
-    txtDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;        // 8비트씩 unsigned norm
-    txtDesc.SampleDesc.Count = 1;
-    txtDesc.Usage = D3D11_USAGE_IMMUTABLE;              // 한 번 읽고 수정 X
-    txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;     // Shader Resource 플래그
-
-    // Fill in the subresource data.
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = image.data();
-    InitData.SysMemPitch = txtDesc.Width * sizeof(uint8_t) * Channels;     // SysMemPitch : 한 행의 바이트 크기
-    // InitData.SysMemSlicePitch = 0;
-
-    // ID3D11Device* pd3dDevice; // Don't forget to initialize this
-    // TODO: You should really consider using a COM smart-pointer like
-    // Microsoft::WRL::ComPtr instead
-
-    Device->CreateTexture2D(&txtDesc, &InitData, &Texture);                     // 텍스처, 텍스처 리소스뷰 생성
-    Device->CreateShaderResourceView(Texture, nullptr, &SRV);
-
-    // 실제로 접근 가능한 map으로 삽입
-    uint32 idx = ShaderResourceViewMap.size();
-    ShaderResourceViewMap.insert({ idx, SRV });
-}
-//
-//void URenderer::CreateTextureSRV(const wchar_t* filename)
-//{
-//    using namespace DirectX;
-//
-//    ComPtr<ID3D11ShaderResourceView> SRV;
-//    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
-//
-//    auto hr = CreateDDSTextureFromFileEx(Device, filename, 0, D3D11_USAGE_DEFAULT, 
-//        D3D11_BIND_SHADER_RESOURCE, 0, 0, DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
-//
-//    if (FAILED(hr))
-//    {
-//        UE_LOG("Failed to load texture");
-//        return;
-//    }
-//    assert(SRV.Get() != nullptr);
-//    // ShaderResourceViewMap에 추가
-//    uint32_t idx = ShaderResourceViewMap.size();
-//    ShaderResourceViewMap.insert({ idx, SRV });
-//
-//    UE_LOG("Successfully loaded texture");
-//}
