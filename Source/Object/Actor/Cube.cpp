@@ -1,8 +1,18 @@
 ﻿#include "Cube.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include "Object/UClassManager.h"
+
+
+
+UClass* ACube::GetClass()
+{
+	return UClassManager::Get().GetClass<ACube>();
+}
 
 ACube::ACube()
 {
+	EquipUClass(ACube, ClassType);
+
 	bCanEverTick = true;
 
 	UCubeComp* CubeComponent = AddComponent<UCubeComp>();

@@ -14,6 +14,10 @@ class UWorld;
 class AActor : public UObject
 {
 	friend class FEditorManager;
+
+public:
+	static UClass* GetClass();
+
 public:
 	AActor();
 	virtual ~AActor() override = default;

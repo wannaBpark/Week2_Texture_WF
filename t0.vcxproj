@@ -185,6 +185,8 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\UClass.cpp" />
+    <ClCompile Include="Source\Object\UClassManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -240,6 +242,8 @@
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\UClass.h" />
+    <ClInclude Include="Source\Object\UClassManager.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />

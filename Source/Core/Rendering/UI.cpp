@@ -20,6 +20,7 @@
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 
+#include "Object/UClassManager.h"
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
@@ -165,7 +166,12 @@ void UI::RenderPrimitiveSelection()
         {
             if (strcmp(items[currentItem], "Sphere") == 0)
             {
-                World->SpawnActor<ASphere>();
+                ASphere* sp = World->SpawnActor<ASphere>();
+                UE_LOG("Sphere is Sphere? %d", sp->IsA(ASphere::GetClass()));
+                UE_LOG("Sphere is Actor? %d", sp->IsA(AActor::GetClass()));
+                UE_LOG("Sphere is UObject? %d", sp->IsA(UObject::GetClass()));
+                UE_LOG("Spehre is Cube? %d", sp->IsA(ACube::GetClass()));
+
             }
             else if (strcmp(items[currentItem], "Cube") == 0)
             {

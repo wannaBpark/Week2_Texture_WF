@@ -4,9 +4,16 @@
 #include "Object/World/World.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Object/UClassManager.h"
+
+UClass* AActor::GetClass()
+{
+	return UClassManager::Get().GetClass<AActor>();
+}
 
 AActor::AActor() : Depth{ 0 }
 {
+	EquipUClass(AActor, ClassType);
 }
 
 void AActor::BeginPlay()
