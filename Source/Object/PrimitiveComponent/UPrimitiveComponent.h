@@ -181,6 +181,8 @@ public:
 	UCircleComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
 	}
 	virtual ~UCircleComp() = default;
 	EPrimitiveType GetType() override
