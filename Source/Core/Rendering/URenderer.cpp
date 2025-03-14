@@ -1,4 +1,4 @@
-#include "URenderer.h"
+﻿#include "URenderer.h"
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Transform.h"
@@ -60,7 +60,7 @@ void URenderer::CreateShader()
     
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg); 
+    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
