@@ -300,6 +300,8 @@
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
     <ClInclude Include="Source\Object\World\World.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
+    <ClInclude Include="Source\ThirdParty\stb-master\stb_image.h" />
+    <ClInclude Include="Source\ThirdParty\stb-master\stb_image_write.h" />
     <ClInclude Include="UColliders.h" />
     <ClInclude Include="URaycastSystem.h" />
   </ItemGroup>
