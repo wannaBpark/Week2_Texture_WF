@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Engine.h"
 #include "Object/USceneComponent.h"
@@ -66,16 +66,25 @@ class UCubeComp : public UPrimitiveComponent
 public:
 	UCubeComp()
 	{
-		bCanBeRendered = true;
+		/*bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColor);*/
 		// shader 관련 index 지정 필요
 		//
+
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Cube;
+		//return EPrimitiveType::EPT_Cube;
+		return EPrimitiveType::EPT_CubeTex;
 	}
 };
 
@@ -87,14 +96,18 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 		//
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Sphere;
+		return EPrimitiveType::EPT_SphereTex;
 	}
 };
 
@@ -106,13 +119,16 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
-		// shader 관련 index 지정 필요
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Triangle;
+		return EPrimitiveType::EPT_TriangleTex;
 	}
 };
 
@@ -145,13 +161,17 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCylinderComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Cylinder;
+		return EPrimitiveType::EPT_CylinderTex;
 	}
 };
 
@@ -163,30 +183,40 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Cone;
+		return EPrimitiveType::EPT_ConeTex;
 	}
 };
 
 class UCircleComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
-
 public:
 	UCircleComp()
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
+		// shader 관련 index 지정 필요
 	}
 	virtual ~UCircleComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Circle;
+		return EPrimitiveType::EPT_CircleTex;
 	}
 };
+
+

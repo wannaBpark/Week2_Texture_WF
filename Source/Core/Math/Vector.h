@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "MathUtility.h"
 
 
@@ -20,6 +20,8 @@ public:
 
     static float DotProduct(const FVector& A, const FVector& B);
     static FVector CrossProduct(const FVector& A, const FVector& B);
+
+    static FVector ComputeNormalFromThreePoint(const FVector& A, const FVector& B, const FVector& C);
 
     static float Distance(const FVector& V1, const FVector& V2);
 
@@ -57,6 +59,14 @@ public:
 inline float FVector::DotProduct(const FVector& A, const FVector& B)
 {
     return A.X * B.X + A.Y * B.Y + A.Z * B.Z;
+}
+
+inline FVector FVector::ComputeNormalFromThreePoint(const FVector& A, const FVector& B, const FVector& C)
+{
+    FVector AB = B - A;
+    FVector AC = C - A;
+    FVector Normal = CrossProduct(AB, AC);
+    return Normal;
 }
 
 inline FVector FVector::CrossProduct(const FVector& A, const FVector& B)
@@ -221,3 +231,4 @@ inline FVector4& FVector4::operator/=(float Scalar)
     X /= Scalar; Y /= Scalar; Z /= Scalar; W /= Scalar;
     return *this;
 }
+
