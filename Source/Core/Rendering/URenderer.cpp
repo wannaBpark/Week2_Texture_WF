@@ -15,6 +15,8 @@
 #include "ThirdParty/stb-master/stb_image.h";
 #include "ThirdParty/stb-master/stb_image_write.h";
 
+#include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -167,6 +169,13 @@ void URenderer::CreateTexturesSamplers()
     Device->CreateSamplerState(&sampDesc, SamplerState.GetAddressOf());
 
     SamplerMap.insert({ 0, SamplerState });
+
+    //CreateTextureSRV(L"../../../Textures/box.dds");
+    //CreateTextureSRV(L"../../../Textures/bg5.dds");
+    CreateTextureSRV("bg5.png");
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/cat0.dds");
 }
 
 void URenderer::ReleaseTexturesSamplers()
@@ -295,8 +304,9 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
     }
     /* Pixel Shader의 ShaderResourceView */
-    if (SRVs && !SRVs->empty())
+    if (SRVs.has_value())
     {
+        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -306,6 +316,17 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             }
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
+        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
+        // 샘플러 설정 추가
+        ID3D11SamplerState* sampler = SamplerMap[0].Get();
+        if (sampler)
+        {
+            DeviceContext->PSSetSamplers(0, 1, &sampler);
+        }
+        else
+        {
+            UE_LOG("Warning: Sampler at slot 0 is NULL.");
+        }
     }
 
     this->Stride = stride;
@@ -810,16 +831,17 @@ void URenderer::RenderPickingTexture()
     SAFE_RELEASE(backBuffer);
 }
 
-void URenderer::CreateTextureSRV(const std::string filename)
+void URenderer::CreateTextureSRV(const std::string& filename)
 {
     // 지역 변수로 우선 선언
     ID3D11Texture2D* Texture;
     ID3D11ShaderResourceView* SRV;
     int Width, Height, Channels;
 
-    unsigned char* img = stbi_load(filename.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
+    std::string path = "./Textures/" + filename;
+    unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
 
-    //assert(channels == 4);
+    assert(Channels == 4);
 
     std::vector<uint8_t> image;
 
@@ -857,3 +879,26 @@ void URenderer::CreateTextureSRV(const std::string filename)
     uint32 idx = ShaderResourceViewMap.size();
     ShaderResourceViewMap.insert({ idx, SRV });
 }
+//
+//void URenderer::CreateTextureSRV(const wchar_t* filename)
+//{
+//    using namespace DirectX;
+//
+//    ComPtr<ID3D11ShaderResourceView> SRV;
+//    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+//
+//    auto hr = CreateDDSTextureFromFileEx(Device, filename, 0, D3D11_USAGE_DEFAULT, 
+//        D3D11_BIND_SHADER_RESOURCE, 0, 0, DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+//
+//    if (FAILED(hr))
+//    {
+//        UE_LOG("Failed to load texture");
+//        return;
+//    }
+//    assert(SRV.Get() != nullptr);
+//    // ShaderResourceViewMap에 추가
+//    uint32_t idx = ShaderResourceViewMap.size();
+//    ShaderResourceViewMap.insert({ idx, SRV });
+//
+//    UE_LOG("Successfully loaded texture");
+//}

@@ -267,7 +267,7 @@ public:
     }
 
     template <typename T>
-    uint32 CreateConstantBuffer()
+    uint32 CreateConstantBuffer()           // 각 PrimitiveComponent에서 호출됨 : 각자가 쓸 상수 버퍼의 인덱스를 소유토록 return
     {
         ComPtr<ID3D11Buffer> ConstantBuffer;
         D3D11_BUFFER_DESC cbDesc;
@@ -307,7 +307,8 @@ public:
         DeviceContext->Unmap(pBuffer.Get(), NULL);
     }
 
-    void CreateTextureSRV(const std::string filename);
+    void CreateTextureSRV(const std::string& filename);
+    //void CreateTextureSRV(const WIDECHAR* filename);
 #pragma endregion
 
 #pragma region picking
