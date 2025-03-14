@@ -474,4 +474,170 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	return { Vertices, Indices };
 }
 
+std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::CreateConeTexVertices()
+{
+	TArray<FPosColorNormalTex> Vertices;
+	std::vector<uint32> Indices;
 
+	int segments = 36;
+	float radius = 1.f;
+	float height = 1.f;
+
+	// 원뿔의 바닥 원의 중심 점
+	Vertices.Add({ 0.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,  0.0f, -1.0f, 0.0f,  0.5f, 0.5f });
+
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+
+		float x = radius * cos(angle);
+		float y = radius * sin(angle);
+
+		// 바닥 Vertex 추가
+		Vertices.Add({ x, y, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+			0.0f - 1.0f, 0.0f,
+			0.5f + cos(angle) / 2.0f, 0.5f - sin(angle) / 2.0f });
+	}
+
+	// 바닥 원 (반시계 방향으로 추가)
+	for (int i = 1; i < segments - 1; i++)
+	{
+		Indices.push_back(0);
+		Indices.push_back(i);
+		Indices.push_back(i + 1);
+	}
+
+	Indices.push_back(0);
+	Indices.push_back(segments);
+	Indices.push_back(1);
+
+	// 옆면 삼각형 Vertex 추가
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+		float nextAngle = 2.0f * PI * (i + 1) / segments;
+
+		float x1 = radius * cos(angle);
+		float y1 = radius * sin(angle);
+		float x2 = radius * cos(nextAngle);
+		float y2 = radius * sin(nextAngle);
+
+		// 바닥 Vertex 2개, 꼭대기 Vertex 1개 위치
+		FVector v1 = { x1, y1, 0.0f };
+		FVector v2 = { x2, y2, 0.0f };
+		FVector h = { 0.0f, 0.0f, height };
+
+		// 3점의 위치를 통해 평면의 normal 벡터 구하기
+		FVector n = FVector::ComputeNormalFromThreePoint(v1, v2, h);
+
+		// 바닥 Vertex 추가
+		Vertices.Add({ v1.X, v1.Y, v1.Z,  1.0f, 1.0f, 1.0f, 1.0f,
+			n.X, n.Y, n.Z,
+			0.5f + (cos(-angle / 2.0f) / 2.0f), 0.5f + (sin(-angle / 2.0f) / 2.0f) });
+		// 꼭지 Vertex 추가
+		Vertices.Add({ h.X, h.Y, h.Z, 1.0f, 1.0f, 1.0f, 1.0f,
+			n.X, n.Y, n.Z,
+			0.5f, 0.0f });
+
+		// 옆면의 경우 UV가 반원의 형태이기에 시작점과 끝점이 같은 위치로 해야함
+		if (i == segments - 1)
+		{
+			Vertices.Add({ v2.X, v2.Y, v2.Z,  1.0f, 1.0f, 1.0f, 1.0f,
+			n.X, n.Y, n.Z,
+			0.5f + (cos(-nextAngle / 2.0f) / 2.0f), 0.5f + (sin(-nextAngle / 2.0f) / 2.0f) });
+		}
+	}
+
+
+
+	// 옆면 삼각형 엮기
+	for (int i = 1; i <= 2 * segments - 1; )
+	{
+		Indices.push_back(segments + i);
+		Indices.push_back(segments + i + 1);
+		Indices.push_back(segments + i + 2);
+		i += 2;
+	}
+
+	return { Vertices, Indices };
+}
+
+std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::CreateSphereTexVertices()
+{
+	TArray<FPosColorNormalTex> Vertices;
+	std::vector<uint32> Indices;
+
+	int segments = 36;
+	float radius = 1.f;
+
+	// 구의 꼭대기 파트
+	for (int i = 0; i < segments; ++i) {
+		float theta = 2.0f * PI * i / segments;
+		float nextTheta = 2.0f * PI * (i + 1) / segments;
+		// 맨 위 꼭짓점 Vertex 추가 Texture을 위해 여러 개
+		Vertices.Add({ 0.0f, 0.0f, radius, 1.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
+			(theta + nextTheta) / (4.0f * PI), 0.0f }); // theta 평균 내서 사용
+	}
+
+	// 중간 부분을 이루는 점들
+	for (int i = 1; i < segments; ++i)
+	{
+		float phi = PI * i / segments;
+		float z = radius * cos(phi);
+		float rSin = radius * sin(phi);
+		for (int j = 0; j <= segments; ++j)
+		{
+			float theta = 2.0f * PI * j / segments;
+			float x = rSin = radius * cos(theta);
+			float y = rSin = radius * sin(theta);
+
+			Vertices.Add({ x, y, z, 1.0f, 1.0f, 1.0f, 1.0f,
+				x, y, z, // 구의 특성을 살려 Normal Vector로 활용
+				theta / (2.0f * PI), phi / PI });
+		}
+	}
+
+	// 구의 아래 파트
+	for (int i = 0; i < segments; ++i) {
+		float theta = 2.0f * PI * i / segments;
+		float nextTheta = 2.0f * PI * (i + 1) / segments;
+		// 맨 아래 꼭짓점 Vertex 추가
+		Vertices.Add({ 0.0f, 0.0f, -radius, 1.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 0.0f, -1.0f,
+			(theta + nextTheta) / (4.0f * PI), 1.0f }); // theta 평균 내서 사용
+	}
+
+	// 구의 윗 꼭짓점과 삼각형 엮기
+	for (int i = 0; i < segments; ++i) {
+		Indices.push_back(i);
+		Indices.push_back(i + segments);
+		Indices.push_back(i + segments + 1);
+	}
+
+	// 구의 중간 부분 삼각형 2번 엮어서 사각형 만들기
+	int baseIndex = segments;
+	for (int i = 0; i < segments - 2; ++i) {    // 가로로 한바퀴씩 돌리는 것을 몇번할지
+		for (int j = 0; j < segments; ++j) {
+			Indices.push_back(baseIndex + j);
+			Indices.push_back(baseIndex + j + (segments + 2));
+			Indices.push_back(baseIndex + j + (segments + 1));
+
+			Indices.push_back(baseIndex + j + 1);
+			Indices.push_back(baseIndex + j + (segments + 2));
+			Indices.push_back(baseIndex + j + (segments + 1));
+
+			baseIndex += segments + 1;
+		}
+	}
+
+	// 구의 아래 꼭짓점 과 삼각형 엮기
+	for (int i = 0; i < segments; ++i) {
+		Indices.push_back(baseIndex + i);
+		Indices.push_back(baseIndex + i + 1);
+		Indices.push_back(baseIndex + segments + 1 + i);
+	}
+
+	return { Vertices, Indices };
+
+}

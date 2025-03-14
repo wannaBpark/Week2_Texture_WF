@@ -197,7 +197,11 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCircleComp() = default;
