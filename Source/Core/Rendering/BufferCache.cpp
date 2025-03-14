@@ -105,6 +105,24 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Size = Indices.size();
 		break;
 	}
+	case EPT_SphereTex:
+	{
+		auto [Vertices, Indices] = CreateSphereTexVertices();
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
+	}
+	case EPT_ConeTex:
+	{
+		auto [Vertices, Indices] = CreateConeTexVertices();
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
+	}
 }
 
 
@@ -484,9 +502,11 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	float height = 1.f;
 
 	// 원뿔의 바닥 원의 중심 점
-	Vertices.Add({ 0.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,  0.0f, -1.0f, 0.0f,  0.5f, 0.5f });
+	Vertices.Add({ 0.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,  
+		0.0f, -1.0f, 0.0f, 
+		0.5f, 0.5f });
 
-	for (int i = 0; i < segments; ++i)
+	for (int i = 0; i <= segments; ++i)
 	{
 		float angle = 2.0f * PI * i / segments;
 
@@ -500,16 +520,14 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	}
 
 	// 바닥 원 (반시계 방향으로 추가)
-	for (int i = 1; i < segments - 1; i++)
+	for (int i = 1; i <= segments; i++)
 	{
 		Indices.push_back(0);
-		Indices.push_back(i);
 		Indices.push_back(i + 1);
+		Indices.push_back(i);
 	}
 
-	Indices.push_back(0);
-	Indices.push_back(segments);
-	Indices.push_back(1);
+	int baseIndex = segments + 2;
 
 	// 옆면 삼각형 Vertex 추가
 	for (int i = 0; i < segments; ++i)
@@ -535,7 +553,7 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 			n.X, n.Y, n.Z,
 			0.5f + (cos(-angle / 2.0f) / 2.0f), 0.5f + (sin(-angle / 2.0f) / 2.0f) });
 		// 꼭지 Vertex 추가
-		Vertices.Add({ h.X, h.Y, h.Z, 1.0f, 1.0f, 1.0f, 1.0f,
+		Vertices.Add({ h.X, h.Y, h.Z, 0.0f, 1.0f, 0.0f, 1.0f,
 			n.X, n.Y, n.Z,
 			0.5f, 0.0f });
 
@@ -551,11 +569,12 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 
 
 	// 옆면 삼각형 엮기
-	for (int i = 1; i <= 2 * segments - 1; )
+	for (int i = 0; i < 2 * segments - 1; )
 	{
-		Indices.push_back(segments + i);
-		Indices.push_back(segments + i + 1);
-		Indices.push_back(segments + i + 2);
+		Indices.push_back(baseIndex + i);
+		Indices.push_back(baseIndex + i + 2);
+		Indices.push_back(baseIndex + i + 1);
+		
 		i += 2;
 	}
 
