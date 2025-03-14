@@ -57,7 +57,7 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
 	ConstantUpdateInfo UpdateInfo{
-		this->GetWorldTransform(),
+		this->GetComponentTransform(),
 		this->GetCustomColor(),
 		this->IsUseVertexColor()
 	};
@@ -74,5 +74,5 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 	
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
-	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }
