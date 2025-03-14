@@ -342,6 +342,16 @@ FVector FMatrix::TransformVector(const FVector& Vector) const
 		Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2]
 	};
 }
+
+FVector4 FMatrix::TransformVector(const FVector4& Vector) const
+{
+	return {
+		Vector.X * M[0][0] + Vector.Y * M[1][0] + Vector.Z * M[2][0] + Vector.W * M[3][0],
+		Vector.X * M[0][1] + Vector.Y * M[1][1] + Vector.Z * M[2][1] + Vector.W * M[3][1],
+		Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2] + Vector.W * M[3][2],
+		Vector.X * M[0][3] + Vector.Y * M[1][3] + Vector.Z * M[2][3] + Vector.W * M[3][3],
+	};
+}
 FMatrix FMatrix::OrthoForLH(float ViewWidth, float VeiwHeight, float NearPlane, float FarPlane)
 {
 	FMatrix Result;
