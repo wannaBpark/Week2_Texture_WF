@@ -8,6 +8,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
 
+
 struct BufferInfo
 {
 public:
@@ -46,7 +47,7 @@ public:
 	TArray<FVertexSimple> CreateArrowVertices();
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();
-
+	TArray<FVertexSimple> CreateCircleVertices();
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);
 };

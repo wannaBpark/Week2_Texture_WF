@@ -172,3 +172,19 @@ public:
 		return EPrimitiveType::EPT_Cone;
 	}
 };
+
+class UCircleComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+
+public:
+	UCircleComp()
+	{
+		bCanBeRendered = true;
+	}
+	virtual ~UCircleComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Circle;
+	}
+};

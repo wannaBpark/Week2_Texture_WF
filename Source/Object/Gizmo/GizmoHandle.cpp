@@ -24,30 +24,55 @@ AGizmoHandle::AGizmoHandle()
 
 
 	// y
-	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
+	/**/UCylinderComp* YArrow = AddComponent<UCylinderComp>();
 	YArrow->SetupAttachment(ZArrow);
 	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
+
+	UCircleComp* ZCircle = AddComponent<UCircleComp>();
+	ZCircle->SetupAttachment(ZArrow);
+	ZCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	ZCircle->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	CircleComponents.Add(ZCircle);
+
+	// x
+	UCircleComp* XCircle = AddComponent<UCircleComp>();
+	XCircle->SetupAttachment(ZArrow);
+	XCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), FVector(1, 1, 1)));
+	XCircle->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	CircleComponents.Add(XCircle);
+
+	UCircleComp* YCircle = AddComponent<UCircleComp>();
+	YCircle->SetupAttachment(ZArrow);
+	YCircle->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	YCircle->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	CircleComponents.Add(YCircle);
+
 	RootComponent = ZArrow;
 
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZCircle);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XCircle);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YCircle);
 
 	SetActive(false);
 }
-
-
 
 void AGizmoHandle::Tick(float DeltaTime)
 {
 	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
 	if (SelectedActor != nullptr && bIsActive)
 	{
-		SetActorTransform(SelectedActor->GetActorTransform());
-		FTransform GizmoTr = RootComponent->GetRelativeTransform();
-		GizmoTr.SetScale(1, 1, 1);
+		// Gizmo의 위치정보를 받아옵니다.
+		FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
+		//FTransform GizmoTr;
+		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		//GizmoTr.SetRotation(SelectedActor->GetActorTransform().GetRotation());
+		GizmoTr.SetScale(FVector(1, 1, 1));
+		// Actor의 Root component == 위치정보를 수정합니다.
 		SetActorTransform(GizmoTr);
 	}
 
@@ -111,6 +136,28 @@ void AGizmoHandle::Tick(float DeltaTime)
 		int type = static_cast<int>(GizmoType);
 		type = (type + 1) % static_cast<int>(EGizmoType::Max);
 		GizmoType = static_cast<EGizmoType>(type);
+		if (GizmoType == EGizmoType::Rotate)
+		{
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(true);
+			}
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(false);
+			}
+		}
+		else
+		{
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(true);
+			}
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(false);
+			}
+		}
 	}
 
 }
@@ -143,9 +190,41 @@ void AGizmoHandle::SetScaleByDistance()
 void AGizmoHandle::SetActive(bool bActive)
 {
 	bIsActive = bActive;
-	for (auto& Cylinder : CylinderComponents)
+	if (bIsActive)
 	{
-		Cylinder->SetCanBeRendered(bActive);
+		if (GizmoType == EGizmoType::Rotate)
+		{
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(bActive);
+			}
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(!bActive);
+			}
+		}
+		else
+		{
+			for (auto& Cylinder : CylinderComponents)
+			{
+				Cylinder->SetCanBeRendered(bActive);
+			}
+			for (auto& Circle : CircleComponents)
+			{
+				Circle->SetCanBeRendered(!bActive);
+			}
+		}
+	}
+	else
+	{
+		for (auto& Cylinder : CylinderComponents)
+		{
+			Cylinder->SetCanBeRendered(false);
+		}
+		for (auto& Circle : CircleComponents)
+		{
+			Circle->SetCanBeRendered(false);
+		}
 	}
 }
 
@@ -156,60 +235,72 @@ const char* AGizmoHandle::GetTypeName()
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
-    // 마우스 입력 위치(`Result`)를 로컬 공간 기준으로 변환
-    FVector LocalDelta = AT.GetMatrix().Inverse().TransformVector(Result - AT.GetPosition());
+	FVector WorldPos = AT.GetPosition();  // 현재 오브젝트의 월드 위치
+	FVector WorldDelta = Result - WorldPos;  // 이동할 월드 기준 벡터
 
-    if (SelectedAxis == ESelectedAxis::X)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            AT.MoveLocal(FVector(LocalDelta.X, 0, 0));
-            break;
-        case EGizmoType::Rotate:
-            AT.RotateRoll(LocalDelta.X);
-            break;
-        case EGizmoType::Scale:
-            AT.AddScale({ LocalDelta.X * .1f, 0, 0 });
-            break;
-        }
-    }
-    else if (SelectedAxis == ESelectedAxis::Y)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            AT.MoveLocal(FVector(0, LocalDelta.Y, 0));
-            break;
-        case EGizmoType::Rotate:
-            AT.RotatePitch(LocalDelta.Y);
-            break;
-        case EGizmoType::Scale:
-            AT.AddScale({ 0, LocalDelta.Y * .1f, 0 });
-            break;
-        }
-    }
-    else if (SelectedAxis == ESelectedAxis::Z)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            AT.MoveLocal(FVector(0, 0, LocalDelta.Z));
-            break;
-        case EGizmoType::Rotate:
-            AT.RotateYaw(-LocalDelta.Z);
-            break;
-        case EGizmoType::Scale:
-            AT.AddScale({ 0, 0, LocalDelta.Z * .1f });
-            break;
-        }
-    }
+	// 월드 벡터를 로컬 벡터로 변환
+	FVector LocalDelta;
+	LocalDelta.X = FVector::DotProduct(WorldDelta, AT.GetForward());  // 로컬 X축 이동량
+	LocalDelta.Y = FVector::DotProduct(WorldDelta, AT.GetRight());    // 로컬 Y축 이동량
+	LocalDelta.Z = FVector::DotProduct(WorldDelta, AT.GetUp());       // 로컬 Z축 이동량
+	
 
-    Actor->SetActorTransform(AT);
+	float MoveSpeedFactor = 0.1f;  // 이동 속도 조절
+
+	if (SelectedAxis == ESelectedAxis::X)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.MoveLocal(FVector(LocalDelta.X * MoveSpeedFactor, 0, 0));
+			break;
+		case EGizmoType::Rotate:
+			AT.RotateRoll(Result.X);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({ Result.X * 0.1f, 0, 0 });
+			break;
+		}
+	}
+	else if (SelectedAxis == ESelectedAxis::Y)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.MoveLocal(FVector(0, LocalDelta.Y * MoveSpeedFactor, 0));
+			break;
+		case EGizmoType::Rotate:
+			AT.RotatePitch(Result.Y);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({ 0, Result.Y * 0.1f, 0 });
+			break;
+		}
+	}
+	else if (SelectedAxis == ESelectedAxis::Z)
+	{
+		switch (GizmoType)
+		{
+		case EGizmoType::Translate:
+			AT.MoveLocal(FVector(0, 0, LocalDelta.Z * MoveSpeedFactor));
+			break;
+		case EGizmoType::Rotate:
+			AT.RotateYaw(-Result.Z);
+			break;
+		case EGizmoType::Scale:
+			AT.AddScale({ 0, 0, Result.Z * 0.1f });
+			break;
+		}
+	}
+
+	Actor->SetActorTransform(AT);
+
 	FVector front = Actor->GetActorTransform().GetForward();
-    UE_LOG("Local Move: %lf %lf %lf", front.X, front.Y, front.Z);
+	UE_LOG("Local front: %lf %lf %lf", front.X, front.Y, front.Z);
+	FVector right = Actor->GetActorTransform().GetLocalRight();
+	UE_LOG("Local right: %lf %lf %lf", right.X, right.Y, right.Z);
+	FVector up = Actor->GetActorTransform().GetLocalUp();
+	UE_LOG("Local up: %lf %lf %lf", up.X, up.Y, up.Z);
 }
-
-
 
 

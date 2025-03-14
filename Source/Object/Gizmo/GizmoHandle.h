@@ -33,6 +33,7 @@ public:
 private:
 	bool bIsActive = false;
 	TArray<class UCylinderComp*> CylinderComponents;
+	TArray<class UCircleComp*> CircleComponents;
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;

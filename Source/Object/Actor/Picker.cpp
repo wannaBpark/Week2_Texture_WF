@@ -116,19 +116,37 @@ void APicker::LateTick(float DeltaTime)
             if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
             {
                 if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
-                FVector4 CompColor = CylinderComp->GetCustomColor();
-                if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+                if(UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent))
                 {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::X);
+                    FVector4 CompColor = CylinderComp->GetCustomColor();
+                    if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::X);
+                    }
+                    else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+                    }
+                    else  // Blue - Z축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+                    }
                 }
-                else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+                else if (UCircleComp* CylinderComp = dynamic_cast<UCircleComp*>(PickedComponent))
                 {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                }
-                else  // Blue - Z축
-                {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+                    FVector4 CompColor = CylinderComp->GetCustomColor();
+                    if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::X);
+                    }
+                    else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+                    }
+                    else  // Blue - Z축
+                    {
+                        Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+                    }
                 }
             }
         }
