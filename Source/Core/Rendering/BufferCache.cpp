@@ -105,9 +105,8 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Size = Indices.size();
 		break;
 	}
-	}
+}
 
-	}
 
 	// 현재 VertexBuffer는 map에 존재하지 않으므로
 	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
