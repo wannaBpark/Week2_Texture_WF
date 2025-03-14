@@ -164,6 +164,12 @@
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\UBoxCollider.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\ICollider.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\CollisionSystem.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\ULineCollider.cpp" />
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\USphereCollider.cpp" />
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
     <ClCompile Include="Source\Object\Actor\Cone.cpp" />
     <ClCompile Include="Source\Object\Actor\Cylinder.cpp" />
@@ -173,7 +179,6 @@
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
-    <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
     <ClCompile Include="Source\Debug\DebugConsole.cpp" />
     <ClCompile Include="Source\Object\Actor\Actor.cpp" />
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
@@ -198,8 +203,16 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
     <ClCompile Include="Source\Object\World\World.cpp" />
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
+    <ClCompile Include="URaycastSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shaders\ShaderTest.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -207,11 +220,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="EEnum.h" />
+    <ClInclude Include="Source\Core\Rendering\RenderResource.h" />
+    <ClInclude Include="Source\Core\Rendering\ShaderParameterMacros.h" />
     <ClInclude Include="Source\Core\HAL\StackAllocator.h" />
+    <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ActorComponent.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ULineCollider.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\UBoxCollider.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ICollider.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\CollisionSystem.h" />
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\USphereCollider.h" />
     <ClInclude Include="Source\Object\Actor\Camera.h" />
     <ClInclude Include="Source\Object\Actor\Cone.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
-    <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\Actor\Actor.h" />
     <ClInclude Include="Source\Core\Container\Map.h" />
     <ClInclude Include="Source\Core\Container\Pair.h" />
@@ -264,6 +286,8 @@
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
     <ClInclude Include="Source\Object\World\World.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
+    <ClInclude Include="UColliders.h" />
+    <ClInclude Include="URaycastSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

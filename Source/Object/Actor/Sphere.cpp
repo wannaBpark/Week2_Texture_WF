@@ -1,5 +1,8 @@
 ﻿#include "Sphere.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include <Object/ActorComponent/Colliders/USphereCollider.h>
+#include <Core/Engine.h>
+#include <Object/World/World.h>
 
 ASphere::ASphere()
 {
@@ -7,6 +10,9 @@ ASphere::ASphere()
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
+	USphereCollider* SphereCollider = AddComponent<USphereCollider>();
+	SphereCollider->SetRadius(GetActorTransform().GetScale().X);
+	UEngine::Get().GetWorld()->AddColliderComponent(SphereCollider);
 	
 	SetActorTransform(FTransform());
 }

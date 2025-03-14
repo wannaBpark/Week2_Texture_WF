@@ -4,6 +4,8 @@
 #include <d3d11.h>
 #include <memory>
 
+#include <unordered_map> // ShaderMap
+
 #include "UI.h"
 #include "Core/Math/Vector.h"
 // #include "Object/Actor/Camera.h"
@@ -12,10 +14,13 @@
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
+#include "Core/Rendering/ShaderParameterMacros.h" // InputlayoutType
 
 
+using namespace Microsoft::WRL;
 struct FVertexSimple;
 struct FVector4;
+struct FRenderResource;
 
 class ACamera;
 
@@ -74,6 +79,7 @@ public:
     void PrepareShader() const;
 
 	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
+    void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp, struct FRenderResource& RenderResource);
 
     /**
      * Buffer에 있는 Vertex를 그립니다.
@@ -81,6 +87,7 @@ public:
      * @param numVertices 버텍스 버퍼에 저장된 버텍스의 총 개수
      */
     void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const;
+    void RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer* pIndexBuffer, UINT numIndices) const;
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
@@ -170,6 +177,22 @@ protected:
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
 	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
     ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
+
+public:
+    std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> VertexBufferMap;
+    std::unordered_map<InputLayoutType, ComPtr<ID3D11Buffer>> IndexBufferMap;
+    std::unordered_map<InputLayoutType, ComPtr<ID3D11InputLayout>> InputLayoutMap;
+
+    std::unordered_map<EPrimitiveType, uint32> VertexCountMap;
+    std::unordered_map<EPrimitiveType, D3D11_PRIMITIVE_TOPOLOGY> TopologyMap;
+
+protected:
+    std::unordered_map<uint32, ComPtr<ID3D11Buffer>> ConstantBufferMap;
+    std::unordered_map<uint32, ComPtr<ID3D11Texture2D>> Texture2DMap;
+    std::unordered_map<uint32, ComPtr<ID3D11ShaderResourceView>> ShaderResourceViewMap;
+    std::unordered_map<uint32, ComPtr<ID3D11VertexShader>> ShaderMapVS;
+    std::unordered_map<uint32, ComPtr<ID3D11PixelShader>> ShaderMapPS;
+    std::unordered_map<uint32, ComPtr<ID3D11GeometryShader>> ShaderMapGS;
 	
 	// Buffer Cache
 
@@ -181,24 +204,50 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
+#pragma region Util_ConstantBuffer
+public:
+    template <typename T>
+    uint32 CreateConstantBuffer()
+    {
+        ComPtr<ID3D11Buffer> ConstantBuffer;
+        D3D11_BUFFER_DESC cbDesc;
+        cbDesc.ByteWidth = (sizeof(T) + 0xf) & 0xfffffff0;
+        cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+        cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        cbDesc.MiscFlags = 0;
+        cbDesc.StructureByteStride = 0;
+        ;
+        if (FAILED(Device->CreateBuffer(&cbDesc, nullptr, ConstantBuffer.GetAddressOf()))) {
+            std::cout << "CreateConstantBuffer() CreateBuffer failed()." << std::endl;
+        }
+
+        uint32 idx = ConstantBufferMap.size();
+        ConstantBufferMap.insert({idx, ConstantBuffer});
+
+        return idx;
+    }
     /**
      * (상수) 버퍼를 새로운 bufferData 값으로 갱신합니다
      * @param bufferData 갱신할 값
      * @param pBuffer 갱신 대상 (상수) 버퍼 포인터
      */
     template <typename T_DATA>
-    void UpdateBuffer(const T_DATA& bufferData, ID3D11Buffer*& pBuffer) {
-
-        if (!pBuffer) {
+    void UpdateBuffer(const T_DATA& bufferData, uint32 idx) {
+        
+        if (ConstantBufferMap.find(idx) == ConstantBufferMap.end()) {               // 해당 idx에 상수버퍼가 존재하지 않을 때
             std::cout << "UpdateBuffer() buffer was not initialized." << std::endl;
         }
 
+        ComPtr<ID3D11Buffer> pBuffer = ConstantBufferMap[idx];
         D3D11_MAPPED_SUBRESOURCE ms;
         
-        DeviceContext->Map(pBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+        DeviceContext->Map(pBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
         memcpy(ms.pData, &bufferData, sizeof(bufferData));
-        DeviceContext->Unmap(pBuffer, NULL);
+        DeviceContext->Unmap(pBuffer.Get(), NULL);
     }
+#pragma endregion
+
 #pragma region picking
 protected:
 	// 피킹용 버퍼들
@@ -216,17 +265,16 @@ public:
     void ReleasePickingFrameBuffer();
     void CreatePickingTexture(HWND hWnd);
     void PrepareZIgnore();
-    //void PreparePicking();
-	//void PreparePickingShader() const;
 	void UpdateConstantPicking(FVector4 UUIDColor) const;
     void UpdateConstantDepth(int Depth) const;
-
     void PrepareMain();
 	void PrepareMainShader();
 
+    FVector GetRayDirectionFromClick(FVector MPos);
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
-	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+    FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+    FMatrix GetViewMatrix() const { return ViewMatrix; }
 #pragma endregion picking
 };

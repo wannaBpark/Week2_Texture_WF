@@ -6,6 +6,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -38,6 +39,7 @@ void URenderer::Release()
     ReleaseDeviceAndSwapChain();
 }
 
+// 필요한 모든 셰이더, Input Layout을 생성합니다
 void URenderer::CreateShader()
 {
     /**
@@ -63,9 +65,10 @@ void URenderer::CreateShader()
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
-
+    
     /*D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
     Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);*/
+
     
 	if (ErrorMsg)
 	{
@@ -73,15 +76,14 @@ void URenderer::CreateShader()
         SAFE_RELEASE(ErrorMsg);
 	}
 
-    // 입력 레이아웃 정의 및 생성
-    D3D11_INPUT_ELEMENT_DESC Layout[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+    auto it = InputLayouts.find(InputLayoutType::POSCOLOR);
 
-    Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
+    Device->CreateInputLayout(it->second.data(), it->second.size(), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
+    //Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
 
+    ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
+    ShaderMapPS.insert({ 0, SimplePixelShader });
+    InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
@@ -98,31 +100,18 @@ void URenderer::ReleaseShader()
     SAFE_RELEASE(SimpleVertexShader);
 }
 
+// 필요한 모든 상수버퍼를 생성합니다
 void URenderer::CreateConstantBuffer()
 {
-    D3D11_BUFFER_DESC ConstantBufferDesc = {};
-    ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
+    uint32 idx;
+    idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
+    idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
+    idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
+    UE_LOG("constantbuffer size : %d", idx);
 
-    Device->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
-
-    D3D11_BUFFER_DESC ConstantBufferDescPicking = {};
-    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDescPicking.ByteWidth = sizeof(FPickingConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
-
-    Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
-
-    D3D11_BUFFER_DESC ConstantBufferDescDepth = {};
-    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDescPicking.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
-
-    Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantsDepthBuffer);
+    /*ConstantBuffer = ConstantBufferMap[0].Get();
+    ConstantPickingBuffer = ConstantBufferMap[1].Get();
+    ConstantsDepthBuffer = ConstantBufferMap[2].Get();*/
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -144,8 +133,8 @@ void URenderer::Prepare() const
     DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     
-    // InputAssembler의 Vertex 해석 방식을 설정
-    DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // InputAssembler의 Vertex 해석 방식을 설정 / deprecated : 각 오브젝트마다 topology 가지는 것으로 설정 - RenderPrimitive() 참고
+    //DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Rasterization할 Viewport를 설정 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
@@ -182,35 +171,93 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
+//void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
+//{
+//    if (BufferCache == nullptr)
+//    {
+//        return;
+//    }
+//
+//	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
+//    PrimitiveComp->RenderResource.Topology = Info.GetTopology();
+//    PrimitiveComp->RenderResource.numVertices = Info.GetSize();
+//
+//	if (Info.GetBuffer() == nullptr)
+//	{
+//		return;
+//	}
+//
+//	if (CurrentTopology != Info.GetTopology())
+//	{
+//		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
+//		CurrentTopology = Info.GetTopology();
+//	}
+//
+//    ConstantUpdateInfo UpdateInfo{ 
+//        PrimitiveComp->GetWorldTransform(), 
+//        PrimitiveComp->GetCustomColor(), 
+//        PrimitiveComp->IsUseVertexColor(),
+//    };
+//
+//
+//    FConstants tmp;
+//    tmp.MVP =
+//        FMatrix::Transpose(ProjectionMatrix) *
+//        FMatrix::Transpose(ViewMatrix) *
+//        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
+//    tmp.Color = UpdateInfo.Color;
+//    tmp.bUseVertexColor = UpdateInfo.bUseVertexColor;
+//    UpdateConstant(UpdateInfo); // legacy code
+//    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+//}
+
+void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
-    if (BufferCache == nullptr)
+    BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
+    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, SRVs] = RenderResource;
+    RenderResource.Topology = TopologyMap[Type];
+    RenderResource.numVertices = VertexCountMap[Type];
+
+    assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
+    assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
+    assert(VertexCountMap.find(Type) != VertexCountMap.end());
+
+    if (CurrentTopology != Topology)
     {
-        return;
+        DeviceContext->IASetPrimitiveTopology(Topology);
+        CurrentTopology = Topology;
+    }
+    DeviceContext->VSSetShader(ShaderMapVS[VS].Get(), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderMapPS[PS].Get(), nullptr, 0);
+
+    /* Vertex Shader의 상수 버퍼 */   
+    if (ConstantBufferMap.find(VC) != ConstantBufferMap.end())
+    {
+        DeviceContext->VSSetConstantBuffers(0, 1, ConstantBufferMap[VC].GetAddressOf());
+    }
+    /* Pixel Shader의 상수 버퍼 */
+    if (ConstantBufferMap.find(PC) != ConstantBufferMap.end())
+    {
+        //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
+    }
+    /* Pixel Shader의 ShaderResourceView */
+    if (SRVs && !SRVs->empty())
+    {
+        std::vector<ID3D11ShaderResourceView*> SRVArray;
+        for (auto SRVIndex : *SRVs)
+        {
+            if (ShaderResourceViewMap.find(SRVIndex) != ShaderResourceViewMap.end())
+            {
+                SRVArray.push_back(ShaderResourceViewMap[SRVIndex].Get());
+            }
+        }
+        DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
     }
 
-	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
-
-	if (Info.GetBuffer() == nullptr)
-	{
-		return;
-	}
-
-	//if (CurrentTopology != Info.GetTopology())
-	{
-		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
-		CurrentTopology = Info.GetTopology();
-	}
-
-    ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetComponentTransformMatrix(), 
-        PrimitiveComp->GetCustomColor(), 
-        PrimitiveComp->IsUseVertexColor()
-    };
-
-    UpdateConstant(UpdateInfo);
-    
-    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+    this->Stride = stride;
+    DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
+    DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
+    RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
 
 }
 
@@ -220,6 +267,14 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices)
     DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
 
     DeviceContext->Draw(numVertices, 0);
+}
+
+void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer* pIndexBuffer, UINT numIndices) const
+{
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
+    DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->Draw(numIndices, 0);
 }
 
 ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
@@ -375,7 +430,7 @@ void URenderer::CreateDepthStencilState()
     D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
+    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
     // DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
     // DepthStencilDesc.StencilReadMask = 0xFF;
     // DepthStencilDesc.StencilWriteMask = 0xFF;
@@ -479,6 +534,7 @@ void URenderer::PrepareZIgnore()
     DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }
 
+
 //void URenderer::PreparePicking()
 //{
 //    // 렌더 타겟 바인딩
@@ -543,6 +599,44 @@ void URenderer::PrepareMain()
 void URenderer::PrepareMainShader()
 {
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+}
+
+FVector URenderer::GetRayDirectionFromClick(FVector MPos)
+{
+
+    // 1. 화면 좌표를 NDC 좌표로 변환 (-1 ~ 1 범위)
+    float ndcX = (2.0f * MPos.X / ViewportInfo.Width) - 1.0f;
+    float ndcY = 1.0f - (2.0f * MPos.Y / ViewportInfo.Height); // 화면 좌표계는 아래로 증가하므로 반전
+
+    // 2. NDC 좌표로 근거리 및 원거리 클립 공간의 점을 생성
+    FVector4 nearPoint = FVector4(ndcX, ndcY, 0.0f, 1.0f);
+    FVector4 farPoint = FVector4(ndcX, ndcY, 1.0f, 1.0f);
+
+    // 3. 투영 및 뷰 변환 역행렬 계산
+    FMatrix invProjection = ProjectionMatrix.Inverse();
+    FMatrix invView = ViewMatrix.Inverse();
+
+    // 4. NDC 좌표를 뷰 공간으로 변환
+    FVector4 nearPointView = invProjection.TransformVector(nearPoint);
+    FVector4 farPointView = invProjection.TransformVector(farPoint);
+
+    // 원근 나눗셈(w로 나누기)
+    nearPointView /= nearPointView.W;
+    farPointView /= farPointView.W;
+
+    // 5. 뷰 공간의 점을 월드 공간으로 변환
+    FVector4 nearPointWorld = invView.TransformVector(nearPointView);
+    FVector4 farPointWorld = invView.TransformVector(farPointView);
+
+    // 6. 카메라 위치 추출 (뷰 행렬의 역행렬의 마지막 행은 월드 공간에서의 카메라 위치)
+    FVector cameraPosition;
+    invView.GetTranslateMatrix(cameraPosition);
+
+    // 7. 카메라 위치에서 원거리 지점으로의 방향 벡터 계산 및 정규화
+    FVector rayDirection = farPointWorld - cameraPosition;
+    rayDirection.Normalize();
+
+    return rayDirection;
 }
 
 FVector4 URenderer::GetPixel(FVector MPos)

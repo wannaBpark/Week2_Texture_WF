@@ -6,6 +6,8 @@
 #include "Static/FEditorManager.h"
 #include "Core/Math/Plane.h"
 
+#include "../URaycastSystem.h"
+
 APlayerController::APlayerController() {
 
 }

@@ -6,6 +6,10 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "ImGui/imgui.h"
+#include "Camera.h"
+
+#include "../URaycastSystem.h"
 
 APicker::APicker()
 {    
@@ -43,7 +47,24 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if(APlayerInput::Get().GetMouseDown(false))
+    if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
+        POINT pt;//TODO 하나로 합치기
+        GetCursorPos(&pt);
+        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+
+        float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
+        float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
+        pt.x = pt.x * ratioX;
+        pt.y = pt.y * ratioY;
+
+        FHitResult result;
+        FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
+        FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
+        URaycastSystem::Raycast(location, dir, 100, result);
+        UE_LOG("result: %d", result.bBlockingHit);
+    }
+
+    if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt;
         GetCursorPos(&pt);

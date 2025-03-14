@@ -58,6 +58,9 @@
     <Filter Include="Source Files\Core\Rendering">
       <UniqueIdentifier>{56b6436b-bf4c-494b-a04c-07350d7ca313}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Define">
+      <UniqueIdentifier>{5ef3b7b8-e21d-46f5-9927-a18e98e61526}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -135,9 +138,6 @@
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Debug\DebugConsole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -181,6 +181,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\ULineCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\USphereCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\UBoxCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\ICollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\Colliders\CollisionSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="URaycastSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -286,9 +307,6 @@
     <ClInclude Include="Source\Object\World\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Container\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -344,6 +362,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\HAL\StackAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EEnum.h">
+      <Filter>Header Files\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ActorComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\UBoxCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ICollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\CollisionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\USphereCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\Colliders\ULineCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="URaycastSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UColliders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
