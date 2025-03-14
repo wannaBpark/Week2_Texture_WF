@@ -21,6 +21,8 @@ enum class EPrimitiveType : uint8
 	EPT_CylinderTex,
 	EPT_TriangleTex,
 	EPT_CircleTex,
+	EPT_SphereTex,
+	EPT_ConeTex,
 	EPT_Max,
 };
 
