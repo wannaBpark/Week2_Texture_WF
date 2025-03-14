@@ -4,6 +4,7 @@ cbuffer constants : register(b0)
     matrix MVP;
     float4 CustomColor;
     uint bUseVertexColor;
+	float4 indexColor;
 }
 
 cbuffer UUIDColor : register(b1){
@@ -26,7 +27,7 @@ struct PS_INPUT
 {
     float4 position : SV_POSITION; // Transformed position to pass to the pixel shader
     float4 color : COLOR;          // Color to pass to the pixel shader
-    // float4 depthPosition : TEXCOORD0;
+    float4 depthPosition : COLOR1;
 };
 
 struct PS_OUTPUT
@@ -44,6 +45,7 @@ PS_INPUT mainVS(VS_INPUT input)
     // output.depthPosition = output.position;
 
     output.color = bUseVertexColor == 1 ? input.color : CustomColor;
+	output.depthPosition = indexColor;
     return output;
 }
 
@@ -58,7 +60,7 @@ PS_OUTPUT mainPS(PS_INPUT input)
     // 색상 설정 (예: 흰색)
     output.color = input.color;
     output.depth = saturate(depth);
-    output.UUID = UUIDColor;
+    output.UUID = input.depthPosition;
     // output.color = float4(depth, depth, depth, 1.0f);
     
     return output;
