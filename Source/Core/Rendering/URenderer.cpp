@@ -206,7 +206,7 @@ void URenderer::PrepareShader() const
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
-    auto& [Type, ILType, Topology, numVertices, VB, IB, VS, PS, VC, PC, GS, SRVs] = RenderResource;
+    auto& [Type, ILType, Topology, numVertices,VS, PS, VC, PC, GS, SRVs] = RenderResource;
     RenderResource.Topology = Info.GetTopology();
     RenderResource.numVertices = Info.GetSize();
 

@@ -178,8 +178,8 @@ protected:
 public:
     std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> VertexBufferMap;
     std::unordered_map<InputLayoutType, ComPtr<ID3D11InputLayout>> InputLayoutMap;
+    std::unordered_map<InputLayoutType, ComPtr<ID3D11Buffer>> IndexBufferMap;
 protected:
-    std::unordered_map<uint32, ComPtr<ID3D11Buffer>> IndexBufferMap;
     std::unordered_map<uint32, ComPtr<ID3D11Buffer>> ConstantBufferMap;
     std::unordered_map<uint32, ComPtr<ID3D11Texture2D>> Texture2DMap;
     std::unordered_map<uint32, ComPtr<ID3D11ShaderResourceView>> ShaderResourceViewMap;
