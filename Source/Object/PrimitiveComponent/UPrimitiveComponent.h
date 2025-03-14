@@ -7,14 +7,14 @@
 
 #include "Core/Rendering/RenderResource.h"
 
-/* 
+/*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
 */
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
 	using Super = USceneComponent;
 public:
-	UPrimitiveComponent() { };
+	UPrimitiveComponent() {};
 	virtual ~UPrimitiveComponent() = default;
 
 public:
@@ -31,7 +31,7 @@ public:
 
 	void SetCustomColor(const FVector4& InColor)
 	{
-		CustomColor = InColor; 
+		CustomColor = InColor;
 		bUseVertexColor = false;
 	}
 
@@ -48,8 +48,8 @@ public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
-	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
-	
+	bool GetIsOrthoGraphic() { return bIsOrthoGraphic; }
+
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
@@ -102,6 +102,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 		//
 	}
@@ -125,6 +126,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
@@ -167,6 +169,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCylinderComp() = default;
@@ -189,6 +192,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
@@ -211,6 +215,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCircleComp() = default;
