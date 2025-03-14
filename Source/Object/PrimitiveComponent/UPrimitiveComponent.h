@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Engine.h"
 #include "Object/USceneComponent.h"
@@ -89,7 +89,7 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColor);
 		// shader 관련 index 지정 필요
-		//
+		
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
