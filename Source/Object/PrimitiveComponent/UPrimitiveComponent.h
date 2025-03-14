@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Engine.h"
 #include "Object/USceneComponent.h"
@@ -79,6 +79,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
