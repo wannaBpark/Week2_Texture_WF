@@ -332,7 +332,7 @@ void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-    DeviceContext->Draw(numIndices, 0);
+    DeviceContext->DrawIndexed(numIndices, 0, 0);
 }
 
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
@@ -512,8 +512,8 @@ void URenderer::CreateRasterizerState()
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
     //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-    //RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
-    RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
+    RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
+    //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
