@@ -1,6 +1,7 @@
-﻿#include "UPrimitiveComponent.h"
+#include "UPrimitiveComponent.h"
 #include "Object/World/World.h"
 #include "Object/Actor/Actor.h"
+//#include "Object/Actor/Picker.h"
 
 
 void UPrimitiveComponent::BeginPlay()
@@ -62,10 +63,12 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		this->IsUseVertexColor()
 	};*/
 
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	ConstantUpdateInfo UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
-		this->IsUseVertexColor()
+		this->IsUseVertexColor(),
+		indexColor,
 	};
 
 	// 업데이트할 자료형들
@@ -77,6 +80,7 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 	ConstantData.MVP = MVP;
 	ConstantData.Color = UpdateInfo.Color;
 	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
+	ConstantData.indexColor = UpdateInfo.indexColor;
 	
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
