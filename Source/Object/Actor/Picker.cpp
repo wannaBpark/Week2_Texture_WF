@@ -61,10 +61,39 @@ void APicker::LateTick(float DeltaTime)
         FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
         FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
         URaycastSystem::Raycast(location, dir, 100, result);
-        UE_LOG("result: %d", result.bBlockingHit);
+
+        TArray<FHitResult> resultAll;
+        URaycastSystem::RaycastAll(location, dir, 100, resultAll);
+        for (int i = 0; i < resultAll.Len(); i++) {
+            UE_LOG("result%d", resultAll[i].hitObject->GetUUID());
+        }
+
+        UActorComponent* PickedComponent = nullptr;
+        if(result.bBlockingHit)
+            PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(result.hitObject->GetUUID());
+
+        if (PickedComponent != nullptr)
+        {
+            AActor* PickedActor = PickedComponent->GetOwner();
+
+            if (PickedActor == nullptr) return;
+            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+            {
+                if (PickedActor == FEditorManager::Get().GetSelectedActor())
+                {
+                    FEditorManager::Get().SelectActor(nullptr);
+                }
+                else
+                {
+                    FEditorManager::Get().SelectActor(PickedActor);
+                }
+            }
+            UE_LOG("Pick - UUID: %u", result.hitObject->GetUUID());
+        }
+
     }
 
-    if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
+    /*if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt;
         GetCursorPos(&pt);
@@ -100,7 +129,7 @@ void APicker::LateTick(float DeltaTime)
             }
         }
         UE_LOG("Pick - UUID: %u", UUID);
-    }
+    }*/
 
     if (APlayerInput::Get().IsPressedMouse(false))
     {

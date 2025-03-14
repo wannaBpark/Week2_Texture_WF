@@ -214,10 +214,32 @@ struct alignas(16) FVector4 : public FVector
     }
 
     FVector4& operator/=(float Scalar);
+    FVector4& operator*(const FVector& V3);
+    FVector4& operator*(const FVector4& V4);
 };
 
 inline FVector4& FVector4::operator/=(float Scalar)
 {
     X /= Scalar; Y /= Scalar; Z /= Scalar; W /= Scalar;
+    return *this;
+}
+
+inline FVector4& FVector4::operator*(const FVector& V3)
+{
+    X *= V3.X;
+    Y *= V3.Y;
+    Z *= V3.Z;
+    // W는 변경하지 않음
+
+    return *this;
+}
+
+inline FVector4& FVector4::operator*(const FVector4& V4)
+{
+    X *= V4.X;
+    Y *= V4.Y;
+    Z *= V4.Z;
+    W *= V4.W;
+
     return *this;
 }
