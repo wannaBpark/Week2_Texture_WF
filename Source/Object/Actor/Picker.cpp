@@ -1,4 +1,4 @@
-﻿#include "Core/HAL/PlatformType.h"
+#include "Core/HAL/PlatformType.h"
 #include "Core/Rendering/URenderer.h"
 #include "Picker.h"
 
@@ -16,7 +16,7 @@ APicker::APicker()
     bIsGizmo = true;
 }
 
-FVector4 APicker::EncodeUUID(unsigned int UUID)
+FVector4 APicker::EncodeUUID(uint32 UUID)
 {
     float a = (UUID >> 24) & 0xff;
     float b = (UUID >> 16) & 0xff;
@@ -125,7 +125,7 @@ void APicker::LateTick(float DeltaTime)
         UE_LOG("Pick - UUID: %u", UUID);
     }*/
 
-    if (APlayerInput::Get().IsPressedMouse(false))
+    if (APlayerInput::Get().IsPressedMouse(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt;
         GetCursorPos(&pt);
