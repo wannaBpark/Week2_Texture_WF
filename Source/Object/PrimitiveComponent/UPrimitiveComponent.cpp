@@ -1,6 +1,7 @@
-﻿#include "UPrimitiveComponent.h"
+#include "UPrimitiveComponent.h"
 #include "Object/World/World.h"
 #include "Object/Actor/Actor.h"
+//#include "Object/Actor/Picker.h"
 
 
 void UPrimitiveComponent::BeginPlay()
@@ -62,23 +63,28 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		this->IsUseVertexColor()
 	};*/
 
-	ConstantUpdateInfo UpdateInfo{
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
+	FConstants Info{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
-		this->IsUseVertexColor()
+		(uint32)this->IsUseVertexColor(),
+		FVector(0.0f, 0.0f, 0.0f),
+		indexColor,
 	};
 
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(UpdateInfo.TransformMatrix);
+		* FMatrix::Transpose(Info.MVP);
 
 
 	ConstantData.MVP = MVP;
-	ConstantData.Color = UpdateInfo.Color;
-	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
+	ConstantData.Color = Info.Color;
+	ConstantData.bUseVertexColor = Info.bUseVertexColor;
+	ConstantData.indexColor = Info.indexColor;
 	
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
-	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }

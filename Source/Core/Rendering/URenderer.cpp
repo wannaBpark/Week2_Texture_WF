@@ -1,4 +1,4 @@
-﻿#include "URenderer.h"
+#include "URenderer.h"
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
 #include "Core/Math/Transform.h"
@@ -238,7 +238,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 상수 버퍼 */
     if (ConstantBufferMap.find(PC) != ConstantBufferMap.end())
     {
-        //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
+        DeviceContext->PSSetConstantBuffers(0, 1, ConstantBufferMap[PC].GetAddressOf());
     }
     /* Pixel Shader의 ShaderResourceView */
     if (SRVs && !SRVs->empty())
