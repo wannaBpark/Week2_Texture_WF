@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Vector.h"
 #include "Matrix.h"
 #include "Core/Engine.h"
@@ -49,7 +49,7 @@ public:
 	{
 		Position = { x, y, z };
 	}
-	inline virtual void SetRotation(const FVector& InRotation)
+	inline virtual void SetRotation(const FVector& InRotation) // 확인 필요함~
 	{
 		Rotation = FQuat::EulerToQuaternion(InRotation);
 	}

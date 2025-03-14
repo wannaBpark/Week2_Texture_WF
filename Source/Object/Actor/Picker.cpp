@@ -48,7 +48,7 @@ void APicker::LateTick(float DeltaTime)
     AActor::LateTick(DeltaTime);
 
     if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
-        POINT pt;//TODO 하나로 합치기
+        POINT pt;
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
