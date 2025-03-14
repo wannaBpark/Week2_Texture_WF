@@ -5,9 +5,10 @@
 
 #include <wrl/client.h>
 #include <unordered_map>
+#include <tuple>
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
-
+struct FPosColorNormalTex;
 struct BufferInfo
 {
 public:
@@ -46,6 +47,7 @@ public:
 	TArray<FVertexSimple> CreateArrowVertices();
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateCubeTexVertices();
 
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);

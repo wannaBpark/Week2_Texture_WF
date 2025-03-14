@@ -1,4 +1,4 @@
-﻿#include "PlayerController.h"
+#include "PlayerController.h"
 
 #include <unordered_map>
 #include "Object//Actor/Camera.h"
@@ -36,7 +36,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
     FVector TargetRotation = CameraTransform.GetRotation().GetEuler();
     TargetRotation.Y += Camera->CameraSpeed * -DeltaPos.Y * DeltaTime;
-    TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime;
+    TargetRotation.Z -= Camera->CameraSpeed * DeltaPos.X * DeltaTime;
     
     TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
     CameraTransform.SetRotation(TargetRotation);

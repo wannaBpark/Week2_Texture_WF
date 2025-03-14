@@ -66,16 +66,25 @@ class UCubeComp : public UPrimitiveComponent
 public:
 	UCubeComp()
 	{
-		bCanBeRendered = true;
+		/*bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColor);*/
 		// shader 관련 index 지정 필요
 		//
+
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Cube;
+		//return EPrimitiveType::EPT_Cube;
+		return EPrimitiveType::EPT_CubeTex;
 	}
 };
 
@@ -172,3 +181,5 @@ public:
 		return EPrimitiveType::EPT_Cone;
 	}
 };
+
+

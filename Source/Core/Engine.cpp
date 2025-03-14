@@ -1,4 +1,4 @@
-﻿#include "Engine.h"
+#include "Engine.h"
 
 #include <iostream>
 #include "Object/ObjectFactory.h"
@@ -10,6 +10,8 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Actor/Sphere.h"
 #include "Static/FEditorManager.h"
+
+#include "Object/Actor/Cube.h" // 테스트용 큐브 렌더링
 
 class AArrow;
 class APicker;
@@ -235,6 +237,7 @@ void UEngine::InitWorld()
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
+    World->SpawnActor<ACube>();
 
 	World->BeginPlay();
 }
