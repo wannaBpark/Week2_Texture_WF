@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Core/HAL/PlatformType.h"
 struct FVertexSimple
 {
@@ -17,6 +17,10 @@ enum class EPrimitiveType : uint8
 	EPT_Cone,
 	EPT_Circle,
 	EPT_BillBoard,
+	EPT_CubeTex,
+	EPT_CylinderTex,
+	EPT_TriangleTex,
+	EPT_CircleTex,
 	EPT_Max,
 };
 

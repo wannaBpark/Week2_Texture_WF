@@ -209,6 +209,9 @@
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\PosTexPixelShader.hlsl" />
+    <FxCompile Include="Shaders\ShaderTest.hlsl" />
+    <FxCompile Include="Shaders\PosTexVertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
@@ -392,6 +395,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UColliders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\RenderResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\ShaderParameterMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ThirdParty\stb-master\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ThirdParty\stb-master\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

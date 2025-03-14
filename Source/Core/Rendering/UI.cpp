@@ -1,4 +1,4 @@
-﻿#include "UI.h"
+#include "UI.h"
 
 #include <algorithm>
 
@@ -155,7 +155,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Circle"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 

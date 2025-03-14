@@ -21,6 +21,7 @@ struct FRenderResource {
 	uint32 VertexConstantIndex     { 0 };
 	uint32 PixelConstantIndex      { 0 };
 	uint32 GeometryShaderIndex     { 0 };
+	bool bUseIndexBuffer			   { false };
 
 	std::optional<std::vector<uint32>> ShaderResourceViewIndices; // 다중 SRV [없을 수도 있음]
 };
