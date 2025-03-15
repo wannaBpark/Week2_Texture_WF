@@ -224,6 +224,8 @@ struct alignas(16) FVector4 : public FVector
     }
 
     FVector4& operator/=(float Scalar);
+    FVector4& operator*(const FVector& V3);
+    FVector4& operator*(const FVector4& V4);
 };
 
 inline FVector4& FVector4::operator/=(float Scalar)

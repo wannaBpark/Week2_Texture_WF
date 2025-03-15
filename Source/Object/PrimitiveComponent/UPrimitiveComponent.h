@@ -103,7 +103,7 @@ public:
 		RenderResource.bUseIndexBuffer = true;
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
-		//
+		
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override

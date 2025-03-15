@@ -568,6 +568,40 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	return { Vertices, Indices };
 }
 
+std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::CreateTextTexVertices()
+{
+	TArray<FPosColorNormalTex> Vertices;
+	std::vector<uint32> Indices;
+
+	Vertices.Add({ 0.0f,  -0.5f, 0.5f,  
+		0.5f, 0.5f, 0.0f, 1.0f, 
+		0.0f, -1.0f,0.0f,
+		0.0f, 1.0f });  // Bottom-left (brown)
+	Vertices.Add({ 0.0f,  0.5f,  0.5f,  
+		1.0f, 0.0f, 0.0f, 1.0f, 
+		0.0f, -1.0f,0.0f,
+		1.0f, 1.0f });  // Top-left (red)
+	Vertices.Add({ 0.0f,  0.5f,  -0.5f,
+		0.0f, 1.0f, 0.0f, 1.0f ,
+		0.0f, -1.0f,0.0f,
+		1.0f, 0.0f });  // Top-right (green)
+	Vertices.Add({ 0.0f, -0.5f, -0.5f,
+		1.0f, 0.0f, 0.5f, 1.0f ,
+		0.0f, -1.0f,0.0f,
+		0.0f, 0.0f });
+
+
+	Indices.push_back(0);
+	Indices.push_back(1);
+	Indices.push_back(2);
+
+	Indices.push_back(0);
+	Indices.push_back(2);
+	Indices.push_back(3);
+
+	return { Vertices, Indices };
+}
+
 std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::CreateSphereTexVertices()
 {
 	TArray<FPosColorNormalTex> Vertices;

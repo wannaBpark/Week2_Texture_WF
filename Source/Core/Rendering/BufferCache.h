@@ -54,6 +54,7 @@ public:
 	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateSphereTexVertices();
 	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateBillBoardVertices();
 	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateConeTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateTextTexVertices();
 
 
 private :

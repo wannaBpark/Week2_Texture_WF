@@ -20,7 +20,8 @@ struct PS_INPUT
 
 struct PS_OUTPUT
 {
-    float4 color : SV_TARGET;
+    float4 color : SV_TARGET0;
+    float4 UUID : SV_TARGET1;
 };
 
 PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
@@ -36,7 +37,7 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     float avg = (color.r + color.g + color.b) / 3.0f; 
     clip(avg < 0.1f ? -1 : 1);                          // png 투명 이미지 밝기 작은 값들 제거 
     output.color = float4(color, 1.0f);
-    //output.color = input.color;
+    output.UUID = indexColor;
 
     return output;
 }

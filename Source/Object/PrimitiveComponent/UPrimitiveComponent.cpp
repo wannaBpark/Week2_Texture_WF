@@ -58,16 +58,16 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
 	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
 		(uint32)this->IsUseVertexColor(),
 		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
-		APicker::EncodeUUID(this->GetUUID()),
+		indexColor
 	};
-
 	FMatrix& WorldPosition = UpdateInfo.MVP;
-
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())

@@ -31,12 +31,10 @@ public:
         ICollider* Object, FHitResult& OutHit);
 
     // 모든 충돌을 감지하고 가장 가까운 것을 반환하는 Raycast
-    static bool RaycastClosest(const FVector& Origin, const FVector& Direction, float MaxDistance,
-        const TArray<ICollider*>& Objects, FHitResult& OutHit);
+    static bool RaycastClosest(const FVector& Origin, const FVector& Direction, float MaxDistance, FHitResult& OutHit);
 
     // 모든 충돌을 배열로 반환하는 Raycast
-    static bool RaycastAll(const FVector& Origin, const FVector& Direction, float MaxDistance,
-        const TArray<ICollider*>& Objects, TArray<FHitResult>& OutHits);
+    static bool RaycastAll(const FVector& Origin, const FVector& Direction, float MaxDistance, TArray<FHitResult>& OutHits);
 
 private:
     // 구체적인 콜라이더 타입에 대한 Raycast 구현
