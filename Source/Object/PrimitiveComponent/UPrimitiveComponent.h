@@ -277,3 +277,28 @@ public:
 	void UpdateConstantData(URenderer*& Renderer) override;
 	void Render() override;
 };
+
+class UBoundingBoxComp : public UPrimitiveComponent {
+	using Super = UPrimitiveComponent;
+
+public:
+	UBoundingBoxComp()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLOR;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
+	}
+
+	virtual ~UBoundingBoxComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_BoundingBox;
+	}
+
+	//void UpdateConstantData(URenderer*& Renderer) override;
+	//void Render() override;
+};
