@@ -131,3 +131,5 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
+
+// 까다로운 이헌우
