@@ -266,7 +266,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);	// TextAtlas 추가 필요
 	}
 
 	virtual ~UWorldTextComp() = default;
