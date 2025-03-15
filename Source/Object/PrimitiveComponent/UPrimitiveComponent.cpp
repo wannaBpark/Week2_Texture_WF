@@ -59,24 +59,26 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	indexColor /= 255.0f;
-	FConstants Info{
+	ConstantUpdateInfo UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
 		(uint32)this->IsUseVertexColor(),
-		FVector(0.0f, 0.0f, 0.0f),
-		indexColor,
+		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		indexColor
 	};
 
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(Info.MVP);
+		* FMatrix::Transpose(UpdateInfo.WorldPosition);
 
 
-	ConstantData.MVP = MVP;
-	ConstantData.Color = Info.Color;
-	ConstantData.bUseVertexColor = Info.bUseVertexColor;
-	ConstantData.indexColor = Info.indexColor;
+	ConstantData = {
+		MVP, UpdateInfo.Color,
+		UpdateInfo.bUseVertexColor,
+		UpdateInfo.eyeWorldPos,
+		UpdateInfo.indexColor,
+	};
 	
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
@@ -96,22 +98,21 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FVector billboardToEye = camera->GetActorTransform().GetPosition() - this->GetComponentTransform().GetPosition();
 	billboardToEye.Normalize();
 
-	// 기본 Up 벡터 설정
-	FVector upVector(0.0f, 0.0f, 1.0f);
-	//FVector upVector = camera->GetActorTransform().GetLocalUp();
-
-	// 카메라와 정렬된 빌보드 좌표계 구성
+	// 카메라의 오른쪽, Up 벡터 계산
+	FVector upVector = camera->GetActorTransform().GetLocalUp();
 	FVector rightVector = FVector::CrossProduct(upVector, billboardToEye);
+	upVector.Normalize();
 	rightVector.Normalize();
+
 
 	FVector adjustedUp = FVector::CrossProduct(billboardToEye, rightVector);
 	adjustedUp.Normalize();
 
 	// 빌보드 회전 행렬 생성
 	FMatrix BillboardRotation = FMatrix(
-		{ billboardToEye.X, billboardToEye.Y,billboardToEye.Z, 0.0f },
-		{ rightVector.X, rightVector.Y,      rightVector.Z, 0.0f },
-		{ adjustedUp.X, adjustedUp.Y,        adjustedUp.Z,   0.0f },
+		{ billboardToEye.X, billboardToEye.Y, billboardToEye.Z, 0.0f },
+		{ rightVector.X,    rightVector.Y,    rightVector.Z,    0.0f },
+		{ adjustedUp.X,     adjustedUp.Y,     adjustedUp.Z,     0.0f },
 		{ 0.0f, 0.0f, 0.0f, 1.0f }
 	);
 
