@@ -186,6 +186,10 @@ void UI::RenderPrimitiveSelection()
             {
                 World->SpawnActor<ACircle>();
 			}
+            else if (strcmp(items[currentItem], "Triangle") == 0)
+            {
+                World->SpawnActor<ATriangle>();
+            }
 			else if (strcmp(items[currentItem], "BillBoard") == 0)
 			{
 				World->SpawnActor<ABillBoard>();

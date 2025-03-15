@@ -207,10 +207,10 @@
     <ClCompile Include="Circle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Actor\Triangle.cpp">
+    <ClCompile Include="Source\Object\Actor\BillBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-     <ClCompile Include="Source\Object\Actor\BillBoard.cpp">
+    <ClCompile Include="Source\Object\Actor\Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -418,13 +418,10 @@
     <ClInclude Include="Source\ThirdParty\stb-master\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Object\Actor\Triangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Object\Actor\Circle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-     <ClInclude Include="Source\Object\Actor\BillBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
