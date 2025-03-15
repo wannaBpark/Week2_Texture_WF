@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #define _TCHAR_DEFINED
 #include <Windows.h>
 #include "ImGui/imgui.h"
