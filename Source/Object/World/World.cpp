@@ -1,4 +1,4 @@
-﻿#include "World.h"
+#include "World.h"
 #include <cassert>
 #include "JsonSavehelper.h"
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "JsonSavehelper.h"
 #include "Core/Engine.h"
 #include "Core/Container/Array.h"

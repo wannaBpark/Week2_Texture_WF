@@ -495,8 +495,8 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	std::vector<uint32> Indices;
 
 	int segments = 36;
-	float radius = 1.f;
-	float height = 1.f;
+	float radius = 0.5f;
+	float height = 1.0f;
 
 	// 원뿔의 바닥 원의 중심 점
 	Vertices.Add({ 0.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,  
@@ -584,7 +584,7 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	std::vector<uint32> Indices;
 
 	int segments = 36;
-	float radius = 1.f;
+	float radius = 0.5f;
 
 	// 구의 꼭대기 파트
 	for (int i = 0; i < segments; ++i) {

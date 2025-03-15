@@ -1,4 +1,4 @@
-﻿#include "FEditorManager.h"
+#include "FEditorManager.h"
 #include "Core/Engine.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -14,6 +14,12 @@ void FEditorManager::SelectActor(AActor* NewActor)
         GizmoHandle->SetActive(false);
     }
 
+    if (BoundingBoxComp == nullptr) {
+        BoundingBoxComp = NewActor->AddComponent<UBoundingBoxComp>();
+        BoundingBoxComp->RegisterComponentWithWorld(UEngine::Get().GetWorld());
+
+    }
+
 	if (SelectedActor == NewActor)
 		return;
 	
@@ -21,14 +27,17 @@ void FEditorManager::SelectActor(AActor* NewActor)
     {
         SelectedActor->UnPick();
         GizmoHandle->SetActive(false);
+        BoundingBoxComp->SetCanBeRendered(false);
     }
 
 	SelectedActor = NewActor;
 	
     if (SelectedActor != nullptr)
     {
+        BoundingBoxComp->SetupAttachment(SelectedActor->GetRootComponent());
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);
+        BoundingBoxComp->SetCanBeRendered(true);
         //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
 		//FTransform GizmoTransform = GizmoHandle->GetActorTransform();
 		//GizmoTransform.SetPosition(Pos);

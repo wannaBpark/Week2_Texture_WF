@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "UObject.h"
 #include "Core/Math/Vector.h"
 #include "Core/Container/Set.h"

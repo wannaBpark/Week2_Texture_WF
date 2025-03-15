@@ -21,4 +21,5 @@ private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
     AGizmoHandle* GizmoHandle = nullptr;
+    UBoundingBoxComp* BoundingBoxComp = nullptr;
 };

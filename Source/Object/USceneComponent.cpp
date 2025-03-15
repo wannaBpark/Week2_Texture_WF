@@ -1,4 +1,4 @@
-﻿#include "USceneComponent.h"
+#include "USceneComponent.h"
 #include "Debug/DebugConsole.h"
 #include "PrimitiveComponent/UPrimitiveComponent.h"
 
