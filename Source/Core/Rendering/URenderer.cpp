@@ -177,8 +177,8 @@ void URenderer::CreateTexturesSamplers()
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
     //CreateTextureSRV("bg5.png");
     //CreateTextureSRV("earth.jpg");
-    //CreateTextureSRV("tree.png");
-    CreateTextureSRV("cat0.png");
+    CreateTextureSRVW(L"Textures/tree.png");
+    //CreateTextureSRV("cat0.png");
 
     //CreateTextureSRV(L"../../../Textures/box2.dds");
     //CreateTextureSRV(L"../../../Textures/box2.dds");
