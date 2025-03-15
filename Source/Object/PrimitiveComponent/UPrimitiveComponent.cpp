@@ -57,12 +57,6 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
-	/*ConstantUpdateInfo UpdateInfo{
-		this->GetComponentTransform(),
-		this->GetCustomColor(),
-		this->IsUseVertexColor()
-	};*/
-
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	indexColor /= 255.0f;
 	FConstants Info{
