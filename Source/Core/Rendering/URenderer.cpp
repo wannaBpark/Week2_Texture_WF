@@ -16,6 +16,7 @@
 #include "ThirdParty/stb-master/stb_image_write.h";
 
 #include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
+#include <directxtk/WICTextureLoader.h>
 
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
@@ -170,8 +171,10 @@ void URenderer::CreateTexturesSamplers()
 
     SamplerMap.insert({ 0, SamplerState });
 
-    //CreateTextureSRV(L"../../../Textures/box.dds");
+    //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
+    CreateTextureSRVW(L"Textures/box.jpg");
+    /*CreateTextureSRVW(L"Textures/box.jpg");*/
     //CreateTextureSRV("bg5.png");
     //CreateTextureSRV("earth.jpg");
     //CreateTextureSRV("tree.png");
@@ -842,6 +845,7 @@ void URenderer::CreateTextureSRV(const std::string& filename)
     ID3D11ShaderResourceView* SRV;
     int Width, Height, Channels;
 
+
     std::string path = "./Textures/" + filename;
     unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
 
@@ -883,26 +887,50 @@ void URenderer::CreateTextureSRV(const std::string& filename)
     uint32 idx = ShaderResourceViewMap.size();
     ShaderResourceViewMap.insert({ idx, SRV });
 }
-//
-//void URenderer::CreateTextureSRV(const wchar_t* filename)
-//{
-//    using namespace DirectX;
-//
-//    ComPtr<ID3D11ShaderResourceView> SRV;
-//    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
-//
-//    auto hr = CreateDDSTextureFromFileEx(Device, filename, 0, D3D11_USAGE_DEFAULT, 
-//        D3D11_BIND_SHADER_RESOURCE, 0, 0, DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
-//
-//    if (FAILED(hr))
-//    {
-//        UE_LOG("Failed to load texture");
-//        return;
-//    }
-//    assert(SRV.Get() != nullptr);
-//    // ShaderResourceViewMap에 추가
-//    uint32_t idx = ShaderResourceViewMap.size();
-//    ShaderResourceViewMap.insert({ idx, SRV });
-//
-//    UE_LOG("Successfully loaded texture");
-//}
+
+void URenderer::CreateTextureSRV(const wchar_t* filename)
+{
+    using namespace DirectX;
+
+    ComPtr<ID3D11ShaderResourceView> SRV;
+    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+
+    auto hr = CreateDDSTextureFromFile(Device, DeviceContext, filename, (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+
+    if (FAILED(hr))
+    {
+        UE_LOG("Failed to load texture");
+        return;
+    }
+    assert(SRV.Get() != nullptr);
+    // ShaderResourceViewMap에 추가
+    uint32_t idx = ShaderResourceViewMap.size();
+    ShaderResourceViewMap.insert({ idx, SRV });
+
+    UE_LOG("Successfully loaded texture");
+}
+
+
+void URenderer::CreateTextureSRVW(const WIDECHAR* filename)
+{
+    using namespace DirectX;
+
+    ComPtr<ID3D11ShaderResourceView> SRV;
+    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+
+
+    auto hr = CreateWICTextureFromFile(Device, DeviceContext, filename, (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+
+
+    if (FAILED(hr))
+    {
+        UE_LOG("Failed to load texture");
+        return;
+    }
+    assert(SRV.Get() != nullptr);
+    // ShaderResourceViewMap에 추가
+    uint32_t idx = ShaderResourceViewMap.size();
+    ShaderResourceViewMap.insert({ idx, SRV });
+
+    UE_LOG("Successfully loaded texture");
+}
