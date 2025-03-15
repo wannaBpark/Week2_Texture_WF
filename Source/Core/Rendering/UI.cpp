@@ -182,10 +182,6 @@ void UI::RenderPrimitiveSelection()
             {
                 World->SpawnActor<ACone>();
             }
-            else if (strcmp(items[currentItem], "Triangle") == 0)
-            {
-                World->SpawnActor<ATriangle>();
-            }
             else if (strcmp(items[currentItem], "Circle") == 0)
             {
                 World->SpawnActor<ACircle>();
