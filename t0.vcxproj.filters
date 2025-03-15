@@ -213,6 +213,12 @@
     <ClCompile Include="Source\Object\Actor\Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Actor\WorldText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -221,6 +227,8 @@
     <FxCompile Include="Shaders\PosTexPixelShader.hlsl" />
     <FxCompile Include="Shaders\ShaderTest.hlsl" />
     <FxCompile Include="Shaders\PosTexVertexShader.hlsl" />
+    <FxCompile Include="Shaders\AtlasPixelShader.hlsl" />
+    <FxCompile Include="Shaders\AtlasVertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
@@ -422,6 +430,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\Actor\Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\TextAtlasManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Actor\WorldText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

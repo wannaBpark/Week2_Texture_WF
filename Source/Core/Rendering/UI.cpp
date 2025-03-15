@@ -197,7 +197,11 @@ void UI::RenderPrimitiveSelection()
 			}
 			else if (strcmp(items[currentItem], "WorldText") == 0)
 			{
-				World->SpawnActor<AWorldText>();
+				AWorldText* wT = World->SpawnActor<AWorldText>();
+                std::string xx = "hello world!";
+                wT->SetLetterSpacing(-0.5f);
+                wT->SetCharComps(xx);
+				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{

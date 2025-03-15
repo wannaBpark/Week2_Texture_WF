@@ -133,7 +133,7 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
 
-void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
+void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
