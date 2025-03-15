@@ -120,7 +120,6 @@ void URenderer::CreateShader()
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
-    //SAFE_RELEASE(PickingShaderCSO);
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
@@ -141,10 +140,6 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
     UE_LOG("constantbuffer size : %d", idx);
-
-    /*ConstantBuffer = ConstantBufferMap[0].Get();
-    ConstantPickingBuffer = ConstantBufferMap[1].Get();
-    ConstantsDepthBuffer = ConstantBufferMap[2].Get();*/
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -177,12 +172,8 @@ void URenderer::CreateTexturesSamplers()
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
     //CreateTextureSRV("bg5.png");
     //CreateTextureSRV("earth.jpg");
-    CreateTextureSRVW(L"Textures/tree.png");
+    CreateTextureSRVW(L"Textures/koverwatch.png");
     //CreateTextureSRV("cat0.png");
-
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/cat0.dds");
 }
 
 void URenderer::ReleaseTexturesSamplers()
