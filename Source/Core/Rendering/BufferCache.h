@@ -8,6 +8,8 @@
 #include <tuple>
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
+
+#include "Core/Math/Vector.h"
 struct FPosColorNormalTex;
 struct BufferInfo
 {
@@ -56,6 +58,9 @@ public:
 	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateConeTexVertices();
 	std::tuple<TArray<FVertexSimple>, std::vector<uint32>> CreateBoundingBoxVertices();
 	std::tuple<TArray<FVertexSimple>, std::vector<uint32>> CreateWorldGridVertices(float cellSize, float gridSize);
+
+	static std::tuple<TArray<FVertexSimple>, std::vector<uint32>> CreateWorldGridVertices(float cellSize, float gridSize, const FVector cameraPos);
+
 
 
 

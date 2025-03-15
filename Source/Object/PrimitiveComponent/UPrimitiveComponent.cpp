@@ -159,7 +159,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 		UpdateInfo.indexColor,
 	};
 
-
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
-	Renderer->UpdateBuffer(ConstantData, 3);		// 픽셀 상수 버퍼 업데이트 시 
+	//Renderer->UpdateBuffer(ConstantData, 3);		// Hull Shader 상수 버퍼 업데이트 
+	//Renderer->UpdateBuffer(ConstantData, 4);		// Domain 상수 버퍼 업데이트 시 
 }

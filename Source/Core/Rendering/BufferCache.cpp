@@ -152,7 +152,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	}
 	case EPT_WORLDGRID:
 	{
-		auto [Vertices, Indices] = CreateWorldGridVertices(2.0f, 1000.0f);
+		auto [Vertices, Indices] = CreateWorldGridVertices(1.0f, 1000.0f);
 		Size = Vertices.Num();
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
@@ -753,4 +753,36 @@ std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateWorld
 	}
 
 	return {Vertices, Indices};
+}
+
+std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateWorldGridVertices(float cellSize, float gridSize, const FVector cameraPos)
+{
+	TArray<FVertexSimple> Vertices;
+	std::vector<uint32> Indices;
+
+	float half = gridSize / 2.0f;
+
+	// 카메라와 그리드의 중앙 간의 거리 계산
+	float distance = fabs(cameraPos.Z);
+
+	// 카메라와의 거리 비례로 그리드 스케일 조정
+	float scale = (distance) / 10.0f;  // 거리 비례로 스케일 변경 (이 값은 조정 가능)
+
+	for (float i = -half; i <= half; ++i)
+	{
+		if (i == 0) continue;
+		// 가로선 
+		Vertices.Add({-half * cellSize * scale, i * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({half * cellSize * scale, i * cellSize * scale, 0.0f,    1.0f, 1.0f, 1.0f, 1.0f } );
+		// 세로선	   
+		Vertices.Add({i * cellSize * scale, -half * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({i * cellSize * scale,  half * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
+	uint32 Size = Vertices.Num();
+	for (uint32 i{ 0 }; i < Size; ++i) {
+		Indices.push_back(i);
+	}
+
+	return { Vertices, Indices };
 }

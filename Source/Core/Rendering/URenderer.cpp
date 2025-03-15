@@ -8,6 +8,7 @@
 #include <Object/Actor/Camera.h>
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Core/Rendering/BufferCache.h" // 그리드 동적 렌더링
 
 // 아래는 Texture에 쓸 이미지 로딩용
 #define STB_IMAGE_IMPLEMENTATION
@@ -73,6 +74,11 @@ void URenderer::CreateShader()
     ID3DBlob* PixelShaderCSO;
     ID3DBlob* PosTexPixelShaderCSO;
 
+	ID3DBlob* TessVertexShaderCSO;
+	ID3DBlob* TessHullShaderCSO;
+	ID3DBlob* TessDomainShaderCSO;
+	ID3DBlob* TessPixelShaderCSO;
+
     //ID3DBlob* PickingShaderCSO;
     
 	ID3DBlob* ErrorMsg = nullptr;
@@ -124,6 +130,14 @@ void URenderer::CreateShader()
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
+
+    D3DCompileFromFile(L"Shaders/GridVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &TessVertexShaderCSO, &ErrorMsg);
+    Device->CreateVertexShader(TessVertexShaderCSO->GetBufferPointer(), TessVertexShaderCSO->GetBufferSize(), nullptr, &TessVertexShader);
+
+    D3DCompileFromFile(L"Shaders/GridPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &TessPixelShaderCSO, &ErrorMsg);
+    Device->CreatePixelShader(TessPixelShaderCSO->GetBufferPointer(), TessPixelShaderCSO->GetBufferSize(), nullptr, &TessPixelShader);
+
+
 }
 
 void URenderer::ReleaseShader()
@@ -140,7 +154,8 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
-	idx = CreateConstantBuffer<FConstants>();           // Grid CBuffer : 3
+    idx = CreateConstantBuffer<FConstants>();           // Grid Hull CBuffer : 3
+    idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
 
     /*ConstantBuffer = ConstantBufferMap[0].Get();
@@ -240,50 +255,24 @@ void URenderer::PrepareShader() const
     }
 }
 
-//void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
-//{
-//    if (BufferCache == nullptr)
-//    {
-//        return;
-//    }
-//
-//	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
-//    PrimitiveComp->RenderResource.Topology = Info.GetTopology();
-//    PrimitiveComp->RenderResource.numVertices = Info.GetSize();
-//
-//	if (Info.GetBuffer() == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (CurrentTopology != Info.GetTopology())
-//	{
-//		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
-//		CurrentTopology = Info.GetTopology();
-//	}
-//
-//    ConstantUpdateInfo UpdateInfo{ 
-//        PrimitiveComp->GetWorldTransform(), 
-//        PrimitiveComp->GetCustomColor(), 
-//        PrimitiveComp->IsUseVertexColor(),
-//    };
-//
-//
-//    FConstants tmp;
-//    tmp.MVP =
-//        FMatrix::Transpose(ProjectionMatrix) *
-//        FMatrix::Transpose(ViewMatrix) *
-//        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
-//    tmp.Color = UpdateInfo.Color;
-//    tmp.bUseVertexColor = UpdateInfo.bUseVertexColor;
-//    UpdateConstant(UpdateInfo); // legacy code
-//    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
-//}
 
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
     auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
+
+    if (Type == EPrimitiveType::EPT_WORLDGRID) {
+        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(10.0f, 1000.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+        auto Size = Vertices.Num();
+        auto Buffer = this->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+        Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+        auto IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+        Size = Indices.size();
+        VertexBufferMap[Type] = Buffer;
+        VertexCountMap[Type] = Size;
+        TopologyMap[Type] = Topology;
+        IndexBufferMap[Type] = IndexBuffer;
+    }
     RenderResource.Topology = TopologyMap[Type];
     RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
 
@@ -336,10 +325,17 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             UE_LOG("Warning: Sampler at slot 0 is NULL.");
         }*/
     }
+	
 
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
+    //if (Type == EPrimitiveType::EPT_WORLDGRID)
+    //{
+    //    // Topology는 LINELIST로 설정되어있음, indexbuffer를 사용하므로 RenderPrimitiveIndexed() 호출, 2개 정점으로 이루어진 선분을 그림
+    //    DeviceContext->VSSetShader(TessVertexShader, nullptr, 0);
+    //    DeviceContext->PSSetShader(TessPixelShader, nullptr, 0);
+    //}
     if (bUseIndexBuffer == true) {
         RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
     } else {
@@ -499,17 +495,6 @@ void URenderer::CreateDepthStencilState()
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
-    // DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
-    // DepthStencilDesc.StencilReadMask = 0xFF;
-    // DepthStencilDesc.StencilWriteMask = 0xFF;
-    // DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    // DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-    // DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    // DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
     
@@ -539,8 +524,8 @@ void URenderer::ReleaseDepthStencilBuffer()
 void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+    //RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
+    RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
 

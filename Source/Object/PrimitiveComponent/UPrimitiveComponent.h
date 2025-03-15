@@ -290,6 +290,8 @@ public:
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLOR;
 		RenderResource.VertexShaderIndex = 0;
 		RenderResource.PixelShaderIndex = 0;
+		RenderResource.VertexConstantIndex = 0;
+		RenderResource.PixelConstantIndex = -1;
 		RenderResource.bUseIndexBuffer = true;
 		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
 	}
