@@ -140,6 +140,7 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
+	idx = CreateConstantBuffer<FConstants>();           // Grid CBuffer : 3
     UE_LOG("constantbuffer size : %d", idx);
 
     /*ConstantBuffer = ConstantBufferMap[0].Get();
@@ -542,7 +543,6 @@ void URenderer::CreateRasterizerState()
     //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
-    RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
 }

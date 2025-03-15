@@ -277,3 +277,28 @@ public:
 	void UpdateConstantData(URenderer*& Renderer) override;
 	void Render() override;
 };
+
+class UWorldGridComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	UWorldGridComp()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FVertexSimple);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLOR;
+		RenderResource.VertexShaderIndex = 0;
+		RenderResource.PixelShaderIndex = 0;
+		RenderResource.bUseIndexBuffer = true;
+		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
+	}
+
+	virtual ~UWorldGridComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_WORLDGRID;
+	}
+
+	void UpdateConstantData(URenderer*& Renderer) override;
+};

@@ -132,4 +132,34 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
 
-// 박녕준 바보
+// 박녕준 천재
+
+void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
+{
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
+	ConstantUpdateInfo UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		this->GetCustomColor(),
+		(uint32)this->IsUseVertexColor(),
+		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		indexColor
+	};
+
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(UpdateInfo.WorldPosition);
+
+
+	ConstantData = {
+		MVP, UpdateInfo.Color,
+		UpdateInfo.bUseVertexColor,
+		UpdateInfo.eyeWorldPos,
+		UpdateInfo.indexColor,
+	};
+
+
+	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+	Renderer->UpdateBuffer(ConstantData, 3);		// 픽셀 상수 버퍼 업데이트 시 
+}
