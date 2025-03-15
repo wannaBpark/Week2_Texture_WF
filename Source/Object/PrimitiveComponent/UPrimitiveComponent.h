@@ -4,7 +4,6 @@
 #include "Object/USceneComponent.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
-
 #include "Core/Rendering/RenderResource.h"
 
 /*
@@ -23,7 +22,7 @@ public:
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render();
-	void UpdateConstantData(URenderer*& Renderer);
+	virtual void UpdateConstantData(URenderer*& Renderer);
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
@@ -223,6 +222,32 @@ public:
 	{
 		return EPrimitiveType::EPT_CircleTex;
 	}
+};
+
+class UBillBoardComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	UBillBoardComp()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 2번째 Texture 사용 : box2.png [값이 없으면 초기화]
+		// shader 관련 index 지정 필요
+		//
+	}
+	virtual ~UBillBoardComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_BillBoard;
+	}
+
+	void UpdateConstantData(URenderer*& Renderer) override;
 };
 
 

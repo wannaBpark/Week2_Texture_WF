@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Actor\BillBoard.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
@@ -235,6 +236,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Actor\BillBoard.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="EEnum.h" />
     <ClInclude Include="Source\Core\Rendering\RenderResource.h" />
