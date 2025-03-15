@@ -7,6 +7,9 @@
 #include "Static/FEditorManager.h"
 
 
+#include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
+#include <directxtk/WICTextureLoader.h>
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -119,6 +122,41 @@ void URenderer::ReleaseConstantBuffer()
     SAFE_RELEASE(ConstantBuffer);
     SAFE_RELEASE(ConstantPickingBuffer);
     SAFE_RELEASE(ConstantsDepthBuffer);
+}
+
+void URenderer::CreateTexturesSamplers()
+{
+    ComPtr<ID3D11SamplerState> SamplerState;
+    D3D11_SAMPLER_DESC sampDesc;
+    ZeroMemory(&sampDesc, sizeof(sampDesc));
+    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc.MinLOD = 0;
+    sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    Device->CreateSamplerState(&sampDesc, SamplerState.GetAddressOf());
+
+    SamplerMap.insert({ 0, SamplerState });
+
+    //CreateTextureSRV(L"Textures/box.dds");
+    //CreateTextureSRV(L"../../../Textures/bg5.dds");
+    CreateTextureSRVW(L"Textures/box.jpg");
+    /*CreateTextureSRVW(L"Textures/box.jpg");*/
+    //CreateTextureSRV("bg5.png");
+    //CreateTextureSRV("earth.jpg");
+    //CreateTextureSRV("tree.png");
+    CreateTextureSRV("cat0.png");
+
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/box2.dds");
+    //CreateTextureSRV(L"../../../Textures/cat0.dds");
+}
+
+void URenderer::ReleaseTexturesSamplers()
+{
 }
 
 void URenderer::SwapBuffer() const
@@ -252,6 +290,17 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             }
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
+        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
+        // 샘플러 설정 추가
+        ID3D11SamplerState* sampler = SamplerMap[0].Get();
+        if (sampler)
+        {
+            DeviceContext->PSSetSamplers(0, 1, &sampler);
+        }
+        /*else
+        {
+            UE_LOG("Warning: Sampler at slot 0 is NULL.");
+        }*/
     }
 
     this->Stride = stride;
@@ -767,4 +816,101 @@ void URenderer::RenderPickingTexture()
     SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     SAFE_RELEASE(backBuffer);
+}
+
+void URenderer::CreateTextureSRV(const std::string& filename)
+{
+    // 지역 변수로 우선 선언
+    ID3D11Texture2D* Texture;
+    ID3D11ShaderResourceView* SRV;
+    int Width, Height, Channels;
+
+
+    std::string path = "./Textures/" + filename;
+    unsigned char* img = stbi_load(path.c_str(), &Width, &Height, &Channels, 0); // 이미지 데이터 읽어옴
+
+    assert(Channels == 4);
+
+    std::vector<uint8_t> image;
+
+    image.resize(Width * Height * Channels);
+    memcpy(image.data(), img, image.size() * sizeof(uint8_t));
+    //for (size_t i = 0; i < Width * Height * Channels; i++) {
+    //    image[i] = img[i]; // 8비트 → 16비트 변환
+    //}
+    stbi_image_free(img);
+
+    // Create texture.
+    D3D11_TEXTURE2D_DESC txtDesc = {};
+    txtDesc.Width = Width;
+    txtDesc.Height = Height;
+    txtDesc.MipLevels = txtDesc.ArraySize = 1;
+    txtDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;        // 8비트씩 unsigned norm
+    txtDesc.SampleDesc.Count = 1;
+    txtDesc.Usage = D3D11_USAGE_IMMUTABLE;              // 한 번 읽고 수정 X
+    txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;     // Shader Resource 플래그
+
+    // Fill in the subresource data.
+    D3D11_SUBRESOURCE_DATA InitData;
+    InitData.pSysMem = image.data();
+    InitData.SysMemPitch = txtDesc.Width * sizeof(uint8_t) * Channels;     // SysMemPitch : 한 행의 바이트 크기
+    // InitData.SysMemSlicePitch = 0;
+
+    // ID3D11Device* pd3dDevice; // Don't forget to initialize this
+    // TODO: You should really consider using a COM smart-pointer like
+    // Microsoft::WRL::ComPtr instead
+
+    Device->CreateTexture2D(&txtDesc, &InitData, &Texture);                     // 텍스처, 텍스처 리소스뷰 생성
+    Device->CreateShaderResourceView(Texture, nullptr, &SRV);
+
+    // 실제로 접근 가능한 map으로 삽입
+    uint32 idx = ShaderResourceViewMap.size();
+    ShaderResourceViewMap.insert({ idx, SRV });
+}
+
+void URenderer::CreateTextureSRV(const wchar_t* filename)
+{
+    using namespace DirectX;
+
+    ComPtr<ID3D11ShaderResourceView> SRV;
+    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+
+    auto hr = CreateDDSTextureFromFile(Device, DeviceContext, filename, (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+
+    if (FAILED(hr))
+    {
+        UE_LOG("Failed to load texture");
+        return;
+    }
+    assert(SRV.Get() != nullptr);
+    // ShaderResourceViewMap에 추가
+    uint32_t idx = ShaderResourceViewMap.size();
+    ShaderResourceViewMap.insert({ idx, SRV });
+
+    UE_LOG("Successfully loaded texture");
+}
+
+
+void URenderer::CreateTextureSRVW(const WIDECHAR* filename)
+{
+    using namespace DirectX;
+
+    ComPtr<ID3D11ShaderResourceView> SRV;
+    ComPtr<ID3D11Texture2D> Texture; // Texture도 받아야 함
+
+
+    auto hr = CreateWICTextureFromFile(Device, DeviceContext, filename, (ID3D11Resource**)Texture.GetAddressOf(), SRV.GetAddressOf());
+
+
+    if (FAILED(hr))
+    {
+        UE_LOG("Failed to load texture");
+        return;
+    }
+    assert(SRV.Get() != nullptr);
+    // ShaderResourceViewMap에 추가
+    uint32_t idx = ShaderResourceViewMap.size();
+    ShaderResourceViewMap.insert({ idx, SRV });
+
+    UE_LOG("Successfully loaded texture");
 }

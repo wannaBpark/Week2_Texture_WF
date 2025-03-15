@@ -247,6 +247,10 @@ public:
         memcpy(ms.pData, &bufferData, sizeof(bufferData));
         DeviceContext->Unmap(pBuffer.Get(), NULL);
     }
+
+    void CreateTextureSRV(const std::string& filename);
+    void CreateTextureSRV(const WIDECHAR* filename);
+    void CreateTextureSRVW(const WIDECHAR* filename);
 #pragma endregion
 
 #pragma region picking

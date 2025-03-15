@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define _TCHAR_DEFINED
 #include <d3d11.h>
@@ -47,7 +47,15 @@ public:
 	TArray<FVertexSimple> CreateArrowVertices();
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();
-	TArray<FVertexSimple> CreateCircleVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateCubeTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateCylinderTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateTriangleTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateCircleTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateSphereTexVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateBillBoardVertices();
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateConeTexVertices();
+
+
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);
 };

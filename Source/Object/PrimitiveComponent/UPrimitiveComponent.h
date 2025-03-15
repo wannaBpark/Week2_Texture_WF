@@ -4,17 +4,16 @@
 #include "Object/USceneComponent.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
-
 #include "Core/Rendering/RenderResource.h"
 
-/* 
+/*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
 */
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
 	using Super = USceneComponent;
 public:
-	UPrimitiveComponent() { };
+	UPrimitiveComponent() {};
 	virtual ~UPrimitiveComponent() = default;
 
 public:
@@ -23,7 +22,7 @@ public:
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render();
-	void UpdateConstantData(URenderer*& Renderer);
+	virtual void UpdateConstantData(URenderer*& Renderer);
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
@@ -31,7 +30,7 @@ public:
 
 	void SetCustomColor(const FVector4& InColor)
 	{
-		CustomColor = InColor; 
+		CustomColor = InColor;
 		bUseVertexColor = false;
 	}
 
@@ -48,8 +47,8 @@ public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
-	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
-	
+	bool GetIsOrthoGraphic() { return bIsOrthoGraphic; }
+
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
@@ -87,7 +86,11 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 		
 	}
@@ -106,8 +109,11 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
-		// shader 관련 index 지정 필요
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
@@ -145,7 +151,11 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCylinderComp() = default;
@@ -163,7 +173,11 @@ public:
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
@@ -181,6 +195,13 @@ public:
 	UCircleComp()
 	{
 		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
+		// shader 관련 index 지정 필요
 	}
 	virtual ~UCircleComp() = default;
 	EPrimitiveType GetType() override
@@ -188,3 +209,5 @@ public:
 		return EPrimitiveType::EPT_Circle;
 	}
 };
+
+

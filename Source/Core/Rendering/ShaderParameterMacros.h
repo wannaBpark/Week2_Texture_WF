@@ -72,7 +72,6 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
     SHADER_PARAMETER(uint32, bUseVertexColor)
     SHADER_PARAMETER(FVector4, indexColor)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
-
 //struct alignas(16) FConstants
 //{
 //    FMatrix MVP;
