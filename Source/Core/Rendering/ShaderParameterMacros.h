@@ -52,7 +52,8 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FConstants)
     SHADER_PARAMETER(FMatrix, MVP)
     SHADER_PARAMETER(FVector4, Color)
     SHADER_PARAMETER(uint32, bUseVertexColor)
-    SHADER_PARAMETER(FVector, Padding)
+    SHADER_PARAMETER(FVector, eyeWorldPos)
+    SHADER_PARAMETER(FVector4, indexColor)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
 
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FPickingConstants)
@@ -66,9 +67,11 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FDepthConstants)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
 
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
-    SHADER_PARAMETER(const FMatrix&, TransformMatrix)
+    SHADER_PARAMETER(const FMatrix&, WorldPosition)
     SHADER_PARAMETER(const FVector4&, Color)
-    SHADER_PARAMETER(bool, bUseVertexColor)
+    SHADER_PARAMETER(uint32, bUseVertexColor)
+    SHADER_PARAMETER(FVector, eyeWorldPos)
+    SHADER_PARAMETER(FVector4, indexColor)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
 //struct alignas(16) FConstants
 //{
