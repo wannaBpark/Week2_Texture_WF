@@ -6,6 +6,11 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+// 아래는 Texture에 쓸 이미지 로딩용
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image.h";
+#include "stb_image_write.h";
 
 #include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 #include <directxtk/WICTextureLoader.h>
@@ -147,8 +152,8 @@ void URenderer::CreateTexturesSamplers()
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
     //CreateTextureSRV("bg5.png");
     //CreateTextureSRV("earth.jpg");
-    //CreateTextureSRV("tree.png");
-    CreateTextureSRV("cat0.png");
+    CreateTextureSRVW(L"Textures/tree.png");
+    //CreateTextureSRV("cat0.png");
 
     //CreateTextureSRV(L"../../../Textures/box2.dds");
     //CreateTextureSRV(L"../../../Textures/box2.dds");
