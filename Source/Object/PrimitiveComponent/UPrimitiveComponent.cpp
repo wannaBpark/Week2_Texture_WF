@@ -131,3 +131,5 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
+
+// 박녕준 바보
