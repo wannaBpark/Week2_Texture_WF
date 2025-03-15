@@ -63,25 +63,32 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		this->IsUseVertexColor()
 	};*/
 
-	ConstantUpdateInfo UpdateInfo{
+	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
-		this->IsUseVertexColor()
+		(uint32)this->IsUseVertexColor(),
+		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		APicker::EncodeUUID(this->GetUUID()),
 	};
+
+	FMatrix& WorldPosition = UpdateInfo.MVP;
 
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(UpdateInfo.TransformMatrix);
+		* FMatrix::Transpose(WorldPosition);
 
 
-	ConstantData.MVP = MVP;
-	ConstantData.Color = UpdateInfo.Color;
-	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
+	ConstantData = {
+		MVP, UpdateInfo.Color,
+		UpdateInfo.bUseVertexColor,
+		UpdateInfo.eyeWorldPos,
+		UpdateInfo.indexColor,
+	};
 	
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
-	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }
 
 void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
@@ -97,22 +104,21 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FVector billboardToEye = camera->GetActorTransform().GetPosition() - this->GetComponentTransform().GetPosition();
 	billboardToEye.Normalize();
 
-	// 기본 Up 벡터 설정
-	FVector upVector(0.0f, 0.0f, 1.0f);
-	//FVector upVector = camera->GetActorTransform().GetLocalUp();
-
-	// 카메라와 정렬된 빌보드 좌표계 구성
+	// 카메라의 오른쪽, Up 벡터 계산
+	FVector upVector = camera->GetActorTransform().GetLocalUp();
 	FVector rightVector = FVector::CrossProduct(upVector, billboardToEye);
+	upVector.Normalize();
 	rightVector.Normalize();
+
 
 	FVector adjustedUp = FVector::CrossProduct(billboardToEye, rightVector);
 	adjustedUp.Normalize();
 
 	// 빌보드 회전 행렬 생성
 	FMatrix BillboardRotation = FMatrix(
-		{ billboardToEye.X, billboardToEye.Y,billboardToEye.Z, 0.0f },
-		{ rightVector.X, rightVector.Y,      rightVector.Z, 0.0f },
-		{ adjustedUp.X, adjustedUp.Y,        adjustedUp.Z,   0.0f },
+		{ billboardToEye.X, billboardToEye.Y, billboardToEye.Z, 0.0f },
+		{ rightVector.X,    rightVector.Y,    rightVector.Z,    0.0f },
+		{ adjustedUp.X,     adjustedUp.Y,     adjustedUp.Z,     0.0f },
 		{ 0.0f, 0.0f, 0.0f, 1.0f }
 	);
 

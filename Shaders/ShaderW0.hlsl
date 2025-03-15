@@ -4,7 +4,8 @@ cbuffer constants : register(b0)
     matrix MVP;
     float4 CustomColor;
     uint bUseVertexColor;
-	float4 indexColor;
+    float3 eyeWorldPos;
+    float4 indexColor;
 }
 
 cbuffer UUIDColor : register(b1){
