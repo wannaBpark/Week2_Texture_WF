@@ -277,7 +277,11 @@ public:
 		return EPrimitiveType::EPT_WorldText;
 	}
 
+private:
 	char Character = 'a';
+
+public:
+	void SetChar(char& InCharacter) { Character = InCharacter; }
 	char GetChar() const { return Character; }
 	FAtlasConstants AtlasConstantData;
 
