@@ -172,7 +172,11 @@ void URenderer::CreateTexturesSamplers()
 
     //CreateTextureSRV(L"../../../Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
-    CreateTextureSRV("bg5.png");
+    //CreateTextureSRV("bg5.png");
+    //CreateTextureSRV("earth.jpg");
+    //CreateTextureSRV("tree.png");
+    CreateTextureSRV("cat0.png");
+
     //CreateTextureSRV(L"../../../Textures/box2.dds");
     //CreateTextureSRV(L"../../../Textures/box2.dds");
     //CreateTextureSRV(L"../../../Textures/cat0.dds");
@@ -323,10 +327,10 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         {
             DeviceContext->PSSetSamplers(0, 1, &sampler);
         }
-        else
+        /*else
         {
             UE_LOG("Warning: Sampler at slot 0 is NULL.");
-        }
+        }*/
     }
 
     this->Stride = stride;

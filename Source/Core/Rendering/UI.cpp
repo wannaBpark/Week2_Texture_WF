@@ -17,6 +17,7 @@
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Circle.h"
+#include "Object/Actor/BillBoard.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -155,7 +156,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -183,7 +184,11 @@ void UI::RenderPrimitiveSelection()
             else if (strcmp(items[currentItem], "Circle") == 0)
             {
                 World->SpawnActor<ACircle>();
-            }
+			}
+			else if (strcmp(items[currentItem], "BillBoard") == 0)
+			{
+				World->SpawnActor<ABillBoard>();
+			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
             //    Actor->AddComponent<UTriangleComp>();   

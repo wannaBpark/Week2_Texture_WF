@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(StructType) \
     class alignas(16) StructType \
@@ -70,7 +70,6 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
     SHADER_PARAMETER(const FVector4&, Color)
     SHADER_PARAMETER(bool, bUseVertexColor)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
-
 //struct alignas(16) FConstants
 //{
 //    FMatrix MVP;
