@@ -141,6 +141,15 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Size = Indices.size();
 		break;
 	}
+	case EPT_BoundingBox:
+	{
+		auto [Vertices, Indices] = CreateBoundingBoxVertices();
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(LineVertices, sizeof(FVertexSimple) * Size);
+		Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		break;
+	}
 }
 
 
@@ -664,5 +673,46 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 
 	return { Vertices, Indices };
 	
+
+}
+
+std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateBoundingBoxVertices()
+{
+	TArray<FVertexSimple> Vertices;
+	std::vector<uint32> Indices;
+	// 모두 하얀색의 선을 그리는 정육면체
+	Vertices.Add({ -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-left (red) // Front face (Z+)
+	Vertices.Add({ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-left (yellow)
+	Vertices.Add({  0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-right (blue)
+	Vertices.Add({  0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-right (green)
+	Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-left (cyan) // Back face (Z-)
+	Vertices.Add({ -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-left (blue)
+	Vertices.Add({  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-right (yellow)
+	Vertices.Add({  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-right (magenta)
+	Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f  }); // Bottom-left (purple) // Left face (X-)
+	Vertices.Add({ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f  }); // Top-left (blue)
+	Vertices.Add({ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f  }); // Top-right (yellow)
+	Vertices.Add({ -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f  }); // Bottom-right (green)
+	Vertices.Add({  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-left (orange) // Right face (X+)
+	Vertices.Add({  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-left (purple)
+	Vertices.Add({  0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-right (dark blue)
+	Vertices.Add({  0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-right (gray)
+	Vertices.Add({ -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-left (light green) // Top face (Y+)
+	Vertices.Add({ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-left (cyan)
+	Vertices.Add({  0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-right (brown)
+	Vertices.Add({  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-right (white)
+	Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-left (brown) // Bottom face (Y-)
+	Vertices.Add({ -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-left (red)
+	Vertices.Add({  0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Top-right (green)
+	Vertices.Add({  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f  }); // Bottom-right (purple)
+
+	Indices = {
+		0,  1,  1,  2,  2,  3, 0, 3, // Front face
+		4,  5,  5,  6,  6,  7, 4, 7, // Back face
+		8,  9,  9,  10, 10, 11, 8, 11, // Left face
+		12, 13, 13, 14, 14, 15, 12, 15, // Right face
+		16, 17, 17, 18, 18, 19, 16, 19, // Top face
+		20, 21, 21, 22, 22, 23, 20, 23, // Bottom face
+	};
 
 }
