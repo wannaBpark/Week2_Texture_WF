@@ -12,8 +12,8 @@
 // 아래는 Texture에 쓸 이미지 로딩용
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "ThirdParty/stb-master/stb_image.h";
-#include "ThirdParty/stb-master/stb_image_write.h";
+#include "stb_image.h";
+#include "stb_image_write.h";
 
 #include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 #include <directxtk/WICTextureLoader.h>
