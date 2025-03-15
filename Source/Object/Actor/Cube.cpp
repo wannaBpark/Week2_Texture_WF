@@ -1,5 +1,8 @@
 ﻿#include "Cube.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include <Object/ActorComponent/Colliders/UBoxCollider.h>
+#include <Core/Engine.h>
+#include <Object/World/World.h>
 
 ACube::ACube()
 {
@@ -7,6 +10,8 @@ ACube::ACube()
 
 	UCubeComp* CubeComponent = AddComponent<UCubeComp>();
 	RootComponent = CubeComponent;
+	UBoxCollider* boxCollider = AddComponent<UBoxCollider>();
+	UEngine::Get().GetWorld()->AddColliderComponent(boxCollider);
 
 	CubeComponent->SetRelativeTransform(FTransform());
 }

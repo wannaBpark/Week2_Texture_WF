@@ -131,3 +131,17 @@ FQuat FQuat::MakeFromRotationMatrix(const FMatrix& M)
 
     return Q;
 }
+
+FVector FQuat::RotateVector(const FVector& V) const
+{
+    // v' = q * v * q^(-1) 구현
+
+    // 벡터를 순수 쿼터니언으로 변환 (실수부 0, 벡터부 V)
+    FQuat VectorQuat(V.X, V.Y, V.Z, 0.0f);
+
+    // 쿼터니언 회전 수행: q * v * q^(-1)
+    FQuat Result = MultiplyQuaternions(MultiplyQuaternions(*this, VectorQuat), Inverse());
+
+    // 결과에서 벡터 부분만 추출
+    return FVector(Result.X, Result.Y, Result.Z);
+}

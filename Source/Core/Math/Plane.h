@@ -24,5 +24,19 @@ struct alignas(16) FQuat : public FVector4{
     static FQuat SubtractQuaternions(const FQuat& q1, const FQuat& q2);
 
     static FQuat MakeFromRotationMatrix(const struct FMatrix& M);
+    
+    FQuat Inverse() const { return FQuat{ -X,-Y,-Z, W }; }
+    FVector RotateVector(const FVector& V) const;
     FVector GetEuler() const { return QuaternionToEuler(*this); }
+
+    FQuat& operator*(const FQuat& q);
 };
+
+inline FQuat& FQuat::operator*(const FQuat& q) {
+    X *= q.X;
+    Y *= q.Y;
+    Z *= q.Z;
+    W *= q.W;
+
+    return *this;
+}

@@ -1,21 +1,6 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
-
-enum class ESelectedAxis : uint8
-{
-	None,
-	X,
-	Y,
-	Z
-};
-
-enum class EGizmoType : uint8
-{
-	Translate,
-	Rotate,
-	Scale,
-	Max
-};
+#include "../EEnum.h"
 
 class AGizmoHandle : public AActor
 {

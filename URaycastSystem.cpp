@@ -7,10 +7,7 @@ bool URaycastSystem::Raycast(const FVector& Origin, const FVector& Direction, fl
     // 방향 벡터 정규화
     FVector NormalizedDirection = Direction.GetSafeNormal();
 
-    // 현재 씬의 모든 콜라이더 가져오기 (실제 구현은 엔진/프레임워크에 따라 다름)
-    TArray<ICollider*> AllColliders = UEngine::Get().GetWorld()->GetCollidrs();
-
-    return RaycastClosest(Origin, NormalizedDirection, MaxDistance, AllColliders, OutHit);
+    return RaycastClosest(Origin, NormalizedDirection, MaxDistance, OutHit);
 }
 
 bool URaycastSystem::RaycastSingle(const FVector& Origin, const FVector& Direction, float MaxDistance,
@@ -36,8 +33,7 @@ bool URaycastSystem::RaycastSingle(const FVector& Origin, const FVector& Directi
     return false;
 }
 
-bool URaycastSystem::RaycastClosest(const FVector& Origin, const FVector& Direction, float MaxDistance,
-    const TArray<ICollider*>& colliders, FHitResult& OutHit)
+bool URaycastSystem::RaycastClosest(const FVector& Origin, const FVector& Direction, float MaxDistance, FHitResult& OutHit)
 {
     // 방향 벡터 정규화
     FVector NormalizedDirection = Direction.GetSafeNormal();
@@ -45,6 +41,8 @@ bool URaycastSystem::RaycastClosest(const FVector& Origin, const FVector& Direct
     FHitResult TempHit;
     bool bHit = false;
     float ClosestDistance = MaxDistance;
+
+    TArray<ICollider*> colliders = UEngine::Get().GetWorld()->GetCollidrs();
 
     // 모든 콜라이더에 대해 검사
     for (ICollider* collider : colliders)
@@ -64,14 +62,15 @@ bool URaycastSystem::RaycastClosest(const FVector& Origin, const FVector& Direct
     return bHit;
 }
 
-bool URaycastSystem::RaycastAll(const FVector& Origin, const FVector& Direction, float MaxDistance,
-    const TArray<ICollider*>& colliders, TArray<FHitResult>& OutHits)
+bool URaycastSystem::RaycastAll(const FVector& Origin, const FVector& Direction, float MaxDistance, TArray<FHitResult>& OutHits)
 {
     // 방향 벡터 정규화
     FVector NormalizedDirection = Direction.GetSafeNormal();
 
     OutHits.Empty();
     bool bHit = false;
+
+    TArray<ICollider*> colliders = UEngine::Get().GetWorld()->GetCollidrs();
 
     // 모든 콜라이더에 대해 검사
     for (ICollider* collider : colliders)
@@ -147,129 +146,141 @@ bool URaycastSystem::RayToBox(const FVector& Origin, const FVector& Direction,
     const UBoxCollider& Box, float MaxDistance, FHitResult& OutHit)
 {
     //// 박스 속성 가져오기
-    //FVector BoxCenter = Box.GetCenter();
-    //FVector BoxExtent = Box.GetScale();
-    //// 녕준TODO: AABB OBB 변환
-    //FQuat BoxRotation = Box.GetRotation();
+    FTransform ownerTransform = Box.GetOwner()->GetActorTransform();
+    FVector BoxCenter = ownerTransform.GetPosition();
+    FVector BoxExtent = ownerTransform.GetScale() / 2;
+    FQuat BoxRotation = ownerTransform.GetRotation();
 
     //// Ray를 박스의 로컬 공간으로 변환
-    //FVector LocalOrigin = BoxRotation.Inverse().RotateVector(Origin - BoxCenter);
-    //FVector LocalDirection = BoxRotation.Inverse().RotateVector(Direction);
+    FVector LocalOrigin = BoxRotation.Inverse().RotateVector(Origin - BoxCenter);
+    FVector LocalDirection = BoxRotation.Inverse().RotateVector(Direction);
 
     //// 각 축별 슬랩 테스트를 위한 변수
-    //float tMin = -FLT_MAX;
-    //float tMax = FLT_MAX;
+    float tMin = -FLT_MAX;
+    float tMax = FLT_MAX;
 
-    //// X축 슬랩 테스트
-    //if (FMath::Abs(LocalDirection.X) < KINDA_SMALL_NUMBER)
-    //{
-    //    // Ray가 X축과 평행하고 원점이 슬랩 외부에 있으면 충돌 없음
-    //    if (LocalOrigin.X < -BoxExtent.X || LocalOrigin.X > BoxExtent.X)
-    //        return false;
-    //}
-    //else
-    //{
-    //    // X축을 따라 진입/탈출 t값 계산
-    //    float invDirX = 1.0f / LocalDirection.X;
-    //    float t1 = (-BoxExtent.X - LocalOrigin.X) * invDirX;
-    //    float t2 = (BoxExtent.X - LocalOrigin.X) * invDirX;
+    // X축 슬랩 테스트
+    if (FMath::Abs(LocalDirection.X) < KINDA_SMALL_NUMBER)
+    {
+        // Ray가 X축과 평행하고 원점이 슬랩 외부에 있으면 충돌 없음
+        if (LocalOrigin.X < -BoxExtent.X || LocalOrigin.X > BoxExtent.X)
+            return false;
+    }
+    else
+    {
+        // X축을 따라 진입/탈출 t값 계산
+        float invDirX = 1.0f / LocalDirection.X;
+        float t1 = (-BoxExtent.X - LocalOrigin.X) * invDirX;
+        float t2 = (BoxExtent.X - LocalOrigin.X) * invDirX;
 
-    //    if (t1 > t2) Swap(t1, t2);
+        if (t1 > t2) {
+            float temp = t1;
+            t1 = t2;
+            t2 = temp;
+        }
 
-    //    tMin = FMath::Max(tMin, t1);
-    //    tMax = FMath::Min(tMax, t2);
+        tMin = FMath::Max(tMin, t1);
+        tMax = FMath::Min(tMax, t2);
 
-    //    if (tMin > tMax) return false;
-    //}
+        if (tMin > tMax) return false;
+    }
 
-    //// Y축 슬랩 테스트
-    //if (FMath::Abs(LocalDirection.Y) < KINDA_SMALL_NUMBER)
-    //{
-    //    if (LocalOrigin.Y < -BoxExtent.Y || LocalOrigin.Y > BoxExtent.Y)
-    //        return false;
-    //}
-    //else
-    //{
-    //    float invDirY = 1.0f / LocalDirection.Y;
-    //    float t1 = (-BoxExtent.Y - LocalOrigin.Y) * invDirY;
-    //    float t2 = (BoxExtent.Y - LocalOrigin.Y) * invDirY;
+    // Y축 슬랩 테스트
+    if (FMath::Abs(LocalDirection.Y) < KINDA_SMALL_NUMBER)
+    {
+        if (LocalOrigin.Y < -BoxExtent.Y || LocalOrigin.Y > BoxExtent.Y)
+            return false;
+    }
+    else
+    {
+        float invDirY = 1.0f / LocalDirection.Y;
+        float t1 = (-BoxExtent.Y - LocalOrigin.Y) * invDirY;
+        float t2 = (BoxExtent.Y - LocalOrigin.Y) * invDirY;
 
-    //    if (t1 > t2) Swap(t1, t2);
+        if (t1 > t2) {
+            float temp = t1;
+            t1 = t2;
+            t2 = temp;
+        }
 
-    //    tMin = FMath::Max(tMin, t1);
-    //    tMax = FMath::Min(tMax, t2);
+        tMin = FMath::Max(tMin, t1);
+        tMax = FMath::Min(tMax, t2);
 
-    //    if (tMin > tMax) return false;
-    //}
+        if (tMin > tMax) return false;
+    }
 
-    //// Z축 슬랩 테스트
-    //if (FMath::Abs(LocalDirection.Z) < KINDA_SMALL_NUMBER)
-    //{
-    //    if (LocalOrigin.Z < -BoxExtent.Z || LocalOrigin.Z > BoxExtent.Z)
-    //        return false;
-    //}
-    //else
-    //{
-    //    float invDirZ = 1.0f / LocalDirection.Z;
-    //    float t1 = (-BoxExtent.Z - LocalOrigin.Z) * invDirZ;
-    //    float t2 = (BoxExtent.Z - LocalOrigin.Z) * invDirZ;
+    // Z축 슬랩 테스트
+    if (FMath::Abs(LocalDirection.Z) < KINDA_SMALL_NUMBER)
+    {
+        if (LocalOrigin.Z < -BoxExtent.Z || LocalOrigin.Z > BoxExtent.Z)
+            return false;
+    }
+    else
+    {
+        float invDirZ = 1.0f / LocalDirection.Z;
+        float t1 = (-BoxExtent.Z - LocalOrigin.Z) * invDirZ;
+        float t2 = (BoxExtent.Z - LocalOrigin.Z) * invDirZ;
 
-    //    if (t1 > t2) Swap(t1, t2);
+        if (t1 > t2) {
+            float temp = t1;
+            t1 = t2;
+            t2 = temp;
+        }
 
-    //    tMin = FMath::Max(tMin, t1);
-    //    tMax = FMath::Min(tMax, t2);
+        tMin = FMath::Max(tMin, t1);
+        tMax = FMath::Min(tMax, t2);
 
-    //    if (tMin > tMax) return false;
-    //}
+        if (tMin > tMax) return false;
+    }
 
-    //// 충돌 지점이 유효한 범위 내에 있는지 확인
-    //if (tMin < 0.0f)
-    //{
-    //    // Ray의 시작점이 박스 내부에 있는 경우
-    //    if (tMax < 0.0f) return false;  // Ray가 완전히 박스 밖을 향하는 경우
+    // 충돌 지점이 유효한 범위 내에 있는지 확인
+    if (tMin < 0.0f)
+    {
+        // Ray의 시작점이 박스 내부에 있는 경우
+        if (tMax < 0.0f) return false;  // Ray가 완전히 박스 밖을 향하는 경우
 
-    //    // tMax 사용 (박스에서 나가는 지점)
-    //    if (tMax > MaxDistance) return false;
+        // tMax 사용 (박스에서 나가는 지점)
+        if (tMax > MaxDistance) return false;
 
-    //    OutHit.distance = tMax;
-    //}
-    //else
-    //{
-    //    // tMin 사용 (박스에 들어가는 지점)
-    //    if (tMin > MaxDistance) return false;
+        OutHit.distance = tMax;
+    }
+    else
+    {
+        // tMin 사용 (박스에 들어가는 지점)
+        if (tMin > MaxDistance) return false;
 
-    //    OutHit.distance = tMin;
-    //}
+        OutHit.distance = tMin;
+    }
 
     //// 충돌 위치 계산
-    //OutHit.location = Origin + Direction * OutHit.distance;
+    OutHit.location = Origin + Direction * OutHit.distance;
 
     //// 로컬 충돌 위치
-    //FVector LocalHitPoint = LocalOrigin + LocalDirection * OutHit.distance;
+    FVector LocalHitPoint = LocalOrigin + LocalDirection * OutHit.distance;
 
     //// 법선 벡터 계산: 충돌이 발생한 면의 법선
-    //FVector LocalNormal = FVector::ZeroVector;
+    FVector LocalNormal = FVector::ZeroVector;
 
     //// 가장 가까운 면 찾기
-    //float epsilon = 0.001f;  // 부동소수점 오차를 위한 작은 값
+    float epsilon = 0.001f;  // 부동소수점 오차를 위한 작은 값
 
-    //if (FMath::Abs(LocalHitPoint.X - BoxExtent.X) < epsilon)
-    //    LocalNormal = FVector(1, 0, 0);
-    //else if (FMath::Abs(LocalHitPoint.X + BoxExtent.X) < epsilon)
-    //    LocalNormal = FVector(-1, 0, 0);
-    //else if (FMath::Abs(LocalHitPoint.Y - BoxExtent.Y) < epsilon)
-    //    LocalNormal = FVector(0, 1, 0);
-    //else if (FMath::Abs(LocalHitPoint.Y + BoxExtent.Y) < epsilon)
-    //    LocalNormal = FVector(0, -1, 0);
-    //else if (FMath::Abs(LocalHitPoint.Z - BoxExtent.Z) < epsilon)
-    //    LocalNormal = FVector(0, 0, 1);
-    //else if (FMath::Abs(LocalHitPoint.Z + BoxExtent.Z) < epsilon)
-    //    LocalNormal = FVector(0, 0, -1);
+    if (FMath::Abs(LocalHitPoint.X - BoxExtent.X) < epsilon)
+        LocalNormal = FVector(1, 0, 0);
+    else if (FMath::Abs(LocalHitPoint.X + BoxExtent.X) < epsilon)
+        LocalNormal = FVector(-1, 0, 0);
+    else if (FMath::Abs(LocalHitPoint.Y - BoxExtent.Y) < epsilon)
+        LocalNormal = FVector(0, 1, 0);
+    else if (FMath::Abs(LocalHitPoint.Y + BoxExtent.Y) < epsilon)
+        LocalNormal = FVector(0, -1, 0);
+    else if (FMath::Abs(LocalHitPoint.Z - BoxExtent.Z) < epsilon)
+        LocalNormal = FVector(0, 0, 1);
+    else if (FMath::Abs(LocalHitPoint.Z + BoxExtent.Z) < epsilon)
+        LocalNormal = FVector(0, 0, -1);
 
     //// 로컬 법선을 월드 공간으로 변환
-    //OutHit.normal = BoxRotation.RotateVector(LocalNormal);
-    //OutHit.bBlockingHit = true;
-    //OutHit.hitObject = const_cast<UBoxCollider*>(&Box);
+    OutHit.normal = BoxRotation.RotateVector(LocalNormal);
+    OutHit.bBlockingHit = true;
+    OutHit.hitObject = const_cast<UBoxCollider*>(&Box);
 
     return true;
 }

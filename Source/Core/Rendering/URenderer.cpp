@@ -308,7 +308,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 상수 버퍼 */
     if (ConstantBufferMap.find(PC) != ConstantBufferMap.end())
     {
-        //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
+        DeviceContext->PSSetConstantBuffers(0, 1, ConstantBufferMap[PC].GetAddressOf());
     }
     /* Pixel Shader의 ShaderResourceView */
     if (SRVs.has_value())
@@ -602,27 +602,6 @@ void URenderer::PrepareZIgnore()
 {
     DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }
-
-
-//void URenderer::PreparePicking()
-//{
-//    // 렌더 타겟 바인딩
-//    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
-//    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-//    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
-//
-//    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
-//}
-
-//void URenderer::PreparePickingShader() const
-//{
-//    DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
-//
-//    if (ConstantPickingBuffer)
-//    {
-//        DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
-//    }
-//}
 
 void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
 {

@@ -24,7 +24,7 @@ AGizmoHandle::AGizmoHandle()
 
 
 	// y
-	/**/UCylinderComp* YArrow = AddComponent<UCylinderComp>();
+	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
 	YArrow->SetupAttachment(ZArrow);
 	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
