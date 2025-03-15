@@ -152,9 +152,9 @@ void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
 		* FMatrix::Transpose(this->GetComponentTransformMatrix());
 
 
-	//ConstantData = { MVP, UpdateInfo.AtlasSzOffset };
+	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
 
 
-	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
 	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }
