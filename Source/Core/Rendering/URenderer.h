@@ -33,6 +33,7 @@ private:
         FVector4 Color;
 		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
         uint32 bUseVertexColor;
+        FVector padding;
         FVector4 indexColor;
     };
 	
@@ -69,10 +70,6 @@ public:
 
     void ReleaseConstantBuffer();
 
-    void CreateTexturesSamplers();
-    void ReleaseTexturesSamplers();
-
-
     /** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
     void SwapBuffer() const;
 
@@ -101,24 +98,7 @@ public:
      *
      * @note 이 함수는 D3D11_USAGE_IMMUTABLE 사용법으로 버퍼를 생성합니다.
      */
-     /*ID3D11Buffer* CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
-    {
-        D3D11_BUFFER_DESC VertexBufferDesc = {};
-        VertexBufferDesc.ByteWidth = ByteWidth;
-        VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-        D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
-        VertexBufferSRD.pSysMem = Vertices;
-
-        ID3D11Buffer* VertexBuffer;
-        const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
-        if (FAILED(Result))
-        {
-            return nullptr;
-        }
-        return VertexBuffer;
-    }*/
+    ID3D11Buffer* CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const;
 
     /** Buffer를 해제합니다. */
     void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
@@ -201,7 +181,7 @@ protected:
 
 public:
     std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> VertexBufferMap;
-    std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> IndexBufferMap;
+    std::unordered_map<InputLayoutType, ComPtr<ID3D11Buffer>> IndexBufferMap;
     std::unordered_map<InputLayoutType, ComPtr<ID3D11InputLayout>> InputLayoutMap;
 
     std::unordered_map<EPrimitiveType, uint32> VertexCountMap;
@@ -209,7 +189,7 @@ public:
 
 protected:
     std::unordered_map<uint32, ComPtr<ID3D11Buffer>> ConstantBufferMap;
-    std::unordered_map<uint32, ComPtr<ID3D11SamplerState>> SamplerMap;
+    std::unordered_map<uint32, ComPtr<ID3D11Texture2D>> Texture2DMap;
     std::unordered_map<uint32, ComPtr<ID3D11ShaderResourceView>> ShaderResourceViewMap;
     std::unordered_map<uint32, ComPtr<ID3D11VertexShader>> ShaderMapVS;
     std::unordered_map<uint32, ComPtr<ID3D11PixelShader>> ShaderMapPS;
@@ -228,46 +208,7 @@ protected:
 #pragma region Util_ConstantBuffer
 public:
     template <typename T>
-    ID3D11Buffer* CreateVertexBuffer(const T* Vertices, UINT ByteWidth) const
-    {
-        D3D11_BUFFER_DESC VertexBufferDesc = {};
-        VertexBufferDesc.ByteWidth = ByteWidth;
-        VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-        D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
-        VertexBufferSRD.pSysMem = Vertices;
-
-        ID3D11Buffer* VertexBuffer;
-        const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
-        if (FAILED(Result))
-        {
-            return nullptr;
-        }
-        return VertexBuffer;
-    }
-
-    ID3D11Buffer* CreateIndexBuffer( const std::vector<uint32>& indices)
-    {
-        ID3D11Buffer* IndexBuffer;
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;                       // 초기화 후 변경X
-        bufferDesc.ByteWidth = UINT(sizeof(uint32) * indices.size());
-        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;                                  // 0 if no CPU access is necessary.
-        bufferDesc.StructureByteStride = sizeof(uint32);
-
-        D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-        indexBufferData.pSysMem = indices.data();
-        indexBufferData.SysMemPitch = 0;
-        indexBufferData.SysMemSlicePitch = 0;
-
-        Device->CreateBuffer(&bufferDesc, &indexBufferData, &IndexBuffer);
-        return IndexBuffer;
-    }
-
-    template <typename T>
-    uint32 CreateConstantBuffer()           // 각 PrimitiveComponent에서 호출됨 : 각자가 쓸 상수 버퍼의 인덱스를 소유토록 return
+    uint32 CreateConstantBuffer()
     {
         ComPtr<ID3D11Buffer> ConstantBuffer;
         D3D11_BUFFER_DESC cbDesc;

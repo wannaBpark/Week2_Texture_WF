@@ -1,6 +1,3 @@
-// stb_image.h 헤더 오류 픽싱용 매크로
-#define _CRT_SECURE_NO_WARNINGS // stb_image_write compile error fix
-
 #include "URenderer.h"
 #include <d3dcompiler.h>
 #include "Core/Rendering/BufferCache.h"
@@ -26,7 +23,6 @@ void URenderer::Create(HWND hWindow)
     CreateFrameBuffer();
     CreateRasterizerState();
     CreateBufferCache();
-    CreateTexturesSamplers();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
 
@@ -65,13 +61,8 @@ void URenderer::CreateShader()
          *   - SIZE_T GetBufferSize
          *     - 버퍼의 크기(바이트 갯수)를 돌려준다
          */
-    ID3D11VertexShader* PosTexVertexShader;
-    ID3D11PixelShader* PosTexPixelShader;
-    ID3D11InputLayout* PosTexInputLayout;
     ID3DBlob* VertexShaderCSO;
-    ID3DBlob* PosTexVertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
-    ID3DBlob* PosTexPixelShaderCSO;
 
     //ID3DBlob* PickingShaderCSO;
     
@@ -83,40 +74,24 @@ void URenderer::CreateShader()
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
     
-    if (ErrorMsg)
-    {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-    auto it = InputLayouts.find(InputLayoutType::POSCOLOR);
-    Device->CreateInputLayout(it->second.data(), it->second.size(), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
+    /*D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
+    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);*/
 
-
-    /* Position Color Normal Texcoord Inputlayout, shader */
-    D3DCompileFromFile(L"Shaders/PosTexVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &PosTexVertexShaderCSO, &ErrorMsg);
-    //UE_LOG("%s ", (char*)ErrorMsg->GetBufferPointer());
-    if (FAILED(Device->CreateVertexShader(PosTexVertexShaderCSO->GetBufferPointer(), PosTexVertexShaderCSO->GetBufferSize(), nullptr, &PosTexVertexShader))) {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-
-    D3DCompileFromFile(L"Shaders/PosTexPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PosTexPixelShaderCSO, &ErrorMsg);
-    if (FAILED(Device->CreatePixelShader(PosTexPixelShaderCSO->GetBufferPointer(), PosTexPixelShaderCSO->GetBufferSize(), nullptr, &PosTexPixelShader))) {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        SAFE_RELEASE(ErrorMsg);
-    }
-   
-    it = InputLayouts.find(InputLayoutType::POSCOLORNORMALTEX);
-    Device->CreateInputLayout(it->second.data(), it->second.size(), PosTexVertexShaderCSO->GetBufferPointer(), PosTexVertexShaderCSO->GetBufferSize(), &PosTexInputLayout);
     
+	if (ErrorMsg)
+	{
+		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        SAFE_RELEASE(ErrorMsg);
+	}
+
+    auto it = InputLayouts.find(InputLayoutType::POSCOLOR);
+
+    Device->CreateInputLayout(it->second.data(), it->second.size(), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
     //Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
 
     ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
-    ShaderMapVS.insert({ 1, PosTexVertexShader});
     ShaderMapPS.insert({ 0, SimplePixelShader });
-    ShaderMapPS.insert({ 1, PosTexPixelShader });
     InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
-    InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
@@ -282,15 +257,13 @@ void URenderer::PrepareShader() const
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
-    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
+    auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, SRVs] = RenderResource;
     RenderResource.Topology = TopologyMap[Type];
-    RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
+    RenderResource.numVertices = VertexCountMap[Type];
 
     assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
     assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
     assert(VertexCountMap.find(Type) != VertexCountMap.end());
-    assert(VertexBufferMap.find(Type) != VertexBufferMap.end());
-    if (bUseIndexBuffer == true ) assert(IndexBufferMap.find(Type) != IndexBufferMap.end());
 
     if (CurrentTopology != Topology)
     {
@@ -308,12 +281,11 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 상수 버퍼 */
     if (ConstantBufferMap.find(PC) != ConstantBufferMap.end())
     {
-        //DeviceContext->PSSetConstantBuffers(2, 1, ConstantBufferMap[PC].GetAddressOf());
+        DeviceContext->PSSetConstantBuffers(0, 1, ConstantBufferMap[PC].GetAddressOf());
     }
     /* Pixel Shader의 ShaderResourceView */
-    if (SRVs.has_value())
+    if (SRVs && !SRVs->empty())
     {
-        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -339,11 +311,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
-    if (bUseIndexBuffer == true) {
-        RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
-    } else {
-        RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
-    }
+    RenderPrimitiveInternal(VertexBufferMap[Type].Get(), numVertices);                  // info에 담긴 실제 vertexbuffer, numVertices 전달 및 렌더
 
 }
 
@@ -360,7 +328,26 @@ void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-    DeviceContext->DrawIndexed(numIndices, 0, 0);
+    DeviceContext->Draw(numIndices, 0);
+}
+
+ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
+{
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = Vertices;
+
+    ID3D11Buffer* VertexBuffer;
+    const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+    if (FAILED(Result))
+    {
+        return nullptr;
+    }
+    return VertexBuffer;
 }
 
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
@@ -539,9 +526,8 @@ void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+   // RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
-    //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
@@ -563,7 +549,6 @@ void URenderer::InitMatrix()
 	ViewMatrix = FMatrix::Identity();
 	ProjectionMatrix = FMatrix::Identity();
 }
-
 
 void URenderer::ReleasePickingFrameBuffer()
 {

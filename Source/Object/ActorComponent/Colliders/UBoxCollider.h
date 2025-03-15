@@ -1,14 +1,11 @@
 ﻿#pragma once
 #include "ICollider.h"
 #include "Object/ActorComponent/Colliders/CollisionSystem.h";
+#include "Core/Math/Transform.h"
 
 class UBoxCollider : public ICollider
 {
 public:
-	FVector GetCenter() const;
-	inline FVector GetOffset() const { return offset; }
-	inline FVector GetScale() const { return scale; }
-
 	bool CheckCollision(const ICollider& other) const override {
 		return other.CheckCollision(*this);
 	}
@@ -23,7 +20,6 @@ public:
 		return CollisionSystem::BoxToSphere(*this, sphere);
 	}
 private:
-	FVector offset;
-	FVector scale;
+	FTransform relativeTransform;
 };
 

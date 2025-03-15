@@ -65,26 +65,16 @@ class UCubeComp : public UPrimitiveComponent
 public:
 	UCubeComp()
 	{
-		/*bCanBeRendered = true;
-		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);*/
-		// shader 관련 index 지정 필요
-		//
-
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColorNormalTex);
-		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
-		RenderResource.PixelShaderIndex = 1;
-		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
+		RenderResource.Stride = sizeof(FPosColor);
+		// shader 관련 index 지정 필요
+		//
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
 	{
-		//return EPrimitiveType::EPT_Cube;
-		return EPrimitiveType::EPT_CubeTex;
+		return EPrimitiveType::EPT_Cube;
 	}
 };
 
@@ -101,14 +91,13 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
-		//
+		
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_SphereTex;
+		return EPrimitiveType::EPT_Sphere;
 	}
 };
 
@@ -125,12 +114,11 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_TriangleTex;
+		return EPrimitiveType::EPT_Triangle;
 	}
 };
 
@@ -168,13 +156,12 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCylinderComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_CylinderTex;
+		return EPrimitiveType::EPT_Cylinder;
 	}
 };
 
@@ -191,19 +178,19 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_ConeTex;
+		return EPrimitiveType::EPT_Cone;
 	}
 };
 
 class UCircleComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+
 public:
 	UCircleComp()
 	{
@@ -214,7 +201,6 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UCircleComp() = default;
@@ -246,8 +232,6 @@ public:
 	{
 		return EPrimitiveType::EPT_BillBoard;
 	}
-
-	void UpdateConstantData(URenderer*& Renderer) override;
 };
 
 

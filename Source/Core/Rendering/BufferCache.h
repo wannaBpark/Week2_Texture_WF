@@ -5,10 +5,10 @@
 
 #include <wrl/client.h>
 #include <unordered_map>
-#include <tuple>
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
-struct FPosColorNormalTex;
+
+
 struct BufferInfo
 {
 public:
@@ -59,5 +59,4 @@ public:
 private :
 	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);
 };
-
 

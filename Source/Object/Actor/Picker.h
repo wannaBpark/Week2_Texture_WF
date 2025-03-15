@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Actor.h"
 
@@ -15,4 +15,6 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
+private:
+    POINT GetMousePoint();
 };

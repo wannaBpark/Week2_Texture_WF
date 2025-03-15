@@ -47,99 +47,22 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
-        POINT pt;//TODO: 하나로 합치기 마우스 위치 받아오는 작업 합치기
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-
-        float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
-        float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
-        pt.x = pt.x * ratioX;
-        pt.y = pt.y * ratioY;
-
-        FHitResult result;
-        FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
-        FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
-        URaycastSystem::Raycast(location, dir, 100, result);
-
-        UActorComponent* PickedComponent = nullptr;
-        if(result.bBlockingHit)
-            PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(result.hitObject->GetUUID());
-
-        if (PickedComponent != nullptr)
-        {
-            AActor* PickedActor = PickedComponent->GetOwner();
-
-            if (PickedActor == nullptr) return;
-            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-            {
-                if (PickedActor == FEditorManager::Get().GetSelectedActor())
-                {
-                    FEditorManager::Get().SelectActor(nullptr);
-                }
-                else
-                {
-                    FEditorManager::Get().SelectActor(PickedActor);
-                }
-            }
-            UE_LOG("Pick - UUID: %u", result.hitObject->GetUUID());
-        }
-
-    }
-
-    /*if(APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse)
+    if (APlayerInput::Get().IsPressedMouse(false) && !ImGui::GetIO().WantCaptureMouse)
     {
-        POINT pt;
+        POINT pt = GetMousePoint();
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
-
-        float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
-        float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
-        pt.x = pt.x * ratioX;
-        pt.y = pt.y * ratioY;
-        
         FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-
         uint32_t UUID = DecodeUUID(color);
 
         UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
-
-        if (PickedComponent != nullptr)
-        {
-            AActor* PickedActor = PickedComponent->GetOwner();
-
-            if (PickedActor == nullptr) return;
-            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-            {
-                if (PickedActor == FEditorManager::Get().GetSelectedActor())
-                {
-                    FEditorManager::Get().SelectActor(nullptr);   
-                }
-                else
-                {
-                    FEditorManager::Get().SelectActor(PickedActor);
-                }
-            }
-        }
-        UE_LOG("Pick - UUID: %u", UUID);
-    }*/
-
-    if (APlayerInput::Get().IsPressedMouse(false) && !ImGui::GetIO().WantCaptureMouse)
-    {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);\
         if (PickedComponent != nullptr)
         {
             if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
             {
                 if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                if(UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent))
+                if (UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent))
                 {
                     FVector4 CompColor = CylinderComp->GetCustomColor();
                     if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
@@ -171,6 +94,8 @@ void APicker::LateTick(float DeltaTime)
                         Gizmo->SetSelectedAxis(ESelectedAxis::Z);
                     }
                 }
+
+                return;
             }
         }
     }
@@ -181,9 +106,65 @@ void APicker::LateTick(float DeltaTime)
             Handle->SetSelectedAxis(ESelectedAxis::None);
         }
     }
+
+    if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
+        POINT pt = GetMousePoint();
+
+        // 컬러 피킹
+        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+        uint32_t UUID = DecodeUUID(color);
+
+        // 오브젝트 RayTracing
+        TArray<FHitResult> resultAll;
+        FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
+        FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
+        URaycastSystem::RaycastAll(location, dir, 100, resultAll);
+        for (int i = 0; i < resultAll.Len(); i++) {
+            UE_LOG("result%d", resultAll[i].hitObject->GetUUID());
+        }
+
+        UActorComponent* PickedComponent = nullptr;
+        if (resultAll.Len() != 0 && resultAll[0].bBlockingHit) {
+            PickedComponent = dynamic_cast<UActorComponent*>(resultAll[0].hitObject);
+
+            if (PickedComponent != nullptr)
+            {
+                AActor* PickedActor = PickedComponent->GetOwner();
+
+                if (PickedActor == nullptr) return;
+                if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+                {
+                    if (PickedActor == FEditorManager::Get().GetSelectedActor())
+                    {
+                        FEditorManager::Get().SelectActor(nullptr);
+                    }
+                    else
+                    {
+                        FEditorManager::Get().SelectActor(PickedActor);
+                    }
+                }
+                UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
+            }
+
+        }
+    }
 }
 
 const char* APicker::GetTypeName()
 {
     return "Picker";
+}
+
+POINT APicker::GetMousePoint()
+{
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+
+    float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
+    float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
+    pt.x = pt.x * ratioX;
+    pt.y = pt.y * ratioY;
+
+    return pt;
 }
