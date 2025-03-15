@@ -174,6 +174,7 @@
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
     <ClCompile Include="Source\Object\Actor\Cone.cpp" />
     <ClCompile Include="Source\Object\Actor\Cylinder.cpp" />
+    <ClCompile Include="Source\Object\Actor\Triangle.cpp" />
     <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
@@ -236,7 +237,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Object\Actor\BillBoard.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="EEnum.h" />
     <ClInclude Include="Source\Core\Rendering\RenderResource.h" />
@@ -272,6 +272,7 @@
     <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
+    <ClInclude Include="Source\Object\Actor\Triangle.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
