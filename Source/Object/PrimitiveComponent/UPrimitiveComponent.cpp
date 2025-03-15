@@ -164,3 +164,13 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 //	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 //	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 //}
+
+void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
+{
+
+}
+
+void UWorldTextComp::Render()
+{
+
+}

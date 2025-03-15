@@ -23,6 +23,7 @@ enum class EPrimitiveType : uint8
 	EPT_CircleTex,
 	EPT_SphereTex,
 	EPT_ConeTex,
+	EPT_WorldText,
 	EPT_Max,
 };
 

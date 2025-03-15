@@ -251,3 +251,29 @@ public:
 };
 
 
+
+class UWorldTextComp : public UPrimitiveComponent 
+{
+	using Super = UPrimitiveComponent;
+public:
+	UWorldTextComp() 
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 1;
+		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
+	}
+
+	virtual ~UWorldTextComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_WorldText;
+	}
+
+	void UpdateConstantData(URenderer*& Renderer) override;
+	void Render() override;
+};
