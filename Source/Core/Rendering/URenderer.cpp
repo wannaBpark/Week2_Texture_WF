@@ -131,7 +131,7 @@ void URenderer::CreateShader()
 
     ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
     ShaderMapVS.insert({ 1, PosTexVertexShader});
-	ShaderMapGS.insert({ 2, AtlasVertexShader });
+	ShaderMapVS.insert({ 2, AtlasVertexShader });
 
     ShaderMapPS.insert({ 0, SimplePixelShader });
     ShaderMapPS.insert({ 1, PosTexPixelShader });
@@ -253,45 +253,6 @@ void URenderer::PrepareShader() const
     }
 }
 
-//void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
-//{
-//    if (BufferCache == nullptr)
-//    {
-//        return;
-//    }
-//
-//	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
-//    PrimitiveComp->RenderResource.Topology = Info.GetTopology();
-//    PrimitiveComp->RenderResource.numVertices = Info.GetSize();
-//
-//	if (Info.GetBuffer() == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (CurrentTopology != Info.GetTopology())
-//	{
-//		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
-//		CurrentTopology = Info.GetTopology();
-//	}
-//
-//    ConstantUpdateInfo UpdateInfo{ 
-//        PrimitiveComp->GetWorldTransform(), 
-//        PrimitiveComp->GetCustomColor(), 
-//        PrimitiveComp->IsUseVertexColor(),
-//    };
-//
-//
-//    FConstants tmp;
-//    tmp.MVP =
-//        FMatrix::Transpose(ProjectionMatrix) *
-//        FMatrix::Transpose(ViewMatrix) *
-//        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
-//    tmp.Color = UpdateInfo.Color;
-//    tmp.bUseVertexColor = UpdateInfo.bUseVertexColor;
-//    UpdateConstant(UpdateInfo); // legacy code
-//    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
-//}
 
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResource& RenderResource)
 {

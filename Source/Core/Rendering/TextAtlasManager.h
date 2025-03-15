@@ -16,7 +16,7 @@ public:
 	static void SetGridLayout(int InColumns, int InRows);
 	static void SetMargin(int InMarginX, int InMarginY);
 
-	static FVector4 GetCharUV(char character) const;
+	static FVector4 GetCharUV(char character);
 
 private:
 	static inline int AtlasWidth{ 512 };

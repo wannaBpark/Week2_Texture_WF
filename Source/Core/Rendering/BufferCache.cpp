@@ -135,6 +135,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	}
 	case EPT_WorldText: {
 		auto [Vertices, Indices] = CreateCubeTexVertices();
+		//auto [Vertices, Indices] = CreateTextTexVertices();
 		Size = Vertices.Num();
 		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
 		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);

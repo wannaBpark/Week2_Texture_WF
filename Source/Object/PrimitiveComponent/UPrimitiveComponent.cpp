@@ -135,11 +135,14 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
 {
+	FVector4 SzOffset;
+	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	FAtlasConstants UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		SzOffset,
+	};
+	UE_LOG("Size : %f %f Offset : %f %f", SzOffset.X, SzOffset.Y, SzOffset.Z, SzOffset.W);
 
-	//FAtlasConstants UpdateInfo{
-	//	this->GetComponentTransformMatrix(),
-	//	TextAtlasManager::GetChar(this->GetChar()),
-	//};
 
 	//FMatrix& WorldPosition = UpdateInfo.MVP;
 

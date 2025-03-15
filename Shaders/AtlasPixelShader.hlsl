@@ -8,7 +8,7 @@ struct PS_INPUT
     float2 texcoord : TEXCOORD0; 
 };
 
-float4 main(PS_INPUT input) : SV_TARGET
+float4 mainPS(PS_INPUT input) : SV_TARGET
 {
     float2 uv = input.texcoord;
     return atlasTexture.Sample(atlasSampler, uv);

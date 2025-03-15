@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp" />
     <ClCompile Include="Source\Object\Actor\BillBoard.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
@@ -206,6 +207,7 @@
     <ClCompile Include="Source\Object\World\World.cpp" />
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
     <ClCompile Include="URaycastSystem.cpp" />
+    <ClCompile Include="Source\Object\Actor\WorldText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\AtlasPixelShader.hlsl">
@@ -258,6 +260,7 @@
     <ClInclude Include="Source\Core\Rendering\RenderResource.h" />
     <ClInclude Include="Source\Core\Rendering\ShaderParameterMacros.h" />
     <ClInclude Include="Source\Core\HAL\StackAllocator.h" />
+    <ClInclude Include="Source\Core\Rendering\TextAtlasManager.h" />
     <ClInclude Include="Source\Object\ActorComponent\ActorComponent.h" />
     <ClInclude Include="Source\Object\ActorComponent\Colliders\ActorComponent.h" />
     <ClInclude Include="Source\Object\ActorComponent\Colliders\ULineCollider.h" />
@@ -325,6 +328,7 @@
     <ClInclude Include="Source\ThirdParty\stb-master\stb_image_write.h" />
     <ClInclude Include="UColliders.h" />
     <ClInclude Include="URaycastSystem.h" />
+    <ClInclude Include="Source\Object\Actor\WorldText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

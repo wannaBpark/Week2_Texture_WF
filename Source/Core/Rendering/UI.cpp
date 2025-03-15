@@ -19,6 +19,7 @@
 #include "Object/Actor/Circle.h"
 #include "Object/Actor/Triangle.h"
 #include "Object/Actor/BillBoard.h"
+#include "Object/Actor/WorldText.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -193,6 +194,10 @@ void UI::RenderPrimitiveSelection()
 			else if (strcmp(items[currentItem], "BillBoard") == 0)
 			{
 				World->SpawnActor<ABillBoard>();
+			}
+			else if (strcmp(items[currentItem], "WorldText") == 0)
+			{
+				World->SpawnActor<AWorldText>();
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
