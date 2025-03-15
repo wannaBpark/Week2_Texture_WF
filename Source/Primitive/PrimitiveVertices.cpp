@@ -1,4 +1,8 @@
-﻿#include "PrimitiveVertices.h"
+#include "PrimitiveVertices.h"
+
+FVertexSimple WorldTextVertices[] = {
+	
+};
 
 FVertexSimple LineVertices[2] =
 {
