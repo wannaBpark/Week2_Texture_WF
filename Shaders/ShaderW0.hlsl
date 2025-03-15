@@ -41,11 +41,9 @@ PS_OUTPUT mainPS(PS_INPUT input)
 {
     PS_OUTPUT output;
 
-
     // 색상 설정 (예: 흰색)
     output.color = input.color;
     output.UUID = indexColor;
-    // output.color = float4(depth, depth, depth, 1.0f);
     
     return output;
 }
