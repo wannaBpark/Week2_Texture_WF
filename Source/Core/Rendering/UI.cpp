@@ -17,6 +17,7 @@
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Circle.h"
+#include "Object/Actor/Triangle.h"
 #include "Object/Actor/BillBoard.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
@@ -180,6 +181,10 @@ void UI::RenderPrimitiveSelection()
             else if (strcmp(items[currentItem], "Cone") == 0)
             {
                 World->SpawnActor<ACone>();
+            }
+            else if (strcmp(items[currentItem], "Triangle") == 0)
+            {
+                World->SpawnActor<ATriangle>();
             }
             else if (strcmp(items[currentItem], "Circle") == 0)
             {
