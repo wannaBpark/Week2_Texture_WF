@@ -3,6 +3,7 @@
 #include "Object/Actor/Actor.h"
 #include "../Source/Static/FEditorManager.h"
 #include "Object/Actor/Camera.h"
+#include "Core/Rendering/TextAtlasManager.h"
 
 void UPrimitiveComponent::BeginPlay()
 {
@@ -57,12 +58,6 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
-	/*ConstantUpdateInfo UpdateInfo{
-		this->GetComponentTransform(),
-		this->GetCustomColor(),
-		this->IsUseVertexColor()
-	};*/
-
 	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
@@ -136,4 +131,27 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+}
+
+void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
+{
+
+	//FAtlasConstants UpdateInfo{
+	//	this->GetComponentTransformMatrix(),
+	//	TextAtlasManager::GetChar(this->GetChar()),
+	//};
+
+	//FMatrix& WorldPosition = UpdateInfo.MVP;
+
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(this->GetComponentTransformMatrix());
+
+
+	//ConstantData = { MVP, UpdateInfo.AtlasSzOffset };
+
+
+	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }

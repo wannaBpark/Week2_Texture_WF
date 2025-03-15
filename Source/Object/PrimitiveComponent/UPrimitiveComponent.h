@@ -263,9 +263,11 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
-		RenderResource.PixelShaderIndex = 1;
-		RenderResource.bUseIndexBuffer = true;
+		RenderResource.VertexShaderIndex = 2;				// 2 : Atlas Vertex Shader
+		RenderResource.PixelShaderIndex = 2;				// 2 : Atlas Pixel Shader		
+		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
+		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
+		RenderResource.bUseIndexBuffer = true;						
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);	// TextAtlas 추가 필요
 	}
 
@@ -275,6 +277,9 @@ public:
 		return EPrimitiveType::EPT_WorldText;
 	}
 
+	char Character = 'a';
+	char GetChar() const { return Character; }
+	FAtlasConstants AtlasConstantData;
+
 	void UpdateConstantData(URenderer*& Renderer) override;
-	void Render() override;
 };
