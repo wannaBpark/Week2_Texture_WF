@@ -233,3 +233,4 @@ inline FVector4& FVector4::operator/=(float Scalar)
     X /= Scalar; Y /= Scalar; Z /= Scalar; W /= Scalar;
     return *this;
 }
+
