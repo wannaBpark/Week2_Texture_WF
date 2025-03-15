@@ -115,14 +115,14 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 	// 빌보드 회전 행렬 생성
 	FMatrix BillboardRotation = FMatrix(
-		{ billboardToEye.X, billboardToEye.Y,billboardToEye.Z, 0.0f },
-		{ rightVector.X, rightVector.Y,      rightVector.Z, 0.0f },
-		{ adjustedUp.X, adjustedUp.Y,        adjustedUp.Z,   0.0f },
+		{ billboardToEye.X, rightVector.X,adjustedUp.X,   0.0f },
+		{ billboardToEye.Y, rightVector.Y,adjustedUp.Y,   0.0f },
+		{ billboardToEye.Z, rightVector.Z,adjustedUp.Z,   0.0f },
 		{ 0.0f, 0.0f, 0.0f, 1.0f }
 	);
 
 	// 빌보드 위치를 고려한 최종 변환 행렬
-	FMatrix BillBoardTransform = this->GetComponentTransformMatrix() * BillboardRotation;
+	FMatrix BillBoardTransform =  FMatrix::Transpose(BillboardRotation) * this->GetComponentTransformMatrix();
 
 	// MVP 행렬 생성 (뷰 행렬을 Renderer에서 가져옴)
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
@@ -136,3 +136,36 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
+
+//void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
+//{
+//
+//	ConstantUpdateInfo UpdateInfo{
+//		this->GetComponentTransformMatrix(),
+//		this->GetCustomColor(),
+//		this->IsUseVertexColor()
+//	};
+//
+//	// 업데이트할 자료형들
+//	FMatrix BillBoardView;
+//	ACamera* camera = FEditorManager::Get().GetCamera();
+//	FVector billboardToEye = camera->GetActorTransform().GetPosition() - this->GetComponentTransform().GetPosition();
+//	billboardToEye.Normalize();
+//	FVector billPos = this->GetComponentTransform().GetPosition();
+//	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+//		* FMatrix::Transpose(FMatrix::LookAtLH(billPos, billPos + billboardToEye, FVector(0.0f, 1.0f, 0.0f))) *
+//		//* FMatrix::Transpose(Renderer->GetViewMatrix()) *
+//		FMatrix::Transpose(UpdateInfo.TransformMatrix);
+//
+//	/*FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+//		* FMatrix::Transpose(Renderer->GetViewMatrix())
+//		* FMatrix::Transpose(UpdateInfo.TransformMatrix);*/
+//
+//	ConstantData.MVP = MVP;
+//	ConstantData.Color = UpdateInfo.Color;
+//	ConstantData.bUseVertexColor = UpdateInfo.bUseVertexColor;
+//
+//
+//	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+//	//Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+//}

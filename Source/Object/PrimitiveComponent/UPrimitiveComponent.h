@@ -206,31 +206,7 @@ public:
 	virtual ~UCircleComp() = default;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_CircleTex;
-	}
-};
-
-class UBillBoardComp : public UPrimitiveComponent
-{
-	using Super = UPrimitiveComponent;
-public:
-	UBillBoardComp()
-	{
-		bCanBeRendered = true;
-		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColorNormalTex);
-		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
-		RenderResource.PixelShaderIndex = 1;
-		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);		// 1번째 Texture 사용 : tree.png [값이 없으면 초기화]
-		// shader 관련 index 지정 필요
-		//
-	}
-	virtual ~UBillBoardComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_BillBoard;
+		return EPrimitiveType::EPT_Circle;
 	}
 };
 
