@@ -141,7 +141,6 @@ void UWorldTextComp::UpdateConstantData(URenderer*& Renderer)
 		this->GetComponentTransformMatrix(),
 		SzOffset,
 	};
-	UE_LOG("Size : %f %f Offset : %f %f", SzOffset.X, SzOffset.Y, SzOffset.Z, SzOffset.W);
 
 
 	//FMatrix& WorldPosition = UpdateInfo.MVP;

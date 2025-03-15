@@ -65,6 +65,5 @@ FVector4 UTextAtlasManager::GetCharUV(char character)
     rect.Z = static_cast<float>(x) / static_cast<float>(AtlasWidth);
     rect.W = static_cast<float>(y) / static_cast<float>(AtlasHeight);
 
-    UE_LOG("Size : %f %f Offset : %f %f", rect.X, rect.Y, rect.Z, rect.W);
     return rect;
 }
