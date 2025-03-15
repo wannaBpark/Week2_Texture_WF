@@ -150,6 +150,17 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
 		break;
 	}
+	case EPT_WORLDGRID:
+	{
+		auto [Vertices, Indices] = CreateWorldGridVertices(2.0f, 1000.0f);
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+		Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
+	}
+
 }
 
 
@@ -715,4 +726,31 @@ std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateBound
 		20, 21, 21, 22, 22, 23, 20, 23, // Bottom face
 	};
 
+	return { Vertices, Indices };
+}
+
+std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateWorldGridVertices(float cellSize, float gridSize)
+{
+	TArray<FVertexSimple> Vertices;
+	std::vector<uint32> Indices;
+
+	float half = gridSize / 2.0f;
+
+	for (float i = -half; i <= half; ++i)
+	{
+		if (i == 0) continue;
+		// 가로선 
+		Vertices.Add({ -half * cellSize,i * cellSize, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({  half * cellSize,i * cellSize, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		// 세로
+		Vertices.Add({ i * cellSize, -half * cellSize, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({ i * cellSize,  half * cellSize, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
+	uint32 Size = Vertices.Num();
+	for (uint32 i{ 0 }; i < Size; ++i) {
+		Indices.push_back(i);
+	}
+
+	return {Vertices, Indices};
 }
