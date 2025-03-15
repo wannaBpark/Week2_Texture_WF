@@ -35,9 +35,10 @@ void UTextAtlasManager::SetMargin(int InMarginX, int InMarginY)
 FVector4 UTextAtlasManager::GetCharUV(char character)
 {
     FVector4 rect = { 0.f, 0.f, 0.f, 0.f };
-    if (character > Columns * Rows - 1 || Columns <= 0 || Rows <= 0 || AtlasWidth <= 0 || AtlasHeight <= 0)
+    if (character > Columns * Rows - 1 || Columns <= 0 || Rows <= 0 || AtlasWidth <= 0 || AtlasHeight <= 0) {
         UE_LOG("TextAtlasManager GetCharUV Error!");
         return rect; // 잘못된 입력이면 기본값 반환
+    }
 
     int index = character; //  현재 준비된 TextAtlas는 char을 바로 사용 가능
 
@@ -49,9 +50,10 @@ FVector4 UTextAtlasManager::GetCharUV(char character)
 
     int col = index % Columns;
     int row = index / Columns;
-    if (row >= Rows)
+    if (row >= Rows) {
         UE_LOG("TextAtlasManager GetCharUV Error row!");
         return rect;
+    }
 
     // 각 셀의 시작 좌표 (픽셀 단위)
     int x = col * (cellWidth + MarginX);
