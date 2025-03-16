@@ -314,3 +314,38 @@ public:
 
 	void UpdateConstantData(URenderer*& Renderer) override;
 };
+
+class USubUVComponent : public UPrimitiveComponent
+{
+	using Super = USubUVComponent;
+public:
+	USubUVComponent()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 2;				// 2 : Atlas Vertex Shader
+		RenderResource.PixelShaderIndex = 2;				// 2 : Atlas Pixel Shader		
+		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
+		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
+		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(2);	// 
+	}
+
+	virtual ~USubUVComponent() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_SubUV;
+	}
+
+private:
+	char Frame = 0;
+
+public:
+	void SetFrame(int InFrame) { Frame = InFrame; }
+	int32 GetFrame() const { return Frame; }
+	FAtlasConstants AtlasConstantData;
+
+	void UpdateConstantData(URenderer*& Renderer) override;
+};

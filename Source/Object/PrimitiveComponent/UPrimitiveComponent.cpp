@@ -4,6 +4,7 @@
 #include "../Source/Static/FEditorManager.h"
 #include "Object/Actor/Camera.h"
 #include "Core/Rendering/TextAtlasManager.h"
+#include "Core/Rendering/SubUVManager.h"
 #include "Core/Math/Vector.h"
 
 void UPrimitiveComponent::BeginPlay()
@@ -38,8 +39,8 @@ void UPrimitiveComponent::Render() // 오버라이딩 필요
 	{
 		if (bIsPicked)
 		{
-			/*bUseVertexColor = false;
-			SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
+			bUseVertexColor = false;
+			SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));
 		}
 		else
 		{
@@ -167,6 +168,23 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	FAtlasConstants UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		SzOffset,
+	};
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(this->GetComponentTransformMatrix());
+
+	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
+	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
+}
+
+void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도 추가
+{
+	FVector4 SzOffset;
+	SzOffset = USubUVManager::GetFrameUV(this->GetFrame());
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,

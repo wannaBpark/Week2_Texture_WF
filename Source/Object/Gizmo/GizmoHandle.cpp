@@ -1,4 +1,4 @@
-﻿#include "GizmoHandle.h"
+#include "GizmoHandle.h"
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
@@ -76,7 +76,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 		SetActorTransform(GizmoTr);
 	}
 
-	SetScaleByDistance();
+	SetScaleByDistance();  // 직교 투영 행렬로 변경 해야함.
 
 	AActor::Tick(DeltaTime);
 

@@ -162,6 +162,15 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		Size = Indices.size();
 		break;
 	}
+	case EPT_SubUV: {
+		auto [Vertices, Indices] = CreateTextTexVertices();
+		Size = Vertices.Num();
+		Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
+	}
 
 }
 
