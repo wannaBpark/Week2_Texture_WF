@@ -258,6 +258,7 @@ public:
         return VertexBuffer;
     }
 
+	// 월드 그리드 렌더링 버텍스 버퍼 생성
     template <typename T>
     ID3D11Buffer* CreateLineVertexBuffer(const T* Vertices, UINT ByteWidth)
     {
@@ -278,18 +279,19 @@ public:
         return LineVertexBuffer;
     }
 
+    // 월드 그리드 렌더링 버텍스 버퍼 업데이트
 	void UpdateLineVertexBuffer(const FVertexSimple* Vertices, uint32 NewSize)
 	{
 
-        if (MaxLineSize > NewSize) 
+        if (MaxLineSize < NewSize) 
         {
 			MaxLineSize = NewSize;
             if (LineVertexBuffer) { LineVertexBuffer->Release();  LineVertexBuffer = nullptr; }
 			CreateLineVertexBuffer(Vertices, MaxLineSize);
-        }
+        } 
         D3D11_MAPPED_SUBRESOURCE ms;
-        if (SUCCEEDED(DeviceContext->Map(LineVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms))) {
-            memcpy(ms.pData, Vertices, MaxLineSize);
+        if (SUCCEEDED(DeviceContext->Map(LineVertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms))) {
+			memcpy(ms.pData, Vertices, MaxLineSize > NewSize ? NewSize : MaxLineSize); // 현재 사이즈보다 작은 경우에는 현재 사이즈만큼만 복사
             DeviceContext->Unmap(LineVertexBuffer, 0);
         }
 	}
