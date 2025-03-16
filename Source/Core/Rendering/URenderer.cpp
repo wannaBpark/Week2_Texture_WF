@@ -19,6 +19,8 @@
 #include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 #include <directxtk/WICTextureLoader.h>
 
+#include "../Source/Object/World/World.h" // World로부터 GridScale을 가져옴
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -261,8 +263,11 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
     auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
 
+
     if (Type == EPrimitiveType::EPT_WORLDGRID) {
-        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(1.0f, 1000.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+        float GridScale = UEngine::Get().GetWorld()->GetGridScale();
+        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(GridScale, 1000.0f * GridScale, 
+            FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
         auto Size = Vertices.Num();
         this->UpdateLineVertexBuffer(Vertices.GetData(), Size * sizeof(FVertexSimple));
         Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Core/Engine.h"
 #include "Core/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
@@ -30,6 +30,7 @@ public:
         {
             Obj->~T();
             FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+			StackAllocator::GetInstance().deleteNode(Obj); // 추가 : 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();
 

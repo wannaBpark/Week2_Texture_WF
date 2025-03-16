@@ -1,5 +1,6 @@
-﻿#include "StackAllocator.h"
+#include "StackAllocator.h"
 #include <cstdlib>   // malloc, free
+#include "Debug/DebugConsole.h"
 
 void* StackAllocator::Allocate(size_t sz)
 {
@@ -24,6 +25,7 @@ void* StackAllocator::Allocate(size_t sz)
         allocateBlock();
         return Allocate(sz);
     }
+	UE_LOG("StackAllocator new Memory : %d", sz);
 }
 
 void StackAllocator::allocateBlock()

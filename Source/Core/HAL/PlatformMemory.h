@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <atomic>
 #include <iostream>
 
@@ -145,11 +145,11 @@ void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
 template <EAllocationType AllocType>
 void FPlatformMemory::Free(void* Address, size_t Size)
 {
-    /*if (Address)
+    if (Address)
     {
         DecrementStats<AllocType>(Size);
         std::free(Address);
-    }*/
+    }
 }
 
 template <EAllocationType AllocType>

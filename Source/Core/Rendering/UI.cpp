@@ -227,6 +227,10 @@ void UI::RenderPrimitiveSelection()
     {
         World->LoadWorld(SceneNameInput);
     }
+	float GridScale = World->GetGridScale();
+    if (ImGui::SliderFloat("Grid Scale", &GridScale, 0.1f, 100.0f)) {
+		World->SetGridScale(GridScale);
+    }
     ImGui::Separator();
 }
 
