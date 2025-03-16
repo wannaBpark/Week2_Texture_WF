@@ -8,6 +8,7 @@
 #include <Object/Actor/Camera.h>
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Core/Rendering/BufferCache.h" // 그리드 동적 렌더링
 
 // 아래는 Texture에 쓸 이미지 로딩용
 #define STB_IMAGE_IMPLEMENTATION
@@ -77,6 +78,11 @@ void URenderer::CreateShader()
     ID3DBlob* AtlasVertexShaderCSO;
     ID3DBlob* AtlasPixelShaderCSO;
 
+	ID3DBlob* TessVertexShaderCSO;
+	ID3DBlob* TessHullShaderCSO;
+	ID3DBlob* TessDomainShaderCSO;
+	ID3DBlob* TessPixelShaderCSO;
+
     //ID3DBlob* PickingShaderCSO;
     
 	ID3DBlob* ErrorMsg = nullptr;
@@ -145,6 +151,14 @@ void URenderer::CreateShader()
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
+
+    D3DCompileFromFile(L"Shaders/GridVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &TessVertexShaderCSO, &ErrorMsg);
+    Device->CreateVertexShader(TessVertexShaderCSO->GetBufferPointer(), TessVertexShaderCSO->GetBufferSize(), nullptr, &TessVertexShader);
+
+    D3DCompileFromFile(L"Shaders/GridPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &TessPixelShaderCSO, &ErrorMsg);
+    Device->CreatePixelShader(TessPixelShaderCSO->GetBufferPointer(), TessPixelShaderCSO->GetBufferSize(), nullptr, &TessPixelShader);
+
+
 }
 
 void URenderer::ReleaseShader()
@@ -161,7 +175,8 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
-    idx = CreateConstantBuffer<FAtlasConstants>();      // Atlas Texture  : 3
+    idx = CreateConstantBuffer<FAtlasConstants>();           // Grid Hull CBuffer : 3
+    idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
 }
 
@@ -258,6 +273,19 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
 {
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
     auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
+
+    if (Type == EPrimitiveType::EPT_WORLDGRID) {
+        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(10.0f, 1000.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+        auto Size = Vertices.Num();
+        auto Buffer = this->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+        Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+        auto IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+        Size = Indices.size();
+        VertexBufferMap[Type] = Buffer;
+        VertexCountMap[Type] = Size;
+        TopologyMap[Type] = Topology;
+        IndexBufferMap[Type] = IndexBuffer;
+    }
     RenderResource.Topology = TopologyMap[Type];
     RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
 
@@ -288,7 +316,6 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 ShaderResourceView */
     if (SRVs.has_value())
     {
-        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -299,21 +326,14 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
         DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
-        // 샘플러 설정 추가
-        ID3D11SamplerState* sampler = SamplerMap[0].Get();
-        if (sampler)
-        {
-            DeviceContext->PSSetSamplers(0, 1, &sampler);
-        }
-        /*else
-        {
-            UE_LOG("Warning: Sampler at slot 0 is NULL.");
-        }*/
+        
     }
+	
 
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
+ 
     if (bUseIndexBuffer == true) {
         RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
     } else {
@@ -473,17 +493,6 @@ void URenderer::CreateDepthStencilState()
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;                     // 더 작은 깊이값이 왔을 때 픽셀을 갱신함
-    // DepthStencilDesc.StencilEnable = FALSE;                                 // 스텐실 테스트는 하지 않는다.
-    // DepthStencilDesc.StencilReadMask = 0xFF;
-    // DepthStencilDesc.StencilWriteMask = 0xFF;
-    // DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    // DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-    // DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    // DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    // DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
     
@@ -514,10 +523,9 @@ void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+    /*RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;*/
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
-    RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
 }

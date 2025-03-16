@@ -24,6 +24,8 @@ enum class EPrimitiveType : uint8
 	EPT_SphereTex,
 	EPT_ConeTex,
 	EPT_WorldText,
+	EPT_BoundingBox,
+	EPT_WORLDGRID,
 	EPT_Max,
 };
 
