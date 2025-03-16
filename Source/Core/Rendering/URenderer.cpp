@@ -264,17 +264,16 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     if (Type == EPrimitiveType::EPT_WORLDGRID) {
         auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(1.0f, 100.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
         auto Size = Vertices.Num();
-        auto Buffer = this->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+        this->UpdateLineVertexBuffer(Vertices.GetData(), Size * sizeof(FVertexSimple));
         Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-        auto IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
-        Size = Indices.size();
-        VertexBufferMap[Type] = Buffer;
+        VertexBufferMap[Type] = LineVertexBuffer;
         VertexCountMap[Type] = Size;
         TopologyMap[Type] = Topology;
-        IndexBufferMap[Type] = IndexBuffer;
     }
+    
     RenderResource.Topology = TopologyMap[Type];
     RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
+
 
     assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
     assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
@@ -303,7 +302,6 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     /* Pixel Shader의 ShaderResourceView */
     if (SRVs.has_value())
     {
-        //UE_LOG("SRVlength : %d", SRVs->size());
         std::vector<ID3D11ShaderResourceView*> SRVArray;
         for (auto SRVIndex : *SRVs)
         {
@@ -314,28 +312,12 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
         DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
-        // 샘플러 설정 추가
-        ID3D11SamplerState* sampler = SamplerMap[0].Get();
-        if (sampler)
-        {
-            DeviceContext->PSSetSamplers(0, 1, &sampler);
-        }
-        /*else
-        {
-            UE_LOG("Warning: Sampler at slot 0 is NULL.");
-        }*/
     }
 	
 
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
-    //if (Type == EPrimitiveType::EPT_WORLDGRID)
-    //{
-    //    // Topology는 LINELIST로 설정되어있음, indexbuffer를 사용하므로 RenderPrimitiveIndexed() 호출, 2개 정점으로 이루어진 선분을 그림
-    //    DeviceContext->VSSetShader(TessVertexShader, nullptr, 0);
-    //    DeviceContext->PSSetShader(TessPixelShader, nullptr, 0);
-    //}
     if (bUseIndexBuffer == true) {
         RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
     } else {
@@ -524,8 +506,8 @@ void URenderer::ReleaseDepthStencilBuffer()
 void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    //RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
+    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
 

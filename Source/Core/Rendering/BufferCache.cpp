@@ -71,12 +71,12 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	}
 	case EPT_CubeTex:
 	{
-	auto [Vertices, Indices] = CreateCubeTexVertices();
-	Size = Vertices.Num();
-	Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
-	IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
-	Size = Indices.size();
-	break;
+		auto [Vertices, Indices] = CreateCubeTexVertices();
+		Size = Vertices.Num();
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
 	}
 	case EPT_CylinderTex:
 	{
@@ -154,17 +154,15 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	{
 		auto [Vertices, Indices] = CreateWorldGridVertices(1.0f, 1000.0f);
 		Size = Vertices.Num();
-		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+		Buffer = UEngine::Get().GetRenderer()->CreateLineVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
 		Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
-		Size = Indices.size();
+		//IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices); // batch line rendering : index buffer 사용하지 않음
+		//Size = Indices.size();
 		break;
 	}
+	}
 
-}
-
-
-	// 현재 VertexBuffer는 map에 존재하지 않으므로
+	// 현재 VertexBuffer는 map에 존재하지 않으므로 추가한다
 	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
 	UEngine::Get().GetRenderer()->VertexCountMap.insert({ Type, Size });
 	UEngine::Get().GetRenderer()->TopologyMap.insert({ Type, Topology });
