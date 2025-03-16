@@ -19,6 +19,7 @@
 #include "Object/Actor/Circle.h"
 #include "Object/Actor/Triangle.h"
 #include "Object/Actor/BillBoard.h"
+#include "Object/Actor/WorldText.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -157,7 +158,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -193,6 +194,14 @@ void UI::RenderPrimitiveSelection()
 			else if (strcmp(items[currentItem], "BillBoard") == 0)
 			{
 				World->SpawnActor<ABillBoard>();
+			}
+			else if (strcmp(items[currentItem], "WorldText") == 0)
+			{
+				AWorldText* wT = World->SpawnActor<AWorldText>();
+                std::string xx = "hello world!";
+                wT->SetLetterSpacing(-0.5f);
+                wT->SetCharComps(xx);
+				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{

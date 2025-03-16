@@ -73,6 +73,11 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
     SHADER_PARAMETER(FVector, eyeWorldPos)
     SHADER_PARAMETER(FVector4, indexColor)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
+
+BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FAtlasConstants)
+    SHADER_PARAMETER(FMatrix, WorldPosition)
+    SHADER_PARAMETER(FVector4, AtlasSzOffset)
+END_GLOBAL_SHADER_PARAMETER_STRUCT()
 //struct alignas(16) FConstants
 //{
 //    FMatrix MVP;
