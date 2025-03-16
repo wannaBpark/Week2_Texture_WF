@@ -215,6 +215,14 @@ protected:
     std::unordered_map<uint32, ComPtr<ID3D11VertexShader>> ShaderMapVS;
     std::unordered_map<uint32, ComPtr<ID3D11PixelShader>> ShaderMapPS;
     std::unordered_map<uint32, ComPtr<ID3D11GeometryShader>> ShaderMapGS;
+
+    // Tessellation 테스트
+    ID3D11VertexShader* TessVertexShader = nullptr;
+    ID3D11PixelShader* TessPixelShader = nullptr;
+    ID3D11HullShader* HullShader = nullptr;
+    ID3D11DomainShader* DomainShader = nullptr;
+
+
 	
 	// Buffer Cache
 

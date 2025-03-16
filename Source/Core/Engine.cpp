@@ -9,6 +9,7 @@
 #include "Core/Input/PlayerController.h"
 #include "Object/Actor/Camera.h"
 #include "Object/Actor/Sphere.h"
+#include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 
 
@@ -236,6 +237,7 @@ void UEngine::InitWorld()
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
+    World->SpawnActor<AWorldGrid>();
 
 	World->BeginPlay();
 }
