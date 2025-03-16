@@ -30,8 +30,8 @@ public:
         {
             Obj->~T();
             //FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
-			FPlatformMemory::DecrementObjectStats(ObjectSize);
-			StackAllocator::GetInstance().deleteNode(Obj); // 추가 : 삭제 시 Stack Allocator 해당 메모리도 해제
+			FPlatformMemory::DecrementObjectStats(ObjectSize);          // 스탯 감소 함수 호출
+			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();
 
