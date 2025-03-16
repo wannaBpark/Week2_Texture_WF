@@ -1,4 +1,4 @@
-﻿#include "World.h"
+#include "World.h"
 #include <cassert>
 #include "JsonSavehelper.h"
 
@@ -156,7 +156,6 @@ void UWorld::ClearWorld()
 			DestroyActor(Actor);
 		}
 	}
-
 	UE_LOG("Clear World");
 }
 
