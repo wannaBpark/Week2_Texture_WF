@@ -29,7 +29,8 @@ public:
         std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
         {
             Obj->~T();
-            FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+            //FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+			FPlatformMemory::DecrementObjectStats(ObjectSize);
 			StackAllocator::GetInstance().deleteNode(Obj); // 추가 : 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();

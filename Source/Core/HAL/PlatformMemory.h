@@ -20,6 +20,7 @@ enum EAllocationType : uint8
  */
 struct FPlatformMemory
 {
+    friend struct StackAllocator;
 private:
     static inline std::atomic<uint64> ObjectAllocationBytes{ 0 };           // 기존 : static 변수는 cpp, 또는 헤더 파일 밖에서 초기화해야 했음
     static inline std::atomic<uint64> ObjectAllocationCount{ 0 };           // 변경 : 클래스 헤더에서 초기화 가능한 inline 멤버 변수
@@ -50,6 +51,12 @@ public:
 
     template <EAllocationType AllocType>
     static uint64 GetAllocationCount();
+
+    static void DecrementObjectStats(size_t ObjSize)
+    {
+        ObjectAllocationBytes -= ObjSize;
+        --ObjectAllocationCount;
+    }
 
 private:
     StackAllocator stackAllocator;
