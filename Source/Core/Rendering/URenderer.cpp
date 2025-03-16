@@ -262,7 +262,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
 
     if (Type == EPrimitiveType::EPT_WORLDGRID) {
-        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(10.0f, 1000.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(1.0f, 100.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
         auto Size = Vertices.Num();
         auto Buffer = this->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
         Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;

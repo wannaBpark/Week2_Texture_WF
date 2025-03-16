@@ -760,23 +760,31 @@ std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateWorld
 	TArray<FVertexSimple> Vertices;
 	std::vector<uint32> Indices;
 
-	float half = gridSize / 2.0f;
-
+	float distance = fabs(cameraPos.Z) / 10.0f;
+	float half = max(gridSize * distance / 2.0f, 100.0f);
+	cellSize *= (distance >= 1.0f ) ? distance : 1.0f;
+	half = floor(half);
 	// 카메라와 그리드의 중앙 간의 거리 계산
-	float distance = fabs(cameraPos.Z);
 
 	// 카메라와의 거리 비례로 그리드 스케일 조정
-	float scale = (distance) / 10.0f;  // 거리 비례로 스케일 변경 (이 값은 조정 가능)
-
+	//float scale = (distance) / 10.0f;  // 거리 비례로 스케일 변경 (이 값은 조정 가능)
+	
+	float offsetX = floor(cameraPos.X);
+	float offsetY = floor(cameraPos.Y);
+	float offsetMx = max(offsetX, offsetY);
+	
 	for (float i = -half; i <= half; ++i)
 	{
-		if (i == 0) continue;
+		if (i + offsetY == 0) continue;
 		// 가로선 
-		Vertices.Add({-half * cellSize * scale, i * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
-		Vertices.Add({half * cellSize * scale, i * cellSize * scale, 0.0f,    1.0f, 1.0f, 1.0f, 1.0f } );
-		// 세로선	   
-		Vertices.Add({i * cellSize * scale, -half * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
-		Vertices.Add({i * cellSize * scale,  half * cellSize * scale, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({(offsetX -half) * cellSize,  (i+offsetY) * cellSize    , 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({(offsetX + half)* cellSize  , (i + offsetY) * cellSize    , 0.0f,    1.0f, 1.0f, 1.0f, 1.0f } );
+	}
+	for (float i = -half; i <= half; ++i) {
+		if(i + offsetX == 0) continue;
+		// 세로선	   									 
+		Vertices.Add({ (i + offsetX) * cellSize    , (offsetY - half) * cellSize , 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
+		Vertices.Add({ (i + offsetX) * cellSize    , (offsetY + half) * cellSize , 0.0f,   1.0f, 1.0f, 1.0f, 1.0f });
 	}
 
 	uint32 Size = Vertices.Num();

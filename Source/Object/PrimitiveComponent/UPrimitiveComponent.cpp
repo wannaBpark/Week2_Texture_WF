@@ -138,6 +138,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	indexColor /= 255.0f;
+	FVector cameraPos = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
 	ConstantUpdateInfo UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
