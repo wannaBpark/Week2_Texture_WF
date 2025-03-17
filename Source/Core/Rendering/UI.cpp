@@ -256,6 +256,13 @@ void UI::RenderPrimitiveSelection()
 		World->SetGridScale(GridScale);
     }
     ImGui::Separator();
+
+    const char* VMI_items[] = { "LIT", "UNLIT", "WIREFRAME"};
+    if (ImGui::Combo("View Mode", &currentVMI, VMI_items, IM_ARRAYSIZE(VMI_items)))
+    {
+		World->SetViewMode(currentVMI);
+    }
+
 }
 
 void UI::RenderCameraSettings()
