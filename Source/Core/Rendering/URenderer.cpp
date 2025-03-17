@@ -211,14 +211,21 @@ void URenderer::CreateTexturesSamplers()
 
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
-    UAtlasInfo koverwatchText = JsonSaveHelper::LoadAtlasInfo("koverwatch.png");
-    UTextAtlasManager::AddAtlasInfo(koverwatchText);
+    UAtlasInfo KoverwatchText = JsonSaveHelper::LoadAtlasInfo("koverwatch.png");
+    UTextAtlasManager::AddAtlasInfo(KoverwatchText);
 
-    CreateTextureSRVW(L"Textures/faker.PNG");
+    CreateTextureSRVW(L"Textures/Faker.png");
+    UAtlasInfo FakerSubUV = JsonSaveHelper::LoadAtlasInfo("Faker.png");
+    USubUVManager::AddAtlasInfo(FakerSubUV);
 
     CreateTextureSRVW(L"Textures/koverwatchBlack.png");
-    UAtlasInfo koverwatchBlackText = JsonSaveHelper::LoadAtlasInfo("koverwatchBlack.png");
-    UTextAtlasManager::AddAtlasInfo(koverwatchBlackText);
+    UAtlasInfo KoverwatchBlackText = JsonSaveHelper::LoadAtlasInfo("koverwatchBlack.png");
+    UTextAtlasManager::AddAtlasInfo(KoverwatchBlackText);
+
+    CreateTextureSRVW(L"Textures/FakerLightOff.png");
+    UAtlasInfo FakerLightOffSubUV = JsonSaveHelper::LoadAtlasInfo("FakerLightOff.png");
+    USubUVManager::AddAtlasInfo(FakerLightOffSubUV);
+
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/

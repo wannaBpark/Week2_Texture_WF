@@ -49,8 +49,10 @@ FVector4 UTextAtlasManager::GetCharUV(char character, uint32 IndexNum)
 FVector4 UTextAtlasManager::GetCharUV(char character, std::string AtlasName)
 {
     UAtlasInfo AtlasInfo;
-    for (int i = 0; i < AtlasInfos.Num(); i++) {
-        if (AtlasInfos[i].AtlasName == AtlasName) {
+    for (int i = 0; i < AtlasInfos.Num(); i++) 
+    {
+        if (AtlasInfos[i].AtlasName == AtlasName) 
+        {
             AtlasInfo = UAtlasInfo(AtlasInfos[i]);
             break;
         }

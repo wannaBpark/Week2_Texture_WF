@@ -29,7 +29,13 @@ const char* ASubUV::GetTypeName()
 
 void ASubUV::SetFrame(int32 frame)
 {
-	SubUVComponent->SetFrame(frame);
+	SubUVComponent->SetFrame(frame, AtlasName);
+}
+
+void ASubUV::SetAtlas(std::string InAtlasName)
+{
+	AtlasName = InAtlasName;
+	SubUVComponent->AddTextureID(USubUVManager::GetTextureIndex(AtlasName));
 }
 
 

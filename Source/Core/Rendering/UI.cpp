@@ -161,7 +161,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText", "SubUV"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText", "SubUV", "SubUV2"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -208,7 +208,13 @@ void UI::RenderPrimitiveSelection()
 			}
             else if (strcmp(items[currentItem], "SubUV") == 0)
             {
-                World->SpawnActor<ASubUV>();
+                ASubUV* SubUV = World->SpawnActor<ASubUV>();
+                SubUV->SetAtlas("Faker.png");
+            }
+            else if (strcmp(items[currentItem], "SubUV2") == 0)
+            {
+                ASubUV* SubUV = World->SpawnActor<ASubUV>();
+                SubUV->SetAtlas("FakerLightOff.png");
             }
         }
     }

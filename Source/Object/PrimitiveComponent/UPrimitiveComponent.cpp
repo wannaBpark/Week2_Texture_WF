@@ -226,7 +226,7 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도 추가
 {
 	FVector4 SzOffset;
-	SzOffset = USubUVManager::GetFrameUV(this->GetFrame());
+	SzOffset = USubUVManager::GetFrameUV(this->GetFrame(), AtlasName);
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,

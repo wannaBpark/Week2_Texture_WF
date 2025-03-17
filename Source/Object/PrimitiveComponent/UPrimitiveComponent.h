@@ -374,7 +374,6 @@ public:
 		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
 		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(2);	// 
 	}
 
 	virtual ~USubUVComponent() = default;
@@ -383,11 +382,16 @@ public:
 		return EPrimitiveType::EPT_SubUV;
 	}
 
+	void AddTextureID(uint32 TextureID) {
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(TextureID);	// 
+	}
+
 private:
 	char Frame = 0;
+	std::string AtlasName = "";
 
 public:
-	void SetFrame(int InFrame) { Frame = InFrame; }
+	void SetFrame(int InFrame, std::string InAtlasName) { Frame = InFrame; AtlasName = InAtlasName; }
 	int32 GetFrame() const { return Frame; }
 	FAtlasConstants AtlasConstantData;
 
