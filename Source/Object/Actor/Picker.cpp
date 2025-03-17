@@ -78,9 +78,9 @@ void APicker::LateTick(float DeltaTime)
                         Gizmo->SetSelectedAxis(ESelectedAxis::Z);
                     }
                 }
-                else if (UCircleComp* CylinderComp = dynamic_cast<UCircleComp*>(PickedComponent))
+                else if (UCircleComp* CircleComp = dynamic_cast<UCircleComp*>(PickedComponent))
                 {
-                    FVector4 CompColor = CylinderComp->GetCustomColor();
+                    FVector4 CompColor = CircleComp->GetCustomColor();
                     if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
                     {
                         Gizmo->SetSelectedAxis(ESelectedAxis::X);

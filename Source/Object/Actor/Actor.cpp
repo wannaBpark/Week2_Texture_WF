@@ -93,6 +93,7 @@ void AActor::SetActorTransform(const FTransform& InTransform)
 {
 	UE_LOG("this UUID : %d", GetUUID());
 	// InTransform은 월드 기준임
+
 	if (RootComponent)
 	{
 		RootComponent->SetRelativeTransform(InTransform);
