@@ -1,4 +1,4 @@
-﻿#include "URaycastSystem.h"
+#include "URaycastSystem.h"
 #include "Object/World/World.h"
 
 // Raycast 구현
@@ -95,8 +95,9 @@ bool URaycastSystem::RaycastAll(const FVector& Origin, const FVector& Direction,
 bool URaycastSystem::RayToSphere(const FVector& Origin, const FVector& Direction,
     const USphereCollider& Sphere, float MaxDistance, FHitResult& OutHit)
 {
-    FVector SphereCenter = Sphere.GetCenter();
-    float SphereRadius = Sphere.GetRadius();
+    FTransform worldTransform = Sphere.GetComponentTransform();
+    FVector SphereCenter = worldTransform.GetPosition();
+    float SphereRadius = Sphere.GetRadius() * worldTransform.GetScale().X;
 
     // Ray 시작점에서 구체 중심까지의 벡터
     FVector OriginToCenter = SphereCenter - Origin;
@@ -146,10 +147,11 @@ bool URaycastSystem::RayToBox(const FVector& Origin, const FVector& Direction,
     const UBoxCollider& Box, float MaxDistance, FHitResult& OutHit)
 {
     //// 박스 속성 가져오기
-    FTransform ownerTransform = Box.GetOwner()->GetActorTransform();
-    FVector BoxCenter = ownerTransform.GetPosition();
-    FVector BoxExtent = ownerTransform.GetScale() / 2;
-    FQuat BoxRotation = ownerTransform.GetRotation();
+    FTransform worldTransform = Box.GetComponentTransform();
+
+    FVector BoxCenter = worldTransform.GetPosition();
+    FVector BoxExtent = worldTransform.GetScale() / 2;
+    FQuat BoxRotation = worldTransform.GetRotation();
 
     //// Ray를 박스의 로컬 공간으로 변환
     FVector LocalOrigin = BoxRotation.Inverse().RotateVector(Origin - BoxCenter);

@@ -10,6 +10,7 @@
 
 
 class UWorld;
+class UBoxCollider;
 
 class AActor : public UObject
 {
@@ -93,6 +94,7 @@ public:
 public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
+	UBoxCollider* GetHitCollider() const { return hitCollider; }
 
 public:
 	void SetColor(FVector4 InColor);
@@ -102,6 +104,7 @@ protected:
 	bool bCanEverTick = true;
 	USceneComponent* RootComponent = nullptr;
 	bool bIsGizmo = false;
+	UBoxCollider* hitCollider = nullptr;
 
 private:
 	UWorld* World = nullptr;

@@ -1,6 +1,9 @@
-﻿#include "Cylinder.h"
+#include "Cylinder.h"
 
+#include <Object/ActorComponent/Colliders/UBoxCollider.h>
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include <Core/Engine.h>
+#include <Object/World/World.h>
 
 ACylinder::ACylinder()
 {
@@ -8,6 +11,12 @@ ACylinder::ACylinder()
 
     UCylinderComp* CylinderComponent = AddComponent<UCylinderComp>();
     RootComponent = CylinderComponent;
+
+    hitCollider = AddComponent<UBoxCollider>();
+    UEngine::Get().GetWorld()->AddColliderComponent(hitCollider);
+    hitCollider->SetupAttachment(RootComponent);
+    hitCollider->RelativeTransform.SetPosition(FVector(0, 0, 0.25));
+    hitCollider->RelativeTransform.SetScale(FVector(0.03f, 0.03f, 0.2f));
 	
     SetActorTransform(FTransform());
 }

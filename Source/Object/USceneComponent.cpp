@@ -17,7 +17,7 @@ FMatrix USceneComponent::GetRelativeTransformMatrix() const
 	return this->RelativeTransform.GetMatrix();
 }
 // 내 월드 트랜스폼 반환
-const FTransform USceneComponent::GetComponentTransform()
+const FTransform USceneComponent::GetComponentTransform() const
 {
 	if (Parent)
 	{

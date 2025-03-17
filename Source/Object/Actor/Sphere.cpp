@@ -1,6 +1,6 @@
-﻿#include "Sphere.h"
+#include "Sphere.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
-#include <Object/ActorComponent/Colliders/USphereCollider.h>
+#include <Object/ActorComponent/Colliders/UBoxCollider.h>
 #include <Core/Engine.h>
 #include <Object/World/World.h>
 
@@ -10,9 +10,10 @@ ASphere::ASphere()
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
-	USphereCollider* SphereCollider = AddComponent<USphereCollider>();
-	SphereCollider->SetRadius(GetActorTransform().GetScale().X);
-	UEngine::Get().GetWorld()->AddColliderComponent(SphereCollider);
+	
+	hitCollider = AddComponent<UBoxCollider>();
+	UEngine::Get().GetWorld()->AddColliderComponent(hitCollider);
+	hitCollider->SetupAttachment(RootComponent);
 	
 	SetActorTransform(FTransform());
 }

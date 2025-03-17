@@ -22,7 +22,7 @@ public:
 	FTransform GetRelativeTransform() const { return RelativeTransform; }
 	FMatrix GetRelativeTransformMatrix() const;
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
-	const FTransform GetComponentTransform();
+	const FTransform GetComponentTransform() const;
 	const FMatrix GetComponentTransformMatrix();
 
 	void SetRelativeTransform(const FTransform& InTransform);

@@ -1,4 +1,4 @@
-﻿#include "CollisionSystem.h";
+#include "CollisionSystem.h";
 #include "ULineCollider.h"
 #include "UBoxCollider.h"
 #include "USphereCollider.h"
@@ -14,7 +14,7 @@ bool CollisionSystem::LineToBox(const ULineCollider& a, const UBoxCollider& b)
 	return false;
 }
 
-bool CollisionSystem::LineToSphere(const ULineCollider& a, const USphereCollider& b) // TODO: 
+bool CollisionSystem::LineToSphere(const ULineCollider& a, const USphereCollider& b)
 {
     // Get line properties
     FVector lineStart = a.GetStart();

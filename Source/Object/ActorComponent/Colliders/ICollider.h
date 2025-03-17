@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 #include "Core/Math/Vector.h";
-#include "Object/ActorComponent/ActorComponent.h"
+#include "Object/USceneComponent.h"
+#include "Core/Math/Transform.h"
 
-class ICollider : public UActorComponent
+class ICollider : public USceneComponent
 {
 public:
 	virtual ~ICollider() = default;

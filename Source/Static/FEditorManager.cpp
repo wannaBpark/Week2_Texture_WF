@@ -4,6 +4,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Transform.h"
+#include "Object/ActorComponent/Colliders/UBoxCollider.h"
 
 void FEditorManager::SelectActor(AActor* NewActor)
 {
@@ -34,7 +35,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
 	
     if (SelectedActor != nullptr)
     {
-        BoundingBoxComp->SetupAttachment(SelectedActor->GetRootComponent());
+        BoundingBoxComp->SetupAttachment(SelectedActor->GetHitCollider());
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);
         BoundingBoxComp->SetCanBeRendered(true);
