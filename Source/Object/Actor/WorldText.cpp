@@ -103,3 +103,12 @@ void AWorldText::SetActive(bool bActive)
 		CharComps[i].SetCanBeRendered(bIsActive);
 	}
 }
+
+void AWorldText::SetUseBillboardUtil(bool bUse)
+{
+	bUseBillboardUtil = bUse;
+	for (int32 i = 0; i < CharComps.Num(); i++)
+	{
+		CharComps[i].SetUseBillboardUtil(bUse);
+	}
+}

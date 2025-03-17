@@ -27,4 +27,11 @@ private:
     bool bIsActive = false;
 	TArray<UWorldCharComp> CharComps;
 	float LetterSpacing{ 0.0f };
+
+public:
+	void SetUseBillboardUtil(bool bUse);
+	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+
+private:
+    bool bUseBillboardUtil = false;
 };

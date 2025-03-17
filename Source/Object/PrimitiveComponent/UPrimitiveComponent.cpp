@@ -5,6 +5,7 @@
 #include "Object/Actor/Camera.h"
 #include "Core/Rendering/TextAtlasManager.h"
 #include "Core/Math/Vector.h"
+#include "Object/UtilComponent/UBillboardUtilComponent.h"	
 
 void UPrimitiveComponent::BeginPlay()
 {
@@ -57,6 +58,18 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 	World->AddRenderComponent(this);
 }
 
+void UPrimitiveComponent::SetUseBillboardUtil(bool bUse)
+{
+	if (BillboardUtil == nullptr)
+	{
+		BillboardUtil = GetOwner()->AddComponent<UBillboardUtilComponent>();
+		BillboardUtil->SetupAttachment(GetOwner()->GetRootComponent(), true);
+	}
+	
+	bUseBillboardUtil = bUse;
+	BillboardUtil->SetIsUseBillboard(bUse);
+}
+
 void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
@@ -68,11 +81,19 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
 		indexColor
 	};
-	FMatrix& WorldPosition = UpdateInfo.MVP;
-	// 업데이트할 자료형들
-	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
-		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(WorldPosition);
+
+	FMatrix MVP;
+
+	if (BillboardUtil == nullptr) {
+		FMatrix& WorldPosition = UpdateInfo.MVP;
+		// 업데이트할 자료형들
+		MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+			* FMatrix::Transpose(Renderer->GetViewMatrix())
+			* FMatrix::Transpose(WorldPosition);
+	}
+	else {
+		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
+	}
 
 
 	ConstantData = {
@@ -85,6 +106,11 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+}
+
+void UBillBoardComp::SetUseBillboardUtil(bool bUse)
+{
+	bUseBillboardUtil = bUse;
 }
 
 void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
@@ -172,10 +198,20 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 		this->GetComponentTransformMatrix(),
 		SzOffset,
 	};
-	// 업데이트할 자료형들
-	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
-		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(this->GetComponentTransformMatrix());
+
+	FMatrix MVP;
+
+	if (bUseBillboardUtil == false) 
+	{
+		FMatrix WorldPosition = this->GetComponentTransformMatrix();
+		// 업데이트할 자료형들
+		MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+			* FMatrix::Transpose(Renderer->GetViewMatrix())
+			* FMatrix::Transpose(WorldPosition);
+	}
+	else {
+		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, GetOwner()->GetRootComponent(), this->RelativeTransform.GetPosition().Y);
+	}
 
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
 	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);

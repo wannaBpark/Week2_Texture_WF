@@ -409,6 +409,15 @@ void UI::RenderPropertyWindow()
                 if (ImGui::Checkbox("Use Texture", &IsUseTexture)) {
                     comp->SetUseVertexColor(IsUseTexture);
                 }
+                
+                ImGui::SameLine();
+
+                bool IsUseBillboard = comp->IsUseBillboardUtil();
+				if (ImGui::Checkbox("Use Billboard", &IsUseBillboard))
+				{
+					comp->SetUseBillboardUtil(IsUseBillboard);
+				}
+
             }
         }
 		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
@@ -427,6 +436,23 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
+        if (FEditorManager::Get().GetWorldText() != nullptr) 
+        {
+            // WorldText의 경우 Char Component를 자체적으로 관리하므로 특수 처리
+            // Letter Spacing을 조절할 수 있도록
+			AWorldText* wT = FEditorManager::Get().GetWorldText();
+            bool IsUseBillboard = wT->IsUseBillboardUtil();
+            if (ImGui::Checkbox("Use Text Billboard", &IsUseBillboard))
+            {
+                wT->SetUseBillboardUtil(IsUseBillboard);
+            }
+
+            float LetterSpacing = wT->GetLetterSpacing();
+            if (ImGui::DragFloat("Letter Spacing", &LetterSpacing, 0.1f))
+            {
+                wT->SetLetterSpacing(LetterSpacing);
+            }
+        }
     }
     ImGui::End();
 }
