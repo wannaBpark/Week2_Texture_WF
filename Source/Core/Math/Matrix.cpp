@@ -1,4 +1,4 @@
-﻿#include "Matrix.h"
+#include "Matrix.h"
 #include "Vector.h"
 #include "Plane.h"
 #include "Transform.h"
@@ -332,7 +332,27 @@ FVector4 FMatrix::TransformVector4(const FVector4& Vector) const
 
 FTransform FMatrix::GetTransform() const
 {
-	FQuat RotationQuat = FQuat::MakeFromRotationMatrix(*this);
+	FMatrix RotationMatrix = *this;
+
+	// 평행이동 제거
+	RotationMatrix.M[3][0] = 0;
+	RotationMatrix.M[3][1] = 0;
+	RotationMatrix.M[3][2] = 0;
+
+	// 스케일 제거 (열 벡터를 정규화)
+	for (int i = 0; i < 3; i++)
+	{
+		FVector ColumnVector(RotationMatrix.M[i][0], RotationMatrix.M[i][1], RotationMatrix.M[i][2]);
+		ColumnVector.Normalize();
+		RotationMatrix.M[i][0] = ColumnVector.X;
+		RotationMatrix.M[i][1] = ColumnVector.Y;
+		RotationMatrix.M[i][2] = ColumnVector.Z;
+	}
+
+	// 이제 순수한 회전 행렬을 기반으로 Quaternion 생성
+	FQuat RotationQuat = FQuat::MakeFromRotationMatrix(RotationMatrix);
+
+	// 최종적으로 올바른 Transform 반환
 	return FTransform(GetTranslation(), RotationQuat, GetScale());
 }
 
