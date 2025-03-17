@@ -27,36 +27,6 @@ class ACamera;
 class URenderer
 {
 private:
-  //  struct alignas(16) FConstants
-  //  {
-  //      FMatrix MVP;
-  //      FVector4 Color;
-		//// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-  //      uint32 bUseVertexColor;
-  //      FVector eyeWorldPos;
-  //      FVector4 indexColor;
-  //      uint32 bIsPicked;
-  //      FVector Padding;
-  //  };
-	
-	struct alignas(16) FPickingConstants
-	{
-		FVector4 UUIDColor;
-	};
-
-	struct alignas(16) FDepthConstants{
-		unsigned int DepthOffset;
-		int nearPlane;
-		int farPlane;
-	};
-	
-    struct ConstantUpdateInfo
-    {
-        const FMatrix& TransformMatrix;
-		const FVector4& Color;
-        bool bUseVertexColor;
-    };
-
 public:
     /** Renderer를 초기화 합니다. */
     void Create(HWND hWindow);
@@ -285,7 +255,6 @@ public:
     // 월드 그리드 렌더링 버텍스 버퍼 업데이트
 	void UpdateLineVertexBuffer(const FVertexSimple* Vertices, uint32 NewSize)
 	{
-
         if (MaxLineSize < NewSize) 
         {
 			MaxLineSize = NewSize;
