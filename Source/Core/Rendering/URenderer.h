@@ -203,6 +203,8 @@ protected:
     ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 
 public:
+    ID3D11Buffer* LineVertexBuffer = nullptr;
+	uint32 MaxLineSize = 0;
     std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> VertexBufferMap;
     std::unordered_map<EPrimitiveType, ComPtr<ID3D11Buffer>> IndexBufferMap;
     std::unordered_map<InputLayoutType, ComPtr<ID3D11InputLayout>> InputLayoutMap;
@@ -257,6 +259,44 @@ public:
         }
         return VertexBuffer;
     }
+
+	// 월드 그리드 렌더링 버텍스 버퍼 생성
+    template <typename T>
+    ID3D11Buffer* CreateLineVertexBuffer(const T* Vertices, UINT ByteWidth)
+    {
+        MaxLineSize = max(ByteWidth, MaxLineSize);
+        D3D11_BUFFER_DESC VertexBufferDesc = {};
+        VertexBufferDesc.ByteWidth = MaxLineSize;
+        VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+        D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+        VertexBufferSRD.pSysMem = Vertices;
+
+        HRESULT hr = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &LineVertexBuffer);
+        if (FAILED(hr)) {
+            return nullptr;
+        }
+        return LineVertexBuffer;
+    }
+
+    // 월드 그리드 렌더링 버텍스 버퍼 업데이트
+	void UpdateLineVertexBuffer(const FVertexSimple* Vertices, uint32 NewSize)
+	{
+
+        if (MaxLineSize < NewSize) 
+        {
+			MaxLineSize = NewSize;
+            if (LineVertexBuffer) { LineVertexBuffer->Release();  LineVertexBuffer = nullptr; }
+			CreateLineVertexBuffer(Vertices, MaxLineSize);
+        } 
+        D3D11_MAPPED_SUBRESOURCE ms;
+        if (SUCCEEDED(DeviceContext->Map(LineVertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms))) {
+			memcpy(ms.pData, Vertices, MaxLineSize > NewSize ? NewSize : MaxLineSize); // 현재 사이즈보다 작은 경우에는 현재 사이즈만큼만 복사
+            DeviceContext->Unmap(LineVertexBuffer, 0);
+        }
+	}
 
     ID3D11Buffer* CreateIndexBuffer( const std::vector<uint32>& indices)
     {

@@ -307,7 +307,7 @@ public:
 		RenderResource.PixelShaderIndex = 0;
 		RenderResource.VertexConstantIndex = 0;
 		RenderResource.PixelConstantIndex = -1;
-		RenderResource.bUseIndexBuffer = true;
+		RenderResource.bUseIndexBuffer = false;
 		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
 	}
 

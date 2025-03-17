@@ -19,6 +19,8 @@
 #include <directxtk/DDSTextureLoader.h> // Create DDS Texture Loader
 #include <directxtk/WICTextureLoader.h>
 
+#include "../Source/Object/World/World.h" // World로부터 GridScale을 가져옴
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -275,20 +277,22 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     BufferInfo Info = BufferCache->GetBufferInfo(RenderResource.PrimitiveType);
     auto& [Type, ILType, Topology, numVertices, stride, VS, PS, VC, PC, GS, bUseIndexBuffer, SRVs] = RenderResource;
 
+
     if (Type == EPrimitiveType::EPT_WORLDGRID) {
-        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(10.0f, 1000.0f, FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+        float GridScale = UEngine::Get().GetWorld()->GetGridScale();
+        auto [Vertices, Indices] = BufferCache->CreateWorldGridVertices(GridScale, 1000.0f * GridScale, 
+            FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
         auto Size = Vertices.Num();
-        auto Buffer = this->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
+        this->UpdateLineVertexBuffer(Vertices.GetData(), Size * sizeof(FVertexSimple));
         Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-        auto IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
-        Size = Indices.size();
-        VertexBufferMap[Type] = Buffer;
+        VertexBufferMap[Type] = LineVertexBuffer;
         VertexCountMap[Type] = Size;
         TopologyMap[Type] = Topology;
-        IndexBufferMap[Type] = IndexBuffer;
     }
+    
     RenderResource.Topology = TopologyMap[Type];
     RenderResource.numVertices = VertexCountMap[Type];                      // indexbuffer를 사용하는 primitive는 numIndices가 numVertices에 저장된다 (union 사용못해서 이렇게 함)
+
 
     assert(ShaderMapVS[VS].Get() != nullptr); assert(ShaderMapPS[PS].Get() != nullptr);
     assert(InputLayoutMap[ILType] != nullptr); assert(TopologyMap.find(Type) != TopologyMap.end());
@@ -327,14 +331,13 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
         DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
-        
     }
 	
 
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
- 
+
     if (bUseIndexBuffer == true) {
         RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
     } else {
@@ -524,7 +527,7 @@ void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    /*RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;*/
+    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
 
