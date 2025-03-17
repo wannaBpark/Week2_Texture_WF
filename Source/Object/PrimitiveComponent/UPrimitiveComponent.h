@@ -9,6 +9,9 @@
 /*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
 */
+
+class UBillboardUtilComponent;
+
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
 	using Super = USceneComponent;
@@ -62,6 +65,14 @@ protected:
 public:
 	FRenderResource RenderResource;
 	FConstants ConstantData;
+
+public:
+	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+	virtual void SetUseBillboardUtil(bool bUse);
+
+protected:
+	bool bUseBillboardUtil = false;
+	UBillboardUtilComponent* BillboardUtil = nullptr;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -253,6 +264,8 @@ public:
 		return EPrimitiveType::EPT_BillBoard;
 	}
 
+	virtual void SetUseBillboardUtil(bool bUse) override;
+
 	void UpdateConstantData(URenderer*& Renderer) override;
 };
 
@@ -286,7 +299,7 @@ private:
 	char Character = 'a';
 
 public:
-	void SetChar(char& InCharacter) { Character = InCharacter; }
+	void SetChar(char InCharacter) { Character = InCharacter; }
 	char GetChar() const { return Character; }
 	FAtlasConstants AtlasConstantData;
 
