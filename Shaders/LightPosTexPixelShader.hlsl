@@ -44,7 +44,7 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     {
         color *= 0.5;
     }
-    output.color = float4(color, 1.0f)/* * float4(input.normal, 1.0f)*/;
+    output.color = float4(color, 1.0f) * float4(input.normal, 1.0f);
     output.UUID = indexColor;
 
     return output;

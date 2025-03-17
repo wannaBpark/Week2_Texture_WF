@@ -408,7 +408,7 @@ public:
 		RenderResource.VertexConstantIndex = 4;
 		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
-		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
 	}
 
 	virtual ~ULightCubeComp() = default;
