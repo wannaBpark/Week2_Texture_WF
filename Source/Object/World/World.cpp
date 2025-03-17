@@ -156,7 +156,6 @@ void UWorld::ClearWorld()
 			DestroyActor(Actor);
 		}
 	}
-
 	UE_LOG("Clear World");
 }
 

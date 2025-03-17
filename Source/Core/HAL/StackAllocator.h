@@ -1,4 +1,4 @@
-﻿#ifndef STACK_ALLOCATOR_H
+#ifndef STACK_ALLOCATOR_H
 #define STACK_ALLOCATOR_H
 
 #include <cstdlib>   // malloc, free
@@ -53,9 +53,10 @@ public:
     void deleteNode(E* node) {
         if (node == nullptr)
             return;
-        node->~E();
+		//node->~E(); // 이미 참조 횟수 0이면 shared_ptr 동작이 소멸자를 호출함
         *reinterpret_cast<void**>(node) = m_pFreeSlots;
         m_pFreeSlots = node;
+
     }
 };
 

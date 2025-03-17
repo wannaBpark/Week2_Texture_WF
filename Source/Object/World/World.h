@@ -55,12 +55,15 @@ public:
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
+	void SetGridScale(float InGridScale) { GridScale = InGridScale; }
+	float GetGridScale() const { return GridScale; }
 private:
 	UWorldInfo GetWorldInfo() const;
 
 public:
 	FString SceneName;
 	uint32 Version = 1;
+	float GridScale = 1.0f;
 	
 protected:
 	TArray<AActor*> Actors;

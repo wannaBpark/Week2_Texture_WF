@@ -1,9 +1,8 @@
 #include "TextAtlasManager.h"
 #include "Debug/DebugConsole.h"
+#include "Core/Math/Vector.h"
 
 UTextAtlasManager::UTextAtlasManager()
-	: AtlasWidth(0), AtlasHeight(0), Columns(0), Rows(0),
-	MarginX(0), MarginY(0)
 {
 
 }
@@ -33,12 +32,13 @@ void UTextAtlasManager::SetMargin(int InMarginX, int InMarginY)
 	MarginY = InMarginY;
 }
 
-UVRect UTextAtlasManager::GetCharUV(char character) const
+FVector4 UTextAtlasManager::GetCharUV(char character)
 {
-    UVRect rect = { 0.f, 0.f, 0.f, 0.f };
-    if (character > Columns * Rows - 1 || Columns <= 0 || Rows <= 0 || AtlasWidth <= 0 || AtlasHeight <= 0)
+    FVector4 rect = { 0.f, 0.f, 0.f, 0.f };
+    if (character > Columns * Rows - 1 || Columns <= 0 || Rows <= 0 || AtlasWidth <= 0 || AtlasHeight <= 0) {
         UE_LOG("TextAtlasManager GetCharUV Error!");
         return rect; // 잘못된 입력이면 기본값 반환
+    }
 
     int index = character; //  현재 준비된 TextAtlas는 char을 바로 사용 가능
 
@@ -50,19 +50,20 @@ UVRect UTextAtlasManager::GetCharUV(char character) const
 
     int col = index % Columns;
     int row = index / Columns;
-    if (row >= Rows)
+    if (row >= Rows) {
         UE_LOG("TextAtlasManager GetCharUV Error row!");
         return rect;
+    }
 
     // 각 셀의 시작 좌표 (픽셀 단위)
     int x = col * (cellWidth + MarginX);
     int y = row * (cellHeight + MarginY);
 
     // 정규화된 UV 좌표 계산 (0.0 ~ 1.0)
-    rect.u0 = static_cast<float>(x) / AtlasWidth;
-    rect.v0 = static_cast<float>(y) / AtlasHeight;
-    rect.u1 = static_cast<float>(x + cellWidth) / AtlasWidth;
-    rect.v1 = static_cast<float>(y + cellHeight) / AtlasHeight;
+    rect.X = static_cast<float>(cellWidth) /  static_cast<float>(AtlasWidth);
+    rect.Y = static_cast<float>(cellHeight) / static_cast<float>(AtlasHeight);
+    rect.Z = static_cast<float>(x) / static_cast<float>(AtlasWidth);
+    rect.W = static_cast<float>(y) / static_cast<float>(AtlasHeight);
 
     return rect;
 }

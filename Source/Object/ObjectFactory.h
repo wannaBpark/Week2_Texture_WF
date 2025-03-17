@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Core/Engine.h"
 #include "Core/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
@@ -29,7 +29,9 @@ public:
         std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
         {
             Obj->~T();
-            FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+            //FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+			FPlatformMemory::DecrementObjectStats(ObjectSize);          // 스탯 감소 함수 호출
+			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();
 

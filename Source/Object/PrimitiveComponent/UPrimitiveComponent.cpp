@@ -3,6 +3,8 @@
 #include "Object/Actor/Actor.h"
 #include "../Source/Static/FEditorManager.h"
 #include "Object/Actor/Camera.h"
+#include "Core/Rendering/TextAtlasManager.h"
+#include "Core/Math/Vector.h"
 
 void UPrimitiveComponent::BeginPlay()
 {
@@ -59,18 +61,18 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	indexColor /= 255.0f;
-	ConstantUpdateInfo UpdateInfo{
+	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
 		(uint32)this->IsUseVertexColor(),
 		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
 		indexColor
 	};
-
+	FMatrix& WorldPosition = UpdateInfo.MVP;
 	// 업데이트할 자료형들
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())
-		* FMatrix::Transpose(UpdateInfo.WorldPosition);
+		* FMatrix::Transpose(WorldPosition);
 
 
 	ConstantData = {
@@ -132,4 +134,48 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
 
-// 박녕준 바보
+// 박녕준 천재 bb
+
+void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
+{
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
+	ConstantUpdateInfo UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		this->GetCustomColor(),
+		(uint32)this->IsUseVertexColor(),
+		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		indexColor
+	};
+
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(UpdateInfo.WorldPosition);
+
+
+	ConstantData = {
+		MVP, UpdateInfo.Color,
+		UpdateInfo.bUseVertexColor,
+		UpdateInfo.eyeWorldPos,
+		UpdateInfo.indexColor,
+	};
+
+	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
+}
+void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
+{
+	FVector4 SzOffset;
+	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	FAtlasConstants UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		SzOffset,
+	};
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(this->GetComponentTransformMatrix());
+
+	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
+	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
+}

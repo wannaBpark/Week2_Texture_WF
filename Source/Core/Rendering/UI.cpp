@@ -18,11 +18,14 @@
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Circle.h"
 #include "Object/Actor/Triangle.h"
+#include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/BillBoard.h"
+#include "Object/Actor/WorldText.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 
+#define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
 
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
@@ -157,7 +160,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -194,6 +197,14 @@ void UI::RenderPrimitiveSelection()
 			{
 				World->SpawnActor<ABillBoard>();
 			}
+			else if (strcmp(items[currentItem], "WorldText") == 0)
+			{
+				AWorldText* wT = World->SpawnActor<AWorldText>();
+                std::string xx = "hello world!";
+                wT->SetLetterSpacing(-0.5f);
+                wT->SetCharComps(xx);
+				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
+			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
             //    Actor->AddComponent<UTriangleComp>();   
@@ -218,14 +229,31 @@ void UI::RenderPrimitiveSelection()
     if (ImGui::Button("New Scene"))
     {
         World->ClearWorld();
+		UEngine::Get().GetWorld()->SpawnActor<AWorldGrid>();
+        GetGridScaleFromIni();
+		
     }
     if (ImGui::Button("Save Scene"))
     {
         World->SaveWorld();   
+        
+        char gridScaleStr[32];
+        sprintf_s(gridScaleStr, "%.2f", World->GetGridScale());
+
+        if (!WritePrivateProfileStringA("EditorSettings", "GridScale", gridScaleStr, INI_PATH)) {
+            MessageBoxA(NULL, "Failed to save GridScale!", "Error", MB_OK | MB_ICONERROR);
+        }
     }
     if (ImGui::Button("Load Scene"))
     {
         World->LoadWorld(SceneNameInput);
+
+        
+
+    }
+	float GridScale = World->GetGridScale();
+    if (ImGui::SliderFloat("Grid Scale", &GridScale, 0.1f, 100.0f)) {
+		World->SetGridScale(GridScale);
     }
     ImGui::Separator();
 }
@@ -403,3 +431,11 @@ void UI::RenderPropertyWindow()
     ImGui::End();
 }
 
+void UI::GetGridScaleFromIni()
+{
+    // Grid Scale 값을 editor.ini 파일에서 읽어옴
+    std::vector<char> buffer(256);
+    GetPrivateProfileStringA("EditorSettings", "GridScale", "1.0", buffer.data(), buffer.size(), INI_PATH);
+    float SavedGridScale = std::stof(buffer.data());
+    UEngine::Get().GetWorld()->SetGridScale(SavedGridScale);
+}
