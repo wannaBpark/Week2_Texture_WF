@@ -71,10 +71,14 @@ void URenderer::CreateShader()
     ID3D11VertexShader* PosTexVertexShader;
     ID3D11PixelShader* PosTexPixelShader;
     ID3D11InputLayout* PosTexInputLayout;
+    ID3D11VertexShader* AtlasVertexShader;
+    ID3D11PixelShader* AtlasPixelShader;
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PosTexVertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
     ID3DBlob* PosTexPixelShaderCSO;
+    ID3DBlob* AtlasVertexShaderCSO;
+    ID3DBlob* AtlasPixelShaderCSO;
 
 	ID3DBlob* TessVertexShaderCSO;
 	ID3DBlob* TessHullShaderCSO;
@@ -117,18 +121,35 @@ void URenderer::CreateShader()
     it = InputLayouts.find(InputLayoutType::POSCOLORNORMALTEX);
     Device->CreateInputLayout(it->second.data(), it->second.size(), PosTexVertexShaderCSO->GetBufferPointer(), PosTexVertexShaderCSO->GetBufferSize(), &PosTexInputLayout);
     
-    //Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
+    
+    /* Atlas Texture Shader : VS computes coordinates */
+    D3DCompileFromFile(L"Shaders/AtlasVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &AtlasVertexShaderCSO, &ErrorMsg);
+    //UE_LOG("%s ", (char*)ErrorMsg->GetBufferPointer());
+    if (FAILED(Device->CreateVertexShader(AtlasVertexShaderCSO->GetBufferPointer(), AtlasVertexShaderCSO->GetBufferSize(), nullptr, &AtlasVertexShader))) {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        SAFE_RELEASE(ErrorMsg);
+    }
+
+    D3DCompileFromFile(L"Shaders/AtlasPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &AtlasPixelShaderCSO, &ErrorMsg);
+    if (FAILED(Device->CreatePixelShader(AtlasPixelShaderCSO->GetBufferPointer(), AtlasPixelShaderCSO->GetBufferSize(), nullptr, &AtlasPixelShader))) {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        SAFE_RELEASE(ErrorMsg);
+    }
+
 
     ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
     ShaderMapVS.insert({ 1, PosTexVertexShader});
+	ShaderMapVS.insert({ 2, AtlasVertexShader });
+
     ShaderMapPS.insert({ 0, SimplePixelShader });
     ShaderMapPS.insert({ 1, PosTexPixelShader });
+	ShaderMapPS.insert({ 2, AtlasPixelShader });
+
     InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
     InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
 
     SAFE_RELEASE(VertexShaderCSO);
     SAFE_RELEASE(PixelShaderCSO);
-    //SAFE_RELEASE(PickingShaderCSO);
 
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
@@ -156,13 +177,9 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
-    idx = CreateConstantBuffer<FConstants>();           // Grid Hull CBuffer : 3
+    idx = CreateConstantBuffer<FAtlasConstants>();           // Grid Hull CBuffer : 3
     idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
-
-    /*ConstantBuffer = ConstantBufferMap[0].Get();
-    ConstantPickingBuffer = ConstantBufferMap[1].Get();
-    ConstantsDepthBuffer = ConstantBufferMap[2].Get();*/
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -189,18 +206,14 @@ void URenderer::CreateTexturesSamplers()
 
     SamplerMap.insert({ 0, SamplerState });
 
+    CreateTextureSRVW(L"Textures/box.jpg");
+    CreateTextureSRVW(L"Textures/koverwatch.png");
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
-    CreateTextureSRVW(L"Textures/box.jpg");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
     //CreateTextureSRV("bg5.png");
     //CreateTextureSRV("earth.jpg");
-    CreateTextureSRVW(L"Textures/tree.png");
     //CreateTextureSRV("cat0.png");
-
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/box2.dds");
-    //CreateTextureSRV(L"../../../Textures/cat0.dds");
 }
 
 void URenderer::ReleaseTexturesSamplers()
@@ -323,6 +336,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
     this->Stride = stride;
     DeviceContext->IASetInputLayout(InputLayoutMap[ILType].Get());
     DeviceContext->IASetPrimitiveTopology(Topology);                                    // 실제 토폴로지 세팅
+
     if (bUseIndexBuffer == true) {
         RenderPrimitiveIndexed(VertexBufferMap[Type].Get(), IndexBufferMap[Type].Get(), numVertices);
     } else {

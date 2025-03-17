@@ -62,6 +62,7 @@ public:
 	static std::tuple<TArray<FVertexSimple>, std::vector<uint32>> CreateWorldGridVertices(float cellSize, float gridSize, const FVector cameraPos);
 
 
+	std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> CreateTextTexVertices();
 
 
 private :
