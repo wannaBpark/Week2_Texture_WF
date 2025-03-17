@@ -13,6 +13,13 @@
 
 #include "Object/ActorComponent/Colliders/ICollider.h"
 
+enum class EViewModeIndex : uint32
+{
+	VMI_Lit,
+	VMI_Unlit,
+	VMI_Wireframe,
+};
+
 class AActor;
 
 
@@ -57,6 +64,9 @@ public:
 
 	void SetGridScale(float InGridScale) { GridScale = InGridScale; }
 	float GetGridScale() const { return GridScale; }
+
+	void SetViewMode(uint8 InViewMode) { ViewMode = InViewMode; }
+	uint32 GetViewMode() const { return ViewMode; }
 private:
 	UWorldInfo GetWorldInfo() const;
 
@@ -64,6 +74,7 @@ public:
 	FString SceneName;
 	uint32 Version = 1;
 	float GridScale = 1.0f;
+	uint8 ViewMode = 0;
 	
 protected:
 	TArray<AActor*> Actors;
