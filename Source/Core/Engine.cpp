@@ -11,6 +11,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
+#include "Object/Gizmo/WorldGizmo.h"
 
 
 class AArrow;
@@ -238,7 +239,7 @@ void UEngine::InitWorld()
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
     World->SpawnActor<AWorldGrid>();
-
+    AWorldGizmo* WorldGizmo = World->SpawnActor<AWorldGizmo>();
 	World->BeginPlay();
 }
 
