@@ -27,7 +27,11 @@ public:
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
 	bool IsUseVertexColor() const { return bUseVertexColor; }
+	bool IsPicked() const { return bIsPicked; }
 
+	void SetIsPicked(bool bPicked)  {
+		bIsPicked = (uint32)bPicked;
+	}
 	void SetCustomColor(const FVector4& InColor)
 	{
 		CustomColor = InColor;
@@ -54,6 +58,7 @@ protected:
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	bool bIsPicked = true;
 public:
 	FRenderResource RenderResource;
 	FConstants ConstantData;
