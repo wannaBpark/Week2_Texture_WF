@@ -173,6 +173,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		break;
 
 	}
+	}
 
 	// 현재 VertexBuffer는 map에 존재하지 않으므로 추가한다
 	UEngine::Get().GetRenderer()->VertexBufferMap.insert({ Type, Buffer });
@@ -183,7 +184,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	if (IndexBuffer != nullptr) {
 		UEngine::Get().GetRenderer()->IndexBufferMap.insert({ Type, IndexBuffer });
 	}
-	
+
 
 	return BufferInfo(Buffer.Get(), Size, Topology);
 }
