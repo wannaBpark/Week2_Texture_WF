@@ -197,6 +197,7 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
+    <ClCompile Include="Source\Object\NameTypes.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
@@ -316,6 +317,7 @@
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\Actor\Triangle.h" />
     <ClInclude Include="Source\Object\Actor\WorldText.h" />
+    <ClInclude Include="Source\Object\NameTypes.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
