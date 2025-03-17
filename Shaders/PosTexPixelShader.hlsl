@@ -5,9 +5,12 @@ cbuffer constants : register(b0)
 {
     matrix MVP;
     float4 CustomColor;
-    uint bUseVertexColor;
+    uint bUseVertexColor;  // 텍스쳐 사용할지 결정하는 변수
     float3 eyeWorldPos;
     float4 indexColor;
+    uint bIsPicked;
+    float3 Padding;
+    // 선택 됐는지 여부 확인하는 변수 추가
 }
 
 struct PS_INPUT
@@ -30,13 +33,16 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     
     PS_OUTPUT output;
     
-
     //output.normal = input.normal;
     //output.texcoord = input.texcoord;
-    float3 color;
-    color = bUseVertexColor ? g_texture0.Sample(g_sampler, float2(input.texcoord.x, 1 - input.texcoord.y)).rgb : CustomColor;
+    float3 color = bUseVertexColor ? g_texture0.Sample(g_sampler, float2(input.texcoord.x, 1 - input.texcoord.y)).rgb : CustomColor;
+    
     float avg = (color.r + color.g + color.b) / 3.0f; 
     clip(avg < 0.1f ? -1 : 1);                          // png 투명 이미지 밝기 작은 값들 제거 
+    if(bIsPicked)
+    {
+        color *= 0.5;
+    }
     output.color = float4(color, 1.0f);
     output.UUID = indexColor;
 

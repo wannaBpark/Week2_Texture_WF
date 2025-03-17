@@ -27,15 +27,17 @@ class ACamera;
 class URenderer
 {
 private:
-    struct alignas(16) FConstants
-    {
-        FMatrix MVP;
-        FVector4 Color;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-        uint32 bUseVertexColor;
-        FVector eyeWorldPos;
-        FVector4 indexColor;
-    };
+  //  struct alignas(16) FConstants
+  //  {
+  //      FMatrix MVP;
+  //      FVector4 Color;
+		//// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
+  //      uint32 bUseVertexColor;
+  //      FVector eyeWorldPos;
+  //      FVector4 indexColor;
+  //      uint32 bIsPicked;
+  //      FVector Padding;
+  //  };
 	
 	struct alignas(16) FPickingConstants
 	{
@@ -178,10 +180,9 @@ protected:
 
     // 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
     ID3D11RenderTargetView* RTVs[2];
+    ID3D11RasterizerState* RasterizerStates[3] = { nullptr, nullptr, nullptr }; // 래스터라이저 상태 (Lit, Unlit, Wireframe)
     ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
     ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
-    ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
-
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
@@ -200,6 +201,7 @@ protected:
 	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
     ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 
+
 public:
     ID3D11Buffer* LineVertexBuffer = nullptr;
 	uint32 MaxLineSize = 0;
@@ -209,6 +211,7 @@ public:
 
     std::unordered_map<EPrimitiveType, uint32> VertexCountMap;
     std::unordered_map<EPrimitiveType, D3D11_PRIMITIVE_TOPOLOGY> TopologyMap;
+
 
 protected:
     std::unordered_map<uint32, ComPtr<ID3D11Buffer>> ConstantBufferMap;

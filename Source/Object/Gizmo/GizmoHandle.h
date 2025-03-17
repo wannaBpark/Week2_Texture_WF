@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object/Actor/Actor.h"
 #include "../EEnum.h"
 
@@ -12,6 +12,7 @@ public:
 	void SetScaleByDistance();
 	void SetActive(bool bActive);
 	void SetSelectedAxis(ESelectedAxis NewAxis) { SelectedAxis = NewAxis; }
+	void SetPickGizmo(int index);
 	ESelectedAxis GetSelectedAxis() const { return SelectedAxis; }
 	EGizmoType GetGizmoType() const { return GizmoType; }
 
