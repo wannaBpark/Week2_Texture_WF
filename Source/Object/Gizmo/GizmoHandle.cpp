@@ -1,4 +1,4 @@
-﻿#include "GizmoHandle.h"
+#include "GizmoHandle.h"
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
@@ -76,7 +76,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 		SetActorTransform(GizmoTr);
 	}
 
-	SetScaleByDistance();
+	SetScaleByDistance();  // 직교 투영 행렬로 변경 해야함.
 
 	AActor::Tick(DeltaTime);
 
@@ -187,6 +187,15 @@ void AGizmoHandle::SetScaleByDistance()
 	MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);
 }
 
+void AGizmoHandle::SetPickGizmo(int index)
+{
+	CylinderComponents[index+1]->SetIsPicked(true);
+	CylinderComponents[(index+1)%3]->SetIsPicked(false);
+	CylinderComponents[(index+2) % 3]->SetIsPicked(false);
+	CircleComponents[index]->SetIsPicked(true);
+	CircleComponents[(index + 1) % 3]->SetIsPicked(false);
+	CircleComponents[(index + 2) % 3]->SetIsPicked(false);
+}
 void AGizmoHandle::SetActive(bool bActive)
 {
 	bIsActive = bActive;
@@ -261,6 +270,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 			AT.AddScale({ Result.X * 0.1f, 0, 0 });
 			break;
 		}
+		
 	}
 	else if (SelectedAxis == ESelectedAxis::Y)
 	{
@@ -276,6 +286,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 			AT.AddScale({ 0, Result.Y * 0.1f, 0 });
 			break;
 		}
+		
 	}
 	else if (SelectedAxis == ESelectedAxis::Z)
 	{

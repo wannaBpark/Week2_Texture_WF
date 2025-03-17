@@ -27,15 +27,17 @@ class ACamera;
 class URenderer
 {
 private:
-    struct alignas(16) FConstants
-    {
-        FMatrix MVP;
-        FVector4 Color;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-        uint32 bUseVertexColor;
-        FVector eyeWorldPos;
-        FVector4 indexColor;
-    };
+  //  struct alignas(16) FConstants
+  //  {
+  //      FMatrix MVP;
+  //      FVector4 Color;
+		//// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
+  //      uint32 bUseVertexColor;
+  //      FVector eyeWorldPos;
+  //      FVector4 indexColor;
+  //      uint32 bIsPicked;
+  //      FVector Padding;
+  //  };
 	
 	struct alignas(16) FPickingConstants
 	{

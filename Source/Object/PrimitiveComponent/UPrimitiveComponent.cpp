@@ -4,6 +4,7 @@
 #include "../Source/Static/FEditorManager.h"
 #include "Object/Actor/Camera.h"
 #include "Core/Rendering/TextAtlasManager.h"
+#include "Core/Rendering/SubUVManager.h"
 #include "Core/Math/Vector.h"
 
 void UPrimitiveComponent::BeginPlay()
@@ -34,18 +35,7 @@ void UPrimitiveComponent::Render() // 오버라이딩 필요
 	{
 		return;
 	}
-	if (GetOwner()->IsGizmoActor() == false)
-	{
-		if (bIsPicked)
-		{
-			/*bUseVertexColor = false;
-			SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
-		}
-		else
-		{
-			bUseVertexColor = true;
-		}
-	}
+	
 	//Renderer->RenderPrimitive(this); // 실제 렌더링 요청 수행
 	
 	this->UpdateConstantData(Renderer);
@@ -61,12 +51,27 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
 	indexColor /= 255.0f;
+	if (GetOwner()->IsGizmoActor() == false)
+	{
+		if (GetOwner()== FEditorManager::Get().GetSelectedActor())
+		{
+			bIsPicked = true;
+			//UE_LOG("ispicked ");
+		}
+		else
+		{
+			bIsPicked = false;
+			//UE_LOG("bisunpicked ");
+		}		
+	}
 	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
 		(uint32)this->IsUseVertexColor(),
 		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
-		indexColor
+		indexColor,
+		(uint32)this->IsPicked(),
+		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
 	};
 	FMatrix& WorldPosition = UpdateInfo.MVP;
 	// 업데이트할 자료형들
@@ -80,6 +85,8 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		UpdateInfo.bUseVertexColor,
 		UpdateInfo.eyeWorldPos,
 		UpdateInfo.indexColor,
+		UpdateInfo.bIsPicked,
+		UpdateInfo.Padding,
 	};
 	
 
@@ -168,6 +175,23 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	FAtlasConstants UpdateInfo{
+		this->GetComponentTransformMatrix(),
+		SzOffset,
+	};
+	// 업데이트할 자료형들
+	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
+		* FMatrix::Transpose(Renderer->GetViewMatrix())
+		* FMatrix::Transpose(this->GetComponentTransformMatrix());
+
+	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
+	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
+}
+
+void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도 추가
+{
+	FVector4 SzOffset;
+	SzOffset = USubUVManager::GetFrameUV(this->GetFrame());
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,

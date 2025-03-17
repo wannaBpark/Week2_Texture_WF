@@ -177,7 +177,7 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
-    idx = CreateConstantBuffer<FAtlasConstants>();           // Grid Hull CBuffer : 3
+    idx = CreateConstantBuffer<FAtlasConstants>();           // Atlas CBuffer : 3
     idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
 }
@@ -208,6 +208,7 @@ void URenderer::CreateTexturesSamplers()
 
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
+    CreateTextureSRVW(L"Textures/faker.PNG");
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
