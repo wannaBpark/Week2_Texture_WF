@@ -78,6 +78,7 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 			//UE_LOG("bisunpicked ");
 		}		
 	}
+
 	FConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		this->GetCustomColor(),
@@ -90,16 +91,17 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 
 	FMatrix MVP;
 	FMatrix& WorldPosition = UpdateInfo.MVP;
-	if (BillboardUtil == nullptr) {
+
+	if (BillboardUtil != nullptr) {
 		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
 	}
 	else  {
-
 		// 업데이트할 자료형들
 		MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 			* FMatrix::Transpose(Renderer->GetViewMatrix())
 			* FMatrix::Transpose(WorldPosition);
 	}
+
 	if (dynamic_cast<AWorldGizmo*>(GetOwner()) != nullptr) {
 		ACamera* Camera = FEditorManager::Get().GetCamera();
 		float ViewportSize = Camera->GetViewportSize();
@@ -120,9 +122,6 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 		MVP.M[2][3] = delta.Z;
 
 	}
-	
-	
-
 
 	ConstantData = {
 		MVP, UpdateInfo.Color,
@@ -179,6 +178,7 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())   // 기존의 View Matrix를 사용
 		* FMatrix::Transpose(BillBoardTransform);         // 빌보드 변환 적용
+
 
 	// 상수 버퍼 업데이트
 	ConstantData.MVP = MVP;
@@ -238,6 +238,7 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 	}
 	else {
 		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, GetOwner()->GetRootComponent(), this->RelativeTransform.GetPosition().Y);
+
 	}
 
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
