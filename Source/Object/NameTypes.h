@@ -6,7 +6,8 @@ class FString;
 
 struct FName
 {
-public:
+    friend struct FNameHelper;
+
     int32 DisplayIndex;
     int32 ComparisonIndex;
 public:

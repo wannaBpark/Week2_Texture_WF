@@ -34,6 +34,10 @@ public:
 			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();
+        
+        ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
+        // static uint32 id = 0;
+        // NewObject->Name = #Object + " " + FString::FromInt(NewObject->UUID);
 
         // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);

@@ -9,7 +9,7 @@
 // TODO: RTTI 구현하면 enable_shared_from_this 제거
 class UObject : public std::enable_shared_from_this<UObject>
 {
-	friend class FObjectFactory;
+	friend class FObjectFactory; // 새 오브젝트 생성시 FName 변경 권한 위해 (UClass도 friend 필요 가능성)
 
 	uint32 UUID = 0;
 	uint32 InternalIndex = -1; // Index of GUObjectArray
