@@ -9,6 +9,9 @@
 /*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
 */
+
+class UBillboardUtilComponent;
+
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
 	using Super = USceneComponent;
@@ -27,7 +30,11 @@ public:
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
 	bool IsUseVertexColor() const { return bUseVertexColor; }
+	bool IsPicked() const { return bIsPicked; }
 
+	void SetIsPicked(bool bPicked)  {
+		bIsPicked = (uint32)bPicked;
+	}
 	void SetCustomColor(const FVector4& InColor)
 	{
 		CustomColor = InColor;
@@ -54,9 +61,18 @@ protected:
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	bool bIsPicked = true;
 public:
 	FRenderResource RenderResource;
 	FConstants ConstantData;
+
+public:
+	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+	virtual void SetUseBillboardUtil(bool bUse);
+
+protected:
+	bool bUseBillboardUtil = false;
+	UBillboardUtilComponent* BillboardUtil = nullptr;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -248,6 +264,8 @@ public:
 		return EPrimitiveType::EPT_BillBoard;
 	}
 
+	virtual void SetUseBillboardUtil(bool bUse) override;
+
 	void UpdateConstantData(URenderer*& Renderer) override;
 };
 
@@ -281,7 +299,7 @@ private:
 	char Character = 'a';
 
 public:
-	void SetChar(char& InCharacter) { Character = InCharacter; }
+	void SetChar(char InCharacter) { Character = InCharacter; }
 	char GetChar() const { return Character; }
 	FAtlasConstants AtlasConstantData;
 
@@ -336,6 +354,41 @@ public:
 	{
 		return EPrimitiveType::EPT_WORLDGRID;
 	}
+
+	void UpdateConstantData(URenderer*& Renderer) override;
+};
+
+class USubUVComponent : public UPrimitiveComponent
+{
+	using Super = USubUVComponent;
+public:
+	USubUVComponent()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 2;				// 2 : Atlas Vertex Shader
+		RenderResource.PixelShaderIndex = 2;				// 2 : Atlas Pixel Shader		
+		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
+		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
+		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(2);	// 
+	}
+
+	virtual ~USubUVComponent() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_SubUV;
+	}
+
+private:
+	char Frame = 0;
+
+public:
+	void SetFrame(int InFrame) { Frame = InFrame; }
+	int32 GetFrame() const { return Frame; }
+	FAtlasConstants AtlasConstantData;
 
 	void UpdateConstantData(URenderer*& Renderer) override;
 };

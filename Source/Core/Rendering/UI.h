@@ -11,6 +11,7 @@ class UI
 {
 public:
     int currentItem = 0;
+	int currentVMI = 0;
     int NumOfSpawn = 0;
 	bool bIsInitialized = false;
     

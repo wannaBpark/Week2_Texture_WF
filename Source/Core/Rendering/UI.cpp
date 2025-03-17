@@ -21,6 +21,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/BillBoard.h"
 #include "Object/Actor/WorldText.h"
+#include "Object/Actor/SubUV.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -160,7 +161,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText", "SubUV"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -205,10 +206,10 @@ void UI::RenderPrimitiveSelection()
                 wT->SetCharComps(xx);
 				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
 			}
-            //else if (strcmp(items[currentItem], "Triangle") == 0)
-            //{
-            //    Actor->AddComponent<UTriangleComp>();   
-            //}
+            else if (strcmp(items[currentItem], "SubUV") == 0)
+            {
+                World->SpawnActor<ASubUV>();
+            }
         }
     }
     ImGui::SameLine();
@@ -256,6 +257,13 @@ void UI::RenderPrimitiveSelection()
 		World->SetGridScale(GridScale);
     }
     ImGui::Separator();
+
+    const char* VMI_items[] = { "LIT", "UNLIT", "WIREFRAME"};
+    if (ImGui::Combo("View Mode", &currentVMI, VMI_items, IM_ARRAYSIZE(VMI_items)))
+    {
+		World->SetViewMode(currentVMI);
+    }
+
 }
 
 void UI::RenderCameraSettings()
@@ -409,6 +417,15 @@ void UI::RenderPropertyWindow()
                 if (ImGui::Checkbox("Use Texture", &IsUseTexture)) {
                     comp->SetUseVertexColor(IsUseTexture);
                 }
+                
+                ImGui::SameLine();
+
+                bool IsUseBillboard = comp->IsUseBillboardUtil();
+				if (ImGui::Checkbox("Use Billboard", &IsUseBillboard))
+				{
+					comp->SetUseBillboardUtil(IsUseBillboard);
+				}
+
             }
         }
 		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
@@ -427,6 +444,23 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
+        if (FEditorManager::Get().GetWorldText() != nullptr) 
+        {
+            // WorldText의 경우 Char Component를 자체적으로 관리하므로 특수 처리
+            // Letter Spacing을 조절할 수 있도록
+			AWorldText* wT = FEditorManager::Get().GetWorldText();
+            bool IsUseBillboard = wT->IsUseBillboardUtil();
+            if (ImGui::Checkbox("Use Text Billboard", &IsUseBillboard))
+            {
+                wT->SetUseBillboardUtil(IsUseBillboard);
+            }
+
+            float LetterSpacing = wT->GetLetterSpacing();
+            if (ImGui::DragFloat("Letter Spacing", &LetterSpacing, 0.1f))
+            {
+                wT->SetLetterSpacing(LetterSpacing);
+            }
+        }
     }
     ImGui::End();
 }

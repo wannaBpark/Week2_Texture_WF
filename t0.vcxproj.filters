@@ -219,6 +219,12 @@
     <ClCompile Include="Source\Object\Actor\WorldText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Actor\WorldGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -229,6 +235,8 @@
     <FxCompile Include="Shaders\PosTexVertexShader.hlsl" />
     <FxCompile Include="Shaders\AtlasPixelShader.hlsl" />
     <FxCompile Include="Shaders\AtlasVertexShader.hlsl" />
+    <FxCompile Include="Shaders\GridPixelShader.hlsl" />
+    <FxCompile Include="Shaders\GridVertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
@@ -436,6 +444,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\Actor\WorldText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Actor\WorldGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

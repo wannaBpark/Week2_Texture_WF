@@ -6,6 +6,11 @@
 #include "Core/Math/Transform.h"
 #include "Object/ActorComponent/Colliders/UBoxCollider.h"
 
+#include "Object/Actor/WorldText.h"
+#include <string>
+#include "Debug/DebugConsole.h"
+
+
 void FEditorManager::SelectActor(AActor* NewActor)
 {
     if (GizmoHandle == nullptr)
@@ -21,6 +26,13 @@ void FEditorManager::SelectActor(AActor* NewActor)
 
     }
 
+    if (WorldText == nullptr) 
+    {
+		WorldText = UEngine::Get().GetWorld()->SpawnActor<AWorldText>();
+        WorldText->SetDepth(0);
+        WorldText->SetActive(false);
+    }
+
 	if (SelectedActor == NewActor)
 		return;
 	
@@ -29,6 +41,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
         SelectedActor->UnPick();
         GizmoHandle->SetActive(false);
         BoundingBoxComp->SetCanBeRendered(false);
+        WorldText->SetActive(false);
     }
 
 	SelectedActor = NewActor;
@@ -39,6 +52,9 @@ void FEditorManager::SelectActor(AActor* NewActor)
         SelectedActor->Pick();
         GizmoHandle->SetActive(true);
         BoundingBoxComp->SetCanBeRendered(true);
+		WorldText->SetActive(true);
+        std::string ActorUUID = "UID: " + std::to_string(NewActor->GetUUID());
+        WorldText->SetCharComps(ActorUUID);
         //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
 		//FTransform GizmoTransform = GizmoHandle->GetActorTransform();
 		//GizmoTransform.SetPosition(Pos);

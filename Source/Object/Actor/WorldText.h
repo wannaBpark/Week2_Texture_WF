@@ -16,12 +16,22 @@ public:
     virtual const char* GetTypeName() override;
 
     void ClearCharComps();
-    void SetCharComps(std::string& InText);
+    void SetCharComps(std::string InText);
 
     float GetLetterSpacing();
     void SetLetterSpacing(float InLetterSpacing);
 
+    void SetActive(bool bActive);
+
 private:
-	TArray<UWorldCharComp*> CharComps;
+    bool bIsActive = false;
+	TArray<UWorldCharComp> CharComps;
 	float LetterSpacing{ 0.0f };
+
+public:
+	void SetUseBillboardUtil(bool bUse);
+	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+
+private:
+    bool bUseBillboardUtil = false;
 };

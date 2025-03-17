@@ -177,7 +177,7 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FConstants>();           // Fconstants : 0
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
-    idx = CreateConstantBuffer<FAtlasConstants>();           // Grid Hull CBuffer : 3
+    idx = CreateConstantBuffer<FAtlasConstants>();           // Atlas CBuffer : 3
     idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
 }
@@ -208,6 +208,7 @@ void URenderer::CreateTexturesSamplers()
 
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
+    CreateTextureSRVW(L"Textures/faker.PNG");
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/
@@ -237,7 +238,7 @@ void URenderer::Prepare() const
 
     // Rasterization할 Viewport를 설정 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
-    DeviceContext->RSSetState(RasterizerState);
+    DeviceContext->RSSetState(RasterizerStates[UEngine::Get().GetWorld()->GetViewMode()]);
 
     /**
      * OutputMerger 설정
@@ -364,29 +365,6 @@ void URenderer::RenderPrimitiveIndexed(ID3D11Buffer* pVertexBuffer, ID3D11Buffer
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
 {
     SAFE_RELEASE(pBuffer);
-}
-
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
-{
-    if (!ConstantBuffer) return;
-
-    D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-
-    FMatrix MVP = 
-        FMatrix::Transpose(ProjectionMatrix) * 
-        FMatrix::Transpose(ViewMatrix) * 
-        FMatrix::Transpose(UpdateInfo.TransformMatrix);    // 상수 버퍼를 CPU 메모리에 매핑
-
-    // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
-    DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
-    {
-        // 매핑된 메모리를 FConstants 구조체로 캐스팅
-        FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        Constants->MVP = MVP;
-		Constants->Color = UpdateInfo.Color;
-		Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
-    }
-    DeviceContext->Unmap(ConstantBuffer, 0);
 }
 
 
@@ -524,18 +502,27 @@ void URenderer::ReleaseDepthStencilBuffer()
 
 void URenderer::CreateRasterizerState()
 {
+    using enum EViewModeIndex;
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
     //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
-    //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 백 페이스 컬링
+    //RasterizerDesc.CullMode = D3D11_CULL_FRONT;  // 프론트 페이스 컬링
 
-    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerStates[static_cast<uint32>(VMI_Lit)]);
+    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerStates[static_cast<uint32>(VMI_Unlit)]);
+    
+RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+    RasterizerDesc.CullMode = D3D11_CULL_NONE;
+    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerStates[static_cast<uint32>(VMI_Wireframe)]);
 }
 
 void URenderer::ReleaseRasterizerState()
 {
-    SAFE_RELEASE(RasterizerState);
+	for (auto& RS : RasterizerStates)
+	{
+		SAFE_RELEASE(RS);
+	}
 }
 
 void URenderer::CreateBufferCache()

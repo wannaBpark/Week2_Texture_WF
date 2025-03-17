@@ -54,6 +54,8 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FConstants)
     SHADER_PARAMETER(uint32, bUseVertexColor)
     SHADER_PARAMETER(FVector, eyeWorldPos)
     SHADER_PARAMETER(FVector4, indexColor)
+    SHADER_PARAMETER(uint32, bIsPicked)
+    SHADER_PARAMETER(FVector, Padding)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
 
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FPickingConstants)
@@ -72,35 +74,9 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
     SHADER_PARAMETER(uint32, bUseVertexColor)
     SHADER_PARAMETER(FVector, eyeWorldPos)
     SHADER_PARAMETER(FVector4, indexColor)
-END_GLOBAL_SHADER_PARAMETER_STRUCT()
+ END_GLOBAL_SHADER_PARAMETER_STRUCT()
 
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FAtlasConstants)
     SHADER_PARAMETER(FMatrix, WorldPosition)
     SHADER_PARAMETER(FVector4, AtlasSzOffset)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
-//struct alignas(16) FConstants
-//{
-//    FMatrix MVP;
-//    FVector4 Color;
-//    // true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-//    uint32 bUseVertexColor;
-//    FVector Padding;
-//};
-//
-//struct alignas(16) FPickingConstants
-//{
-//    FVector4 UUIDColor;
-//};
-//
-//struct alignas(16) FDepthConstants {
-//    unsigned int DepthOffset;
-//    int nearPlane;
-//    int farPlane;
-//};
-//
-//struct ConstantUpdateInfo
-//{
-//    const FTransform& Transform;
-//    const FVector4& Color;
-//    bool bUseVertexColor;
-//};

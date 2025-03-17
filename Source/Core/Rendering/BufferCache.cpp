@@ -163,6 +163,17 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 		//Size = Indices.size();
 		break;
 	}
+
+	case EPT_SubUV: {
+		auto [Vertices, Indices] = CreateTextTexVertices();
+		Size = Vertices.Num();
+		Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FPosColorNormalTex) * Size);
+		IndexBuffer = UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices);
+		Size = Indices.size();
+		break;
+
+	}
 	}
 
 	// 현재 VertexBuffer는 map에 존재하지 않으므로 추가한다
@@ -174,7 +185,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 	if (IndexBuffer != nullptr) {
 		UEngine::Get().GetRenderer()->IndexBufferMap.insert({ Type, IndexBuffer });
 	}
-	
+
 
 	return BufferInfo(Buffer.Get(), Size, Topology);
 }

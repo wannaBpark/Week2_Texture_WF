@@ -161,7 +161,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Rendering\SubUVManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp" />
+    <ClCompile Include="Source\Object\Actor\SubUV.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Object\Actor\BillBoard.cpp" />
     <ClCompile Include="Circle.cpp" />
@@ -196,6 +198,7 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -272,7 +275,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Rendering\SubUVManager.h" />
     <ClInclude Include="Source\Core\Rendering\TextAtlasManager.h" />
+    <ClInclude Include="Source\Object\Actor\SubUV.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="EEnum.h" />
@@ -312,6 +317,7 @@
     <ClInclude Include="Source\Object\Actor\Triangle.h" />
     <ClInclude Include="Source\Object\Actor\WorldText.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
@@ -347,6 +353,9 @@
     <ClInclude Include="Source\ThirdParty\stb-master\stb_image_write.h" />
     <ClInclude Include="UColliders.h" />
     <ClInclude Include="URaycastSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\Explosion.PNG" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
