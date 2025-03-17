@@ -22,10 +22,9 @@ public:
     void SetLetterSpacing(float InLetterSpacing);
 
     void SetActive(bool bActive);
-
+    TArray<UWorldCharComp> CharComps;
 private:
     bool bIsActive = false;
-	TArray<UWorldCharComp> CharComps;
 	float LetterSpacing{ 0.0f };
 
 public:

@@ -7,6 +7,7 @@
 #include "Core/Rendering/SubUVManager.h"
 #include "Core/Math/Vector.h"
 #include "Object/UtilComponent/UBillboardUtilComponent.h"	
+#include "Object/Gizmo/WorldGizmo.h"
 
 void UPrimitiveComponent::BeginPlay()
 {
@@ -88,17 +89,39 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 	};
 
 	FMatrix MVP;
-
+	FMatrix& WorldPosition = UpdateInfo.MVP;
 	if (BillboardUtil == nullptr) {
-		FMatrix& WorldPosition = UpdateInfo.MVP;
+		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
+	}
+	else  {
+
 		// 업데이트할 자료형들
 		MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 			* FMatrix::Transpose(Renderer->GetViewMatrix())
 			* FMatrix::Transpose(WorldPosition);
 	}
-	else {
-		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
+	if (dynamic_cast<AWorldGizmo*>(GetOwner()) != nullptr) {
+		ACamera* Camera = FEditorManager::Get().GetCamera();
+		float ViewportSize = Camera->GetViewportSize();
+		float Near = Camera->GetNear();
+		float Far = Camera->GetFar();
+		// 카메라의 오른쪽, Up 벡터 계산
+		// 업데이트할 자료형들
+		// 단순하게 NDC 상의 오프셋을 적용하는 방법 (행렬 순서에 주의)
+		//FMatrix NDCOffset = FMatrix::GetTranslateMatrix(0.9,0.1,0);
+		MVP = FMatrix::Transpose(FMatrix::OrthoForLH(ViewportSize, ViewportSize, Near, Far))
+			* FMatrix::Transpose(Renderer->GetViewMatrix())
+			* FMatrix::Transpose(WorldPosition);
+
+		FVector delta = FVector(-0.8,-0.8,0);
+
+		MVP.M[0][3] = delta.X;
+		MVP.M[1][3] = delta.Y;
+		MVP.M[2][3] = delta.Z;
+
 	}
+	
+	
 
 
 	ConstantData = {
@@ -138,8 +161,6 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FVector rightVector = FVector::CrossProduct(upVector, billboardToEye);
 	upVector.Normalize();
 	rightVector.Normalize();
-
-
 	FVector adjustedUp = FVector::CrossProduct(billboardToEye, rightVector);
 	adjustedUp.Normalize();
 
@@ -239,3 +260,5 @@ void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
 	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
 }
+
+
