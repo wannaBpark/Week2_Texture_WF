@@ -15,7 +15,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
 #include "Core/Rendering/ShaderParameterMacros.h" // InputlayoutType
-
+#include "../EEnum.h"
 
 using namespace Microsoft::WRL;
 struct FVertexSimple;
@@ -182,6 +182,7 @@ public:
     std::unordered_map<EPrimitiveType, uint32> VertexCountMap;
     std::unordered_map<EPrimitiveType, D3D11_PRIMITIVE_TOPOLOGY> TopologyMap;
 
+    std::unordered_map<EPrimitiveType, FHitColliderInfo> HitColliderInfoMap;
 
 protected:
     std::unordered_map<uint32, ComPtr<ID3D11Buffer>> ConstantBufferMap;
