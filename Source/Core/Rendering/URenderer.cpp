@@ -21,6 +21,9 @@
 
 #include "../Source/Object/World/World.h" // World로부터 GridScale을 가져옴
 
+#include "Core/Rendering/TextAtlasManager.h";
+#include "Core/Rendering/SubUVManager.h";
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -208,7 +211,14 @@ void URenderer::CreateTexturesSamplers()
 
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
+    UAtlasInfo koverwatchText = JsonSaveHelper::LoadAtlasInfo("koverwatch.png");
+    UTextAtlasManager::AddAtlasInfo(koverwatchText);
+
     CreateTextureSRVW(L"Textures/faker.PNG");
+
+    CreateTextureSRVW(L"Textures/koverwatchBlack.png");
+    UAtlasInfo koverwatchBlackText = JsonSaveHelper::LoadAtlasInfo("koverwatchBlack.png");
+    UTextAtlasManager::AddAtlasInfo(koverwatchBlackText);
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/

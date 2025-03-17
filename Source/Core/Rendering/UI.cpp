@@ -203,7 +203,7 @@ void UI::RenderPrimitiveSelection()
 				AWorldText* wT = World->SpawnActor<AWorldText>();
                 std::string xx = "hello world!";
                 wT->SetLetterSpacing(-0.5f);
-                wT->SetCharComps(xx);
+                wT->SetCharComps(xx, "koverwatchBlack.png");
 				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
 			}
             else if (strcmp(items[currentItem], "SubUV") == 0)

@@ -1,4 +1,4 @@
-﻿#include "JsonSaveHelper.h"
+#include "JsonSaveHelper.h"
 
 #include <fstream>
 
@@ -85,6 +85,65 @@ void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
     std::ofstream Output(WorldInfo.SceneName + ".scene");
     
     if (Output.is_open())
+    {
+        Output << Json;
+    }
+}
+
+
+UAtlasInfo JsonSaveHelper::LoadAtlasInfo(std::string AtlasName)
+{
+    std::ifstream Input("AtlasData/" + AtlasName + ".atlas");
+
+    if (!Input.is_open())
+    {
+        UE_LOG("Scene file not found");
+        return UAtlasInfo();
+    }
+    std::string Contents;
+    Input.seekg(0, std::ios::end);
+    Contents.reserve(Input.tellg());
+    Input.seekg(0, std::ios::beg);
+
+    Contents.assign(std::istreambuf_iterator<char>(Input), std::istreambuf_iterator<char>());
+
+    JSON Json = JSON::Load(Contents);
+
+    UAtlasInfo AtlasInfo = UAtlasInfo();
+
+    AtlasInfo.AtlasName = Json["AtlasName"].ToString();
+    AtlasInfo.ColNum = Json["ColNum"].ToInt();
+    AtlasInfo.RowNum = Json["RowNum"].ToInt();
+    AtlasInfo.AtlasWidth = Json["AtlasWidth"].ToInt();
+    AtlasInfo.AtlasHeight = Json["AtlasHeight"].ToInt();
+    AtlasInfo.TextureIndex = Json["TextureIndex"].ToInt();
+    AtlasInfo.TotalFrame = Json["TotalFrame"].ToInt();
+
+    return AtlasInfo;
+}
+
+void JsonSaveHelper::SaveAtlasInfo(const UAtlasInfo& AtlasInfo)
+{
+    if (AtlasInfo.AtlasName.empty()) 
+    {
+        UE_LOG("AtlasName EMPTY! Can't SaveAtlasInfo");
+        return;
+    }
+
+    JSON Json;
+
+    Json["AtlasName"] = AtlasInfo.AtlasName;
+    Json["ColNum"] = AtlasInfo.ColNum;
+    Json["RowNum"] = AtlasInfo.RowNum;
+    Json["AtlasWidth"] = AtlasInfo.AtlasWidth;
+    Json["AtlasHeight"] = AtlasInfo.AtlasHeight;
+    Json["TextureIndex"] = AtlasInfo.TextureIndex;
+    Json["TotalFrame"] = AtlasInfo.TotalFrame;
+
+
+    std::ofstream Output("AtlasData/" + AtlasInfo.AtlasName + ".atlas");
+
+    if (Output.is_open()) 
     {
         Output << Json;
     }

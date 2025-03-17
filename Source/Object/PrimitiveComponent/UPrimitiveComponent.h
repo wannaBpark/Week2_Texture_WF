@@ -275,7 +275,7 @@ class UWorldCharComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
 public:
-	UWorldCharComp() 
+	UWorldCharComp(uint32 TextureID) 
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
@@ -286,7 +286,7 @@ public:
 		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
 		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
 		RenderResource.bUseIndexBuffer = true;						
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);	// TextAtlas 추가 필요
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(TextureID);	// TextAtlas 추가 필요
 	}
 
 	virtual ~UWorldCharComp() = default;
@@ -297,9 +297,10 @@ public:
 
 private:
 	char Character = 'a';
+	std::string AtlasName = "";
 
 public:
-	void SetChar(char InCharacter) { Character = InCharacter; }
+	void SetChar(char InCharacter, std::string InAtlasName) { Character = InCharacter; AtlasName = InAtlasName; }
 	char GetChar() const { return Character; }
 	FAtlasConstants AtlasConstantData;
 

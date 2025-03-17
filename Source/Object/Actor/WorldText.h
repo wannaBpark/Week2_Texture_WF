@@ -16,7 +16,7 @@ public:
     virtual const char* GetTypeName() override;
 
     void ClearCharComps();
-    void SetCharComps(std::string InText);
+    void SetCharComps(std::string InText, std::string AtlasName);
 
     float GetLetterSpacing();
     void SetLetterSpacing(float InLetterSpacing);

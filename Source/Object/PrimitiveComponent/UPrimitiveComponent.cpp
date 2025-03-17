@@ -199,7 +199,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
-	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar(), AtlasName);
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,

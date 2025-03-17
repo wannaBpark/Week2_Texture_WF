@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 
 #include "Debug/DebugConsole.h"
+#include "Core/Rendering//TextAtlasManager.h"
 
 AWorldText::AWorldText()
 {
@@ -32,6 +33,7 @@ void AWorldText::Tick(float DeltaTime)
 		SetActorTransform(RootTr); 
 	}
 
+	// 현재 방식은 Single 쓰레드로 고안하여 처리, 만약 멀티 쓰레드라면 TextAtlasManager 구조 변경 필요
 	int32 num = CharComps.Num();
 	for (int32 i = 0; i < num; i++)
 	{
@@ -55,11 +57,12 @@ void AWorldText::ClearCharComps()
 	CharComps.Empty();
 }
 
-void AWorldText::SetCharComps(std::string InText)
+
+void AWorldText::SetCharComps(std::string InText, std::string AtlasName)
 {
 	if (CharComps.Num() == InText.size()) {
 		for (int i = 0; i < CharComps.Num(); i++) {
-			CharComps[i].SetChar(InText[i]);
+			CharComps[i].SetChar(InText[i], AtlasName);
 		}
 		return;
 	}
@@ -68,20 +71,24 @@ void AWorldText::SetCharComps(std::string InText)
 
 	if (InText.size() == 0)
 		return;
+
+	uint32 TextureIndex = UTextAtlasManager::GetTextureIndex(AtlasName);
+
 	float TextSize = static_cast<float>(InText.size());
 	float Middle = (TextSize + (TextSize - 1.0f) * LetterSpacing) / 2.0f;
 	for (int32 i = 0; i < InText.size(); i++)
 	{
-		UWorldCharComp CharComponent = UWorldCharComp();
+		UWorldCharComp CharComponent = UWorldCharComp(TextureIndex);
 		CharComponent.SetupAttachment(RootComponent);
 		CharComponent.SetOwner(this);
 		CharComponent.SetRelativeTransform(
 			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
 				FQuat(0, 0, 0, 1),
 				FVector(1, 1, 1)));
-		CharComponent.SetChar(InText[i]);
+		CharComponent.SetChar(InText[i], AtlasName);
 		CharComps.Add(CharComponent);
 	}
+
 }
 
 float AWorldText::GetLetterSpacing()

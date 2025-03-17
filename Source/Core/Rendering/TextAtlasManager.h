@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include <vector>
-#include <algorithm>
+#include "Core/Container/Array.h"
+#include "JsonSaveHelper.h"
 
 struct FVector4;
 
@@ -16,6 +16,14 @@ public:
 	static void SetGridLayout(int InColumns, int InRows);
 	static void SetMargin(int InMarginX, int InMarginY);
 
+
+
+public:
+	static FVector4 GetCharUV(char character, uint32 IndexNum);
+	static FVector4 GetCharUV(char character, std::string AtlasName);
+	static uint32 GetTextureIndex(std::string AtlasName);
+
+private:
 	static FVector4 GetCharUV(char character);
 
 private:
@@ -25,4 +33,11 @@ private:
 	static inline int Rows{ 16 };
 	static inline int MarginX{ 0 };
 	static inline int MarginY{ 0 };
+
+
+public:
+	static void AddAtlasInfo(UAtlasInfo& InAtlasInfo);
+
+private:
+	static inline TArray<UAtlasInfo> AtlasInfos;
 };
