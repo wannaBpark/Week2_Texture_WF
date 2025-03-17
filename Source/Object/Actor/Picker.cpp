@@ -114,7 +114,31 @@ void APicker::LateTick(float DeltaTime)
         FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
         uint32_t UUID = DecodeUUID(color);
 
-        // 오브젝트 RayTracing
+        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+
+        PickedComponent = dynamic_cast<UActorComponent*>(PickedComponent);
+
+        if (PickedComponent != nullptr)
+        {
+            AActor* PickedActor = PickedComponent->GetOwner();
+
+            if (PickedActor == nullptr) return;
+            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+            {
+                if (PickedActor == FEditorManager::Get().GetSelectedActor())
+                {
+                    FEditorManager::Get().SelectActor(nullptr);
+                }
+                else
+                {
+                    FEditorManager::Get().SelectActor(PickedActor);
+                }
+            }
+            UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
+            return;
+        }
+
+        // 검출된 오브젝트가 없을 시 RayTracing으로도 검사
         TArray<FHitResult> resultAll;
         FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
         FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
@@ -123,7 +147,6 @@ void APicker::LateTick(float DeltaTime)
             UE_LOG("result%d", resultAll[i].hitObject->GetUUID());
         }
 
-        UActorComponent* PickedComponent = nullptr;
         if (resultAll.Len() != 0 && resultAll[0].bBlockingHit) {
             PickedComponent = dynamic_cast<UActorComponent*>(resultAll[0].hitObject);
 
