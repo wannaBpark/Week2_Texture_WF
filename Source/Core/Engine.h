@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <memory>
 
@@ -17,6 +17,13 @@ enum class EScreenMode : uint8
     Windowed,    // 창 모드
     Fullscreen,  // 전체화면 모드
     Borderless,  // 테두리 없는 창 모드
+};
+
+enum class EViewMode : uint8
+{
+    Unlit,
+    Lit,
+	Wireframe,
 };
 
 class UEngine : public TSingleton<UEngine>
@@ -52,6 +59,7 @@ public:
     int GetScreenHeight() const { return ScreenHeight; }
     int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
+    
 
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
@@ -84,6 +92,8 @@ private:
 
     int ScreenWidth = 0;
     int ScreenHeight = 0;
+
+    
 
 private:
 	std::unique_ptr<URenderer> Renderer;

@@ -1,4 +1,4 @@
-﻿#include "Axis.h"
+#include "Axis.h"
 
 AAxis::AAxis()
 {
