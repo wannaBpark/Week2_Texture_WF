@@ -10,6 +10,8 @@ class FSceneManager : public TSingleton<FSceneManager>
 public:
 	void AddScene(UWorld* world);
 	void ToggleShowFlag(EShowFlag showFlag) { showFlagMasking ^= showFlag; }
+	uint32 GetShowFlagMask() const { return showFlagMasking; }
+
 private:
 	std::unordered_map<uint32, UWorld*> worldMap;
 	inline static uint32 showFlagMasking = 0xFFFFFFFF;

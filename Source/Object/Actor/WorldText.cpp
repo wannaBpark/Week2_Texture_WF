@@ -3,7 +3,7 @@
 #include "Core/EngineTypes.h"
 #include "Static/FEditorManager.h"
 #include "Core/Math/Transform.h"
-
+#include "Core/FSceneManager.h"
 #include "Debug/DebugConsole.h"
 
 AWorldText::AWorldText()
@@ -31,13 +31,15 @@ void AWorldText::Tick(float DeltaTime)
 		RootTr.Translate(FVector(0, 0, 1));
 		SetActorTransform(RootTr); 
 	}
-
 	int32 num = CharComps.Num();
-	for (int32 i = 0; i < num; i++)
-	{
-		CharComps[i].Render();
-	}
 
+	if (((FSceneManager::Get().GetShowFlagMask() & EShowFlag::Text) != 0) && ((FSceneManager::Get().GetShowFlagMask() & EShowFlag::Primitive) != 0))
+	{
+		for (int32 i = 0; i < num; i++)
+		{
+			CharComps[i].Render();
+		}
+	}
 }
 
 const char* AWorldText::GetTypeName()

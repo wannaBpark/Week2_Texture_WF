@@ -26,6 +26,7 @@
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Object/Gizmo/WorldGizmo.h"
+#include "Core/FSceneManager.h"
 
 #define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
@@ -261,9 +262,6 @@ void UI::RenderPrimitiveSelection()
     if (ImGui::Button("Load Scene"))
     {
         World->LoadWorld(SceneNameInput);
-
-        
-
     }
 	float GridScale = World->GetGridScale();
     if (ImGui::SliderFloat("Grid Scale", &GridScale, 0.1f, 100.0f)) {
@@ -480,7 +478,26 @@ void UI::RenderPropertyWindow()
 
 void UI::RenderSceneManager()
 {
-    ImGui::Begin("SceneManager");
+    ImGui::Begin("Scene Manager");
+
+    FSceneManager& SceneManager = FSceneManager::Get();
+    uint32 showFlagMask = SceneManager.GetShowFlagMask();
+
+    static const std::pair<const char*, EShowFlag> showFlagOptions[] = {
+        {"Show Grid", EShowFlag::Grid},
+        {"Show Primitive", EShowFlag::Primitive},
+        {"Show Text", EShowFlag::Text},
+        {"Show Bounding Box", EShowFlag::BoundingBox},
+    };
+
+    for (const auto& [label, flag] : showFlagOptions)
+    {
+        bool isEnabled = (showFlagMask & flag) != 0;
+        if (ImGui::Checkbox(label, &isEnabled))
+        {
+            SceneManager.ToggleShowFlag(flag);
+        }
+    }
 
     ImGui::End();
 }
