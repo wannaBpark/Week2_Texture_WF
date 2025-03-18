@@ -8,6 +8,7 @@
 #include "Static/FEditorManager.h"
 #include "ImGui/imgui.h"
 #include "Camera.h"
+#include "Object/Gizmo/WorldGizmo.h"
 
 #include "../URaycastSystem.h"
 
@@ -52,53 +53,11 @@ void APicker::LateTick(float DeltaTime)
     if (APlayerInput::Get().IsPressedMouse(false) && !ImGui::GetIO().WantCaptureMouse)
     {
         POINT pt = GetMousePoint();
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+        UActorComponent* PickedComponent = GetAcotrByPixelPicking(pt);
 
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
-        if (PickedComponent != nullptr)
-        {
-            if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
-            {
-                if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                if (UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent))
-                {
-                    FVector4 CompColor = CylinderComp->GetCustomColor();
-                    if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::X);
-                    }
-                    else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                    }
-                    else  // Blue - Z축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Z);
-                    }
-                }
-                else if (UCircleComp* CircleComp = dynamic_cast<UCircleComp*>(PickedComponent))
-                {
-                    FVector4 CompColor = CircleComp->GetCustomColor();
-                    if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::X);
-                    }
-                    else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                    }
-                    else  // Blue - Z축
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Z);
-                    }
-                }
-
-                return;
-            }
+        if (PickedComponent != nullptr && dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner())) {
+            PickLocalGizmo(PickedComponent);
+            return;
         }
     }
     else
@@ -110,35 +69,11 @@ void APicker::LateTick(float DeltaTime)
     }
 
     if (APlayerInput::Get().GetMouseDown(false) && !ImGui::GetIO().WantCaptureMouse) {
+
         POINT pt = GetMousePoint();
-
-        // 컬러 피킹
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
-
-        PickedComponent = dynamic_cast<UActorComponent*>(PickedComponent);
-
+        UActorComponent* PickedComponent = GetAcotrByPixelPicking(pt);
         if (PickedComponent != nullptr)
-        {
-            AActor* PickedActor = PickedComponent->GetOwner();
-
-            if (PickedActor == nullptr) return;
-            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-            {
-                if (PickedActor == FEditorManager::Get().GetSelectedActor())
-                {
-                    FEditorManager::Get().SelectActor(nullptr);
-                }
-                else
-                {
-                    FEditorManager::Get().SelectActor(PickedActor);
-                }
-            }
-            UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
-            return;
-        }
+            if (SetSelectActor(PickedComponent)) return;
 
         // 검출된 오브젝트가 없을 시 RayTracing으로도 검사
         TArray<FHitResult> resultAll;
@@ -148,26 +83,8 @@ void APicker::LateTick(float DeltaTime)
 
         if (resultAll.Len() != 0 && resultAll[0].bBlockingHit) {
             PickedComponent = dynamic_cast<UActorComponent*>(resultAll[0].hitObject);
-
             if (PickedComponent != nullptr)
-            {
-                AActor* PickedActor = PickedComponent->GetOwner();
-
-                if (PickedActor == nullptr) return;
-                if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-                {
-                    if (PickedActor == FEditorManager::Get().GetSelectedActor())
-                    {
-                        FEditorManager::Get().SelectActor(nullptr);
-                    }
-                    else
-                    {
-                        FEditorManager::Get().SelectActor(PickedActor);
-                    }
-                }
-                UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
-            }
-
+                if (SetSelectActor(PickedComponent)) return;
         }
     }
 }
@@ -189,5 +106,79 @@ POINT APicker::GetMousePoint()
     pt.y = pt.y * ratioY;
 
     return pt;
+}
+
+UActorComponent* APicker::GetAcotrByPixelPicking(const POINT& pt) {
+    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+    uint32_t UUID = DecodeUUID(color);
+    UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+    return PickedComponent;
+}
+
+void APicker::PickLocalGizmo(UActorComponent* actor) {
+    AGizmoHandle* Gizmo = static_cast<AGizmoHandle*>(actor->GetOwner());
+    if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
+
+    if (UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(actor))
+    {
+        FVector4 CompColor = CylinderComp->GetCustomColor();
+        if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::X);
+        }
+        else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+        }
+        else  // Blue - Z축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+        }
+    }
+    else if (UCircleComp* CircleComp = dynamic_cast<UCircleComp*>(actor))
+    {
+        FVector4 CompColor = CircleComp->GetCustomColor();
+        if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::X);
+        }
+        else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+        }
+        else  // Blue - Z축
+        {
+            Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+        }
+    }
+}
+
+void APicker::PickWorldGizmo() {
+    FEditorManager::Get().GetCamera()->ResetRotation();
+}
+
+
+bool APicker::SetSelectActor(const UActorComponent* actorComponent) {
+    // null이라면 return false
+    AActor* actor = actorComponent->GetOwner();
+    if (actor == nullptr) return false;
+    // 로컬 기즈모면 true
+    if (actorComponent->GetOwner()->IsGizmoActor()) return true;
+    // 월드 기즈모면 true
+    if (dynamic_cast<AWorldGizmo*>(actor)) {
+        PickWorldGizmo();
+        return true;
+    }
+    // 모든 경우를 통과했다면 Select
+    if (actor == FEditorManager::Get().GetSelectedActor())
+    {
+        FEditorManager::Get().SelectActor(nullptr);
+    }
+    else
+    {
+        FEditorManager::Get().SelectActor(actor);
+    }
+    //UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
+    return true;
 }
 

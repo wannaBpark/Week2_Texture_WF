@@ -38,6 +38,13 @@ struct FPosColorNormalTex
     float U, V;       // Texcoord
 };
 
+struct FMatrix3
+{
+    FMatrix Model;
+    FMatrix View;
+    FMatrix Projection;
+};
+
 enum class InputLayoutType
 {
     POSCOLOR,

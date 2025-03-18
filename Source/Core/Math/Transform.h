@@ -160,7 +160,7 @@ public:
 	void RotateYaw(float Angle)
 	{
 		FVector Axis = FVector(0, 0, 1);
-		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle),Rotation);
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle),Rotation); //현재 쿼터니언 * Z축으로 돌리는 쿼터니언(오른쪽에서 왼쪽으로 계산)
 
 		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
 	}

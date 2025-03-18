@@ -27,8 +27,11 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
     void RenderPropertyWindow();
+	void RenderSceneManager();
 
 	void GetGridScaleFromIni();
+
+	void GetCameraStartSpeed();
 
 private:
 	// Mouse 전용

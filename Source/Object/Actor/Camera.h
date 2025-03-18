@@ -43,6 +43,8 @@ public:
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
+    void ResetRotation() { RootComponent->RelativeTransform.SetRotation(FVector(0, 0, 0)); }
+
     void SetFieldOfVew(float Fov);
     void SetViewportSize(float inViewprotSize);
     void SetFar(float Far);

@@ -20,7 +20,9 @@ public:
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
 private:
-    POINT GetMousePoint();
-
-
+    static POINT GetMousePoint();
+    UActorComponent* GetAcotrByPixelPicking(const POINT& pt);
+    void PickLocalGizmo(UActorComponent* actor);
+    void PickWorldGizmo();
+    bool SetSelectActor(const UActorComponent* actorComponent);
 };

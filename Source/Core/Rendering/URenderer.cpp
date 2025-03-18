@@ -222,6 +222,7 @@ void URenderer::CreateTexturesSamplers()
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
     CreateTextureSRVW(L"Textures/faker.PNG");
+    CreateTextureSRVW(L"Textures/earth.jpg");
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/

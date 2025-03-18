@@ -19,6 +19,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FMatrix GetBillboardMVPMat(URenderer*& Renderer);
+	FMatrix3 GetBillboardMVPMat3(URenderer*& Renderer);
 	static FMatrix GetBillboardMVPMatForText(URenderer*& Renderer, USceneComponent* RootComponent, float YOffset);
 	
 	bool GetIsUseBillboard() const { return IsUseBillboard; }
