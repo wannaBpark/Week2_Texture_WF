@@ -40,10 +40,10 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
     float3 color = bUseVertexColor ? g_texture0.Sample(g_sampler, float2(input.texcoord.x, 1 - input.texcoord.y)).rgb : CustomColor;
     
     float avg = (color.r + color.g + color.b) / 3.0f;
-    clip(avg < 0.1f ? -1 : 1); // png 투명 이미지 밝기 작은 값들 제거 
+    //clip(avg < 0.1f ? -1 : 1); // png 투명 이미지 밝기 작은 값들 제거 
     if (bIsPicked)
     {
-        float rim = (1.0 - dot(normalWorld, toEye));
+        float rim = (1.0 - max(0.0, dot(normalWorld, toEye)));
         rim = smoothstep(0.0, 1.0, rim);
         rim = pow(abs(rim), 2.0f);
         color += rim * float4(1.0f, 1.0, 1.0, 1.0) * 1.f;

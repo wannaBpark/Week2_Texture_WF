@@ -163,7 +163,7 @@ void UPrimitiveComponent::UpdateLightConstantData(URenderer*& Renderer)
 	}
 	modelWorld.M[3][0] = modelWorld.M[3][1] = modelWorld.M[3][2] = 0;
 	modelWorld = modelWorld.Inverse();
-	FMatrix InvTranspose = FMatrix::Transpose(modelWorld);
+	FMatrix InvTranspose = FMatrix::Transpose(FMatrix::Transpose(modelWorld));
 	FLightConstants UpdateInfo{
 		.Model = FMatrix::Transpose(this->GetComponentTransformMatrix()),
 		.View = FMatrix::Transpose(Renderer->GetViewMatrix()),
