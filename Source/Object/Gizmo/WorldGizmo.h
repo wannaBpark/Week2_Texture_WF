@@ -13,5 +13,5 @@ public:
 
 private:
 	TArray<class UCylinderComp*> CylinderComponents;
-	TArray<AWorldText*> CharComponents;
+	//TArray<AWorldText*> CharComponents;
 };
