@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\FSceneManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\SubUVManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp" />
     <ClCompile Include="Source\Object\Actor\SubUV.cpp" />
@@ -289,6 +290,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\FSceneManager.h" />
     <ClInclude Include="Source\Core\Rendering\SubUVManager.h" />
     <ClInclude Include="Source\Core\Rendering\TextAtlasManager.h" />
     <ClInclude Include="Source\Object\Actor\SubUV.h" />
