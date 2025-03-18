@@ -30,7 +30,7 @@ AWorldGizmo::AWorldGizmo()
 
 	RootComponent = ZArrow;
 
-	AWorldText* ZText = UEngine::Get().GetWorld()->SpawnActor<AWorldText>();
+	/*AWorldText* ZText = UEngine::Get().GetWorld()->SpawnActor<AWorldText>();
 	ZText->GetRootComponent()->SetupAttachment(ZArrow);
 	ZText->SetCharComps("Z");
 	ZText->AddComponent<UBillboardUtilComponent>();
@@ -55,7 +55,7 @@ AWorldGizmo::AWorldGizmo()
 
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(&YText->CharComps[0]);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(&XText->CharComps[0]);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(&ZText->CharComps[0]);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(&ZText->CharComps[0]);*/
 }
 
 void AWorldGizmo::Tick(float DeltaTime)
