@@ -5,6 +5,7 @@
 #include "Core/Container/String.h"
 #include "Core/HAL/PlatformType.h"
 
+class UClass;
 
 // TODO: RTTI 구현하면 enable_shared_from_this 제거
 class UObject : public std::enable_shared_from_this<UObject>
@@ -23,9 +24,18 @@ public:
 	virtual ~UObject();
 
 public:
+	static UClass* GetClass();
+
+public:
 	FName GetFName() const noexcept { return Name; }
 	FString GetName() const { return GetFName().ToString(); }
 
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
+
+protected:
+	UClass* ClassType;
+	
+public:
+	bool IsA(UClass* OtherClass);
 };

@@ -3,9 +3,12 @@
 #include <Object/ActorComponent/Colliders/UBoxCollider.h>
 #include <Core/Engine.h>
 #include <Object/World/World.h>
+#include "Object/UClassManager.h"
 
 ACube::ACube()
 {
+	EquipUClass(ACube, ClassType);
+
 	bCanEverTick = true;
 
 	//UCubeComp* CubeComponent = AddComponent<UCubeComp>();
@@ -32,4 +35,9 @@ void ACube::Tick(float DeltaTime)
 const char* ACube::GetTypeName()
 {
 	return "Cube";
+}
+
+UClass* ACube::GetClass()
+{
+	return UClassManager::Get().GetClass<ACube>();
 }
