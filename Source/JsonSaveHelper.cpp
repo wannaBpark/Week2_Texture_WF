@@ -122,12 +122,12 @@ UAtlasInfo JsonSaveHelper::LoadAtlasInfo(std::string AtlasName)
     return AtlasInfo;
 }
 
-void JsonSaveHelper::SaveAtlasInfo(const UAtlasInfo& AtlasInfo)
+bool JsonSaveHelper::SaveAtlasInfo(const UAtlasInfo& AtlasInfo)
 {
     if (AtlasInfo.AtlasName.empty()) 
     {
         UE_LOG("AtlasName EMPTY! Can't SaveAtlasInfo");
-        return;
+        return false;
     }
 
     JSON Json;
@@ -147,4 +147,6 @@ void JsonSaveHelper::SaveAtlasInfo(const UAtlasInfo& AtlasInfo)
     {
         Output << Json;
     }
+
+    return true;
 }

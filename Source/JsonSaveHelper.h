@@ -42,5 +42,5 @@ public:
     static void SaveScene(const UWorldInfo& WorldInfo);
 
     static UAtlasInfo LoadAtlasInfo(std::string AtlasName);
-    static void SaveAtlasInfo(const UAtlasInfo& AtlasInfo);
+    static bool SaveAtlasInfo(const UAtlasInfo& AtlasInfo);
 };
