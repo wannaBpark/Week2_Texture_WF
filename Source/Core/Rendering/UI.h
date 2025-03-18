@@ -27,6 +27,7 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
     void RenderPropertyWindow();
+	void RenderSceneManager();
 
 	void GetGridScaleFromIni();
 

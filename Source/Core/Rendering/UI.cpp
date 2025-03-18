@@ -86,7 +86,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
-
+    RenderSceneManager();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
     // ImGui 렌더링
@@ -478,6 +478,13 @@ void UI::RenderPropertyWindow()
     ImGui::End();
 }
 
+void UI::RenderSceneManager()
+{
+    ImGui::Begin("SceneManager");
+
+    ImGui::End();
+}
+
 void UI::GetGridScaleFromIni()
 {
     // Grid Scale 값을 editor.ini 파일에서 읽어옴
@@ -497,3 +504,5 @@ void UI::GetCameraStartSpeed()
     ACamera* Camera = FEditorManager::Get().GetCamera();
     Camera->CameraSpeed = std::stof(buffer.data());
 }
+
+
