@@ -15,6 +15,4 @@ public:
 private:
     USubUVComponent* SubUVComponent;
 
-public:
-    static UClass* GetClass();
 };

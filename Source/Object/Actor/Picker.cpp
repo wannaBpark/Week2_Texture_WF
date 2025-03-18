@@ -11,11 +11,9 @@
 
 #include "../URaycastSystem.h"
 
-#include "Object/UClassManager.h"
 
 APicker::APicker()
 {   
-    EquipUClass(APicker, ClassType);
 
     bIsGizmo = true;
 }
@@ -193,7 +191,3 @@ POINT APicker::GetMousePoint()
     return pt;
 }
 
-UClass* APicker::GetClass()
-{
-    return UClassManager::Get().GetClass<APicker>();
-}

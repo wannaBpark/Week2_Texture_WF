@@ -6,11 +6,9 @@
 #include <Object/World/World.h>
 #include "../EEnum.h"
 
-#include "Object/UClassManager.h"
 
 ACylinder::ACylinder()
 {
-    EquipUClass(ACylinder, ClassType);
 
     bCanEverTick = true;
 
@@ -46,7 +44,3 @@ const char* ACylinder::GetTypeName()
     return "Cylinder";
 }
 
-UClass* ACylinder::GetClass()
-{
-    return UClassManager::Get().GetClass<ACylinder>();
-}

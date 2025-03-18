@@ -6,11 +6,9 @@
 #include <Object/World/World.h>
 #include <../EEnum.h>
 
-#include "Object/UClassManager.h"
 
 ACone::ACone()
 {
-    EquipUClass(ACone, ClassType);
 
     bCanEverTick = true;
 
@@ -46,7 +44,3 @@ const char* ACone::GetTypeName()
     return "Cone";
 }
 
-UClass* ACone::GetClass()
-{
-    return UClassManager::Get().GetClass<ACone>();
-}

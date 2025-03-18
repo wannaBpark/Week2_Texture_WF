@@ -5,11 +5,8 @@
 #include "Debug/DebugConsole.h"
 
 
-#include "Object/UClassManager.h"
-
 ASubUV::ASubUV()
 {
-	EquipUClass(ASubUV, ClassType);
 
 	bCanEverTick = true;
 	SubUVComponent = AddComponent<USubUVComponent>();
@@ -37,10 +34,6 @@ void ASubUV::SetFrame(int32 frame)
 	SubUVComponent->SetFrame(frame);
 }
 
-UClass* ASubUV::GetClass()
-{
-	return UClassManager::Get().GetClass<ASubUV>();
-}
 
 
 

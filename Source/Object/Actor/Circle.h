@@ -11,8 +11,6 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
 
-public:
-    static UClass* GetClass();
 
 };
 

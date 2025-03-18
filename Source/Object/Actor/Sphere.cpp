@@ -3,11 +3,9 @@
 #include <Object/ActorComponent/Colliders/UBoxCollider.h>
 #include <Core/Engine.h>
 #include <Object/World/World.h>
-#include "Object/UClassManager.h"
 
 ASphere::ASphere()
 {
-	EquipUClass(ASphere, ClassType);
 
 	bCanEverTick = true;
 
@@ -36,7 +34,3 @@ const char* ASphere::GetTypeName()
 	return "Sphere";
 }
 
-UClass* ASphere::GetClass()
-{
-	return UClassManager::Get().GetClass<ASphere>();
-}

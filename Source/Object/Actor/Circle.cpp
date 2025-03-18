@@ -2,11 +2,9 @@
 
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
-#include "Object/UClassManager.h"
 
 ACircle::ACircle()
 {
-    EquipUClass(ACircle, ClassType);
 
     bCanEverTick = true;
 
@@ -31,7 +29,3 @@ const char* ACircle::GetTypeName()
     return "Circle";
 }
 
-UClass* ACircle::GetClass()
-{
-    return UClassManager::Get().GetClass<ACircle>();
-}

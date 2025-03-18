@@ -3,11 +3,9 @@
 #include "Core/Rendering/URenderer.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
-#include "Object/UClassManager.h"
 
 ACamera::ACamera()
 {
-    EquipUClass(ACamera, ClassType);
 
     bIsGizmo = true;
     
@@ -24,10 +22,6 @@ ACamera::ACamera()
     SetActorTransform(StartPos);
 }
 
-UClass* ACamera::GetClass()
-{
-    return UClassManager::Get().GetClass<ACamera>();
-}
 
 void ACamera::SetFieldOfVew(float Fov)
 {

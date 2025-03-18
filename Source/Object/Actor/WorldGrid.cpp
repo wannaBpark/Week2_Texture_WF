@@ -1,12 +1,10 @@
 #include "Object/Actor/WorldGrid.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
-#include "Object/UClassManager.h"
 
 
 AWorldGrid::AWorldGrid()
 {
-	EquipUClass(AWorldGrid, ClassType);
 
 	bCanEverTick = true;
 
@@ -31,7 +29,3 @@ const char* AWorldGrid::GetTypeName()
 	return "WorldGrid";
 }
 
-UClass* AWorldGrid::GetClass()
-{
-	return UClassManager::Get().GetClass<AWorldGrid>();
-}

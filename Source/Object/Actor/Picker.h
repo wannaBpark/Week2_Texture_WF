@@ -18,7 +18,5 @@ public:
 private:
     POINT GetMousePoint();
 
-public:
-    static UClass* GetClass();
 
 };

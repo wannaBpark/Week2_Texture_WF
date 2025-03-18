@@ -6,11 +6,9 @@
 
 #include "Debug/DebugConsole.h"
 
-#include "Object/UClassManager.h"
 
 AWorldText::AWorldText()
 {
-	EquipUClass(AWorldText, ClassType);
 
 	bCanEverTick = true;
 
@@ -117,7 +115,3 @@ void AWorldText::SetUseBillboardUtil(bool bUse)
 	}
 }
 
-UClass* AWorldText::GetClass()
-{
-	return UClassManager::Get().GetClass<AWorldText>();
-}

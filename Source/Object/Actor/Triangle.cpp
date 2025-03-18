@@ -1,11 +1,9 @@
 #include "Object/Actor/Triangle.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
-#include "Object/UClassManager.h"
 
 ATriangle::ATriangle()
 {
-	EquipUClass(ATriangle, ClassType);
 
 	bCanEverTick = true;
 
@@ -30,7 +28,3 @@ const char* ATriangle::GetTypeName()
 	return "Triangle";
 }
 
-UClass* ATriangle::GetClass()
-{
-	return UClassManager::Get().GetClass<ATriangle>();
-}

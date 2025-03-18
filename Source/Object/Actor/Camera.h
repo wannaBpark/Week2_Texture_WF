@@ -23,8 +23,6 @@ class ACamera : public AActor
 public:
     ACamera();
 
-public:
-    static UClass* GetClass();
 
 private:    
     float Near;
