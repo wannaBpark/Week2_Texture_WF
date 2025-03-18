@@ -5,6 +5,7 @@
 #include "Debug/DebugConsole.h"
 #include "Core/HAL//StackAllocator.h"
 #include "Object/UClass.h"
+#include "Core/Container/String.h"
 
 class UObject;
 
@@ -34,9 +35,11 @@ public:
 			FPlatformMemory::DecrementObjectStats(ObjectSize);          // 스탯 감소 함수 호출
 			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
+        static uint32 instanceID = 0;
         NewObject->UUID = UEngineStatics::GenUUID();
         UClass* ClassInfo = T::StaticClass();
-        NewObject->Name = ClassInfo->GetName();
+        NewObject->Name = ClassInfo->GetName() + "_" + FString::FromInt(instanceID++);
+        UE_LOG("%s ", NewObject->Name.ToString());
         NewObject->ClassType = ClassInfo;
         ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
         // s 
