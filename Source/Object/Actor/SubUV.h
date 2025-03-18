@@ -1,10 +1,13 @@
 #pragma once
 #include "Actor.h"
 #include "Core/Container/Array.h"
+#include "Object/ObjectMacro.h"
+
 
 class ASubUV : public AActor
 {
     using Super = AActor;
+    DECLARE_CLASS(ASubUV, Super)
 public:
     ASubUV();
     virtual ~ASubUV() = default;

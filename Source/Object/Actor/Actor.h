@@ -14,6 +14,7 @@ class UBoxCollider;
 
 class AActor : public UObject
 {
+	DECLARE_CLASS(AActor, UObject)
 
 	friend class FEditorManager;
 public:

@@ -1,9 +1,11 @@
 #pragma once
 #include "Object/Actor/Actor.h"
+#include "Object/ObjectMacro.h"
 
 class ATriangle : public AActor
 {
     using Super = AActor;
+    DECLARE_CLASS(ATriangle, Super)
 public:
     ATriangle();
     virtual ~ATriangle() = default;

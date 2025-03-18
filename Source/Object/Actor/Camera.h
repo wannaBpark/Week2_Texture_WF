@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector.h"
 #include "Object/Actor/Actor.h"
+#include "Object/ObjectMacro.h"
 
 namespace ECameraProjectionMode
 {
@@ -19,7 +20,8 @@ class ACamera : public AActor
 {
 
     using Super = AActor;
-    
+    DECLARE_CLASS(ACamera, Super)
+
 public:
     ACamera();
 

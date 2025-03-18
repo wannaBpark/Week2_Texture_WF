@@ -1,8 +1,11 @@
 #pragma once
 #include "Actor.h"
+#include "Object/ObjectMacro.h"
+
 class ABillBoard : public AActor
 {
 	using Super = AActor;
+	DECLARE_CLASS(ABillBoard, Super)
 public:
 	ABillBoard();
 	virtual ~ABillBoard() = default;

@@ -2,12 +2,15 @@
 #include "Actor.h"
 #include "Core/Container/Array.h"
 #include <string>
+#include "Object/ObjectMacro.h"
+
 
 class UWorldTextComponent;
 
 class AWorldText : public AActor
 {
     using Super = AActor;
+    DECLARE_CLASS(AWorldText, Super)
 public:
     AWorldText();
     virtual ~AWorldText() = default;

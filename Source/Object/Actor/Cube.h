@@ -1,8 +1,13 @@
 #pragma once
 #include "Actor.h"
+#include "Object/ObjectMacro.h"
+
 class ACube : public AActor
 {
 	using Super = AActor;
+	DECLARE_CLASS(ACube, Super)
+
+
 public:
 	ACube();
 	virtual ~ACube() = default;
