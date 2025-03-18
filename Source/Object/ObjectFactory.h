@@ -4,6 +4,8 @@
 #include "Core/HAL/PlatformMemory.h"
 #include "Debug/DebugConsole.h"
 #include "Core/HAL//StackAllocator.h"
+#include "Object/UClass.h"
+
 class UObject;
 
 class FObjectFactory
@@ -33,7 +35,9 @@ public:
 			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
         NewObject->UUID = UEngineStatics::GenUUID();
-        
+        UClass* ClassInfo = T::StaticClass();
+        NewObject->Name = ClassInfo->GetName();
+        NewObject->ClassType = ClassInfo;
         ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
         // s 
         // NewObject->Name = #Object + " " + FString::FromInt(NewObject->UUID);
