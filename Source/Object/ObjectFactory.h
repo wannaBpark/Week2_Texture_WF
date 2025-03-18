@@ -38,8 +38,9 @@ public:
         static uint32 instanceID = 0;
         NewObject->UUID = UEngineStatics::GenUUID();
         UClass* ClassInfo = T::StaticClass();
-        NewObject->Name = ClassInfo->GetName() + "_" + FString::FromInt(instanceID++);
-        UE_LOG("%s ", NewObject->Name.ToString());
+        NewObject->Name = FName(ClassInfo->GetName() + "_" + FString::FromInt(instanceID++));
+        auto tmp = NewObject->Name.ToString();
+        UE_LOG("%s ", *tmp);
         NewObject->ClassType = ClassInfo;
         ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
         // s 
