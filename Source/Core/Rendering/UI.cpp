@@ -26,6 +26,8 @@
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 
+#include "JsonSaveHelper.h"
+
 #define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
 
@@ -130,6 +132,8 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+
+    RenderAtlasData();
     
     ImGui::End();
 }
@@ -371,6 +375,58 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+}
+
+void UI::RenderAtlasData() 
+{
+    ImGui::Separator();
+    ImGui::Text("Atlas Data");
+    ImGui::Text("Add Atlas Data");
+
+    ImGui::InputText("AtlasName", AtlasName, sizeof(AtlasName));
+    
+    ImGui::PushItemWidth(75);
+    ImGui::DragInt("ColNum", &ColNum);
+    ImGui::SameLine(0, 37);
+    ImGui::DragInt("RowNum", &RowNum);
+    ImGui::DragInt("AtlasWidth", &AtlasWidth);
+    ImGui::SameLine();
+    ImGui::DragInt("AtlasHeight", &AtlasHeight);
+    ImGui::DragInt("TextureIndex", &TextureIndex);
+    ImGui::DragInt("TotalFrame", &TotalFrame);
+
+    if (ImGui::Button("Make New Atlas Data")) 
+    {
+        UAtlasInfo AtlasInfo = UAtlasInfo();
+        AtlasInfo.AtlasName = AtlasName;
+        AtlasInfo.ColNum = ColNum;
+        AtlasInfo.RowNum = RowNum;
+        AtlasInfo.AtlasWidth = AtlasWidth;
+        AtlasInfo.AtlasHeight = AtlasHeight;
+        AtlasInfo.TextureIndex = TextureIndex;
+        AtlasInfo.TotalFrame = TotalFrame;
+
+        if (JsonSaveHelper::SaveAtlasInfo(AtlasInfo)) 
+        {
+            AtlasSaveCondition = 1;
+        }
+        else 
+        {
+            AtlasSaveCondition = -1;
+        }
+        
+    }
+
+    if (AtlasSaveCondition == 1)
+    {
+        ImGui::SameLine();
+        ImGui::Text("Save Atlas Data Success!");
+    }
+    else if (AtlasSaveCondition == -1)
+    {
+        ImGui::SameLine();
+        ImGui::Text("Save Atlas Data Fail! Check AtlasName is Not Null");
+    }
 }
 
 void UI::RenderPropertyWindow()

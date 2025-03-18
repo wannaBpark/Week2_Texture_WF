@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include "ImGui/imgui.h"
 
-
 class AActor;
 class URenderer;
 
@@ -27,6 +26,8 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
     void RenderPropertyWindow();
+
+	void RenderAtlasData();
 
 	void GetGridScaleFromIni();
 
@@ -79,4 +80,15 @@ private:
 
 	ImVec2 PreRatio;
 	ImVec2 CurRatio;
+
+	// Atlas Data
+	char AtlasName[256] = "";
+	int ColNum;
+	int RowNum;
+	int AtlasWidth;
+	int AtlasHeight;
+	int TextureIndex;
+	int TotalFrame;
+
+	int AtlasSaveCondition = 0;
 };
