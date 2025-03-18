@@ -19,7 +19,6 @@ public:
     static T* ConstructObject()
     {
         UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
-
         constexpr size_t ObjectSize = sizeof(T);
         //void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);            // 기존 할당 방식 : 생성시마다 malloc
         //void* RawMemory = (void*)FPlatformMemory::Malloc<T, EAT_Object>(ObjectSize);    // StackAllocator : 이미 malloc 완료, 일부분을 떼어줌
@@ -36,7 +35,7 @@ public:
         NewObject->UUID = UEngineStatics::GenUUID();
         
         ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
-        // static uint32 id = 0;
+        // s 
         // NewObject->Name = #Object + " " + FString::FromInt(NewObject->UUID);
 
         // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
