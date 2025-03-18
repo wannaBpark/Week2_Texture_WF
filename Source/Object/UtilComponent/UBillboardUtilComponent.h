@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Object/USceneComponent.h"
+#include "Object/ObjectMacro.h"
 
 struct FMatrix;
 
 class UBillboardUtilComponent : public USceneComponent
 {
+	DECLARE_CLASS(UBillboardUtilComponent, USceneComponent)
 	using Super = USceneComponent;
 
 public:

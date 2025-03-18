@@ -4,8 +4,9 @@
 
 class ABillBoard : public AActor
 {
+	DECLARE_CLASS(ABillBoard, AActor)
 	using Super = AActor;
-	DECLARE_CLASS(ABillBoard, Super)
+	
 public:
 	ABillBoard();
 	virtual ~ABillBoard() = default;

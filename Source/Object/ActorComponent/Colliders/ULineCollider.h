@@ -1,9 +1,12 @@
-﻿#pragma once
+#pragma once
 #include "ICollider.h"
 #include "Object/ActorComponent/Colliders/CollisionSystem.h";
+#include "Object/ObjectMacro.h"
 
 class ULineCollider : public ICollider
 {
+	DECLARE_CLASS(ULineCollider, ICollider)
+
 public:
 	inline FVector GetStart() const { return start; }
 	inline FVector GetEnd() const { return end; }

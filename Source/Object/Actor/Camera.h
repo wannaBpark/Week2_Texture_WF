@@ -18,9 +18,9 @@ namespace ECameraProjectionMode
 
 class ACamera : public AActor
 {
-
+    DECLARE_CLASS(ACamera, AActor)
     using Super = AActor;
-    DECLARE_CLASS(ACamera, Super)
+    
 
 public:
     ACamera();

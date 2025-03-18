@@ -5,8 +5,9 @@
 
 class AWorldGrid : public AActor
 {
+	DECLARE_CLASS(AWorldGrid, AActor)
 	using Super = AActor;
-	DECLARE_CLASS(AWorldGrid, Super)
+	
 public:
 	AWorldGrid();
 	virtual ~AWorldGrid() = default;

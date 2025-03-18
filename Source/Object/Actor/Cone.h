@@ -5,8 +5,8 @@
 
 class ACone : public AActor
 {
+    DECLARE_CLASS(ACone, AActor)
     using Super = AActor;
-    DECLARE_CLASS(ACone, Super)
 
 public:
     ACone();

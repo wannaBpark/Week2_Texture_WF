@@ -4,8 +4,9 @@
 
 class ATriangle : public AActor
 {
+    DECLARE_CLASS(ATriangle, AActor)
     using Super = AActor;
-    DECLARE_CLASS(ATriangle, Super)
+    
 public:
     ATriangle();
     virtual ~ATriangle() = default;

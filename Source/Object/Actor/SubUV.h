@@ -6,8 +6,9 @@
 
 class ASubUV : public AActor
 {
+    DECLARE_CLASS(ASubUV, AActor)
     using Super = AActor;
-    DECLARE_CLASS(ASubUV, Super)
+    
 public:
     ASubUV();
     virtual ~ASubUV() = default;

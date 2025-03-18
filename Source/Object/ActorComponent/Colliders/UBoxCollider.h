@@ -1,9 +1,12 @@
 #pragma once
 #include "ICollider.h"
 #include "Object/ActorComponent/Colliders/CollisionSystem.h";
+#include "Object/ObjectMacro.h"
 
 class UBoxCollider : public ICollider
 {
+	DECLARE_CLASS(UBoxCollider, ICollider)
+
 public:
 
 	bool CheckCollision(const ICollider& other) const override {

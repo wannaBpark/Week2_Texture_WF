@@ -4,8 +4,9 @@
 
 class ACircle : public AActor
 {
+    DECLARE_CLASS(ACircle, AActor)
     using Super = AActor;
-    DECLARE_CLASS(ACircle, Super)
+    
 public:
     ACircle();
     virtual ~ACircle() = default;

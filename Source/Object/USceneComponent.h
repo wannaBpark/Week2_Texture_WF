@@ -5,9 +5,12 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Matrix.h"
 #include "Object/ActorComponent/ActorComponent.h"
+#include "Object/ObjectMacro.h"
 
 class USceneComponent : public UActorComponent
 {
+	DECLARE_CLASS(USceneComponent, UActorComponent)
+
 	friend class AActor;
 	using Super = UActorComponent;
 public:

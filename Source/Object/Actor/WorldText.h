@@ -9,8 +9,9 @@ class UWorldTextComponent;
 
 class AWorldText : public AActor
 {
+    DECLARE_CLASS(AWorldText, AActor)
     using Super = AActor;
-    DECLARE_CLASS(AWorldText, Super)
+    
 public:
     AWorldText();
     virtual ~AWorldText() = default;

@@ -4,10 +4,9 @@
 
 class ASphere : public AActor
 {
+	DECLARE_CLASS(ASphere, AActor)
 	using Super = AActor;
 public:
-	DECLARE_CLASS(ASphere, AActor)
-
 	ASphere();
 	virtual ~ASphere() = default;
 	virtual void BeginPlay() override;

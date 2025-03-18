@@ -4,8 +4,8 @@
 
 class AArrow : public AActor
 {
+	DECLARE_CLASS(AArrow, AActor)
 	using Super = AActor;
-	DECLARE_CLASS(AArrow, Super)
 
 public:
 	AArrow();

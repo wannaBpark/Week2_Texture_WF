@@ -4,8 +4,9 @@
 
 class ACube : public AActor
 {
+	DECLARE_CLASS(ACube, AActor)
 	using Super = AActor;
-	DECLARE_CLASS(ACube, Super)
+	
 
 
 public:
