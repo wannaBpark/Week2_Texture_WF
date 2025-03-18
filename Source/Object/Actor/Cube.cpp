@@ -4,6 +4,7 @@
 #include <Core/Engine.h>
 #include <Object/World/World.h>
 #include "Object/UClassManager.h"
+#include <../EEnum.h>
 
 ACube::ACube()
 {
@@ -18,6 +19,11 @@ ACube::ACube()
 	hitCollider = AddComponent<UBoxCollider>();
 	UEngine::Get().GetWorld()->AddColliderComponent(hitCollider);
 	hitCollider->SetupAttachment(RootComponent);
+	
+	FHitColliderInfo hitInfo = UEngine::Get().GetRenderer()->HitColliderInfoMap[EPrimitiveType::EPT_Cone];
+
+	//hitCollider->RelativeTransform.SetScale(FVector(hitInfo.maxX - hitInfo.minX, hitInfo.maxY - hitInfo.minY, hitInfo.maxZ - hitInfo.minZ));
+	//hitCollider->RelativeTransform.SetPosition(FVector((hitInfo.minX + hitInfo.maxX) / 2, (hitInfo.minY + hitInfo.maxY) / 2, (hitInfo.minZ + hitInfo.maxZ) / 2));
 
 	CubeComponent->SetRelativeTransform(FTransform());
 }

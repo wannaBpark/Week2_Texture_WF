@@ -80,6 +80,8 @@ void AGizmoHandle::Tick(float DeltaTime)
 
 	AActor::Tick(DeltaTime);
 
+	SetPickGizmo((int32)SelectedAxis);
+
 	if (SelectedAxis != ESelectedAxis::None)
 	{
 		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
@@ -189,13 +191,25 @@ void AGizmoHandle::SetScaleByDistance()
 
 void AGizmoHandle::SetPickGizmo(int index)
 {
-	CylinderComponents[index+1]->SetIsPicked(true);
-	CylinderComponents[(index+1)%3]->SetIsPicked(false);
-	CylinderComponents[(index+2) % 3]->SetIsPicked(false);
-	CircleComponents[index]->SetIsPicked(true);
-	CircleComponents[(index + 1) % 3]->SetIsPicked(false);
-	CircleComponents[(index + 2) % 3]->SetIsPicked(false);
+	if (index == 0)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			CylinderComponents[i]->SetIsPicked(false);
+			CircleComponents[i]->SetIsPicked(false);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			CylinderComponents[i]->SetIsPicked(i == index%3);
+			CircleComponents[i]->SetIsPicked(i == index%3);
+		}
+	}
 }
+
+
 void AGizmoHandle::SetActive(bool bActive)
 {
 	bIsActive = bActive;
@@ -286,7 +300,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 			AT.AddScale({ 0, Result.Y * 0.1f, 0 });
 			break;
 		}
-		
+
 	}
 	else if (SelectedAxis == ESelectedAxis::Z)
 	{

@@ -1,7 +1,9 @@
 #include "BufferCache.h"
 #include "Core/Engine.h"
+#include "Core/Rendering/URenderer.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Rendering/ShaderParameterMacros.h"
+#include "../EEnum.h"
 
 FBufferCache::FBufferCache()
 {
@@ -194,11 +196,18 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 TArray<FVertexSimple> FBufferCache::CreateConeVertices()
 {
 	TArray<FVertexSimple> vertices;
+	FHitColliderInfo hitInfo;
 
 	int segments = 36;
 	float radius = 1.f;
 	float height = 1.f;
 
+	hitInfo.minX = -radius;
+	hitInfo.maxX = radius;
+	hitInfo.minY = -radius;
+	hitInfo.maxY = radius;
+	hitInfo.minZ = 0;
+	hitInfo.maxZ = height;
 
 	// 원뿔의 바닥
 	for (int i = 0; i < segments; ++i)
@@ -222,17 +231,26 @@ TArray<FVertexSimple> FBufferCache::CreateConeVertices()
         vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
 	}
 
+	UEngine::Get().GetRenderer()->HitColliderInfoMap.insert({ EPrimitiveType::EPT_Cone, hitInfo });
+
 	return vertices;
 }
 
 TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 {
 	TArray<FVertexSimple> vertices;
+	FHitColliderInfo hitInfo;
 	
 	int segments = 36;
 	float radius = .03f;
 	float height = .5f;
 
+	hitInfo.minX = -radius;
+	hitInfo.maxX = radius;
+	hitInfo.minY = -radius;
+	hitInfo.maxY = radius;
+	hitInfo.minZ = 0;
+	hitInfo.maxZ = height;
 
 	// 원기둥의 바닥과 윗면
 	for (int i = 0; i < segments; ++i)
@@ -264,6 +282,8 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 		vertices.Add({ x2, y2, height, 0.0f, 0.0f, 1.0f, 1.0f });
 		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
 	}
+
+	UEngine::Get().GetRenderer()->HitColliderInfoMap.insert({ EPrimitiveType::EPT_Cylinder, hitInfo });
 
 	return vertices;
 }
@@ -387,6 +407,7 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::CreateTriangleTexVertices()
 {
 	TArray<FPosColorNormalTex> Vertices;
+	FHitColliderInfo hitInfo;
 	std::vector<uint32> Indices;
 
 	float size = 0.5f; // 한 변의 길이
@@ -396,6 +417,13 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 	FVector v0 = { 0.0f,  height / 2.0f, 0.0f };
 	FVector v1 = { -size / 2.0f, -height / 2.0f, 0.0f };
 	FVector v2 = { size / 2.0f, -height / 2.0f, 0.0f };
+
+	hitInfo.minX = -size / 2.0f;
+	hitInfo.maxX = size / 2.0f;
+	hitInfo.minY = -height / 2.0f;
+	hitInfo.maxY = height / 2.0f;
+	hitInfo.minZ = -0.1f;
+	hitInfo.maxZ = 0.1f;
 
 	// front_normal - z+
 	FVector normalFront = { 0.0f, 0.0f, 1.0f };
@@ -424,6 +452,8 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32>> FBufferCache::Create
 
 
 	Indices.insert(Indices.end(), { i3, i4, i5 });
+
+	UEngine::Get().GetRenderer()->HitColliderInfoMap.insert({ EPrimitiveType::EPT_Triangle, hitInfo });
 
 	return { Vertices, Indices };
 }

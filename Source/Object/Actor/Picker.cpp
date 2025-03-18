@@ -143,9 +143,6 @@ void APicker::LateTick(float DeltaTime)
         FVector location = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
         FVector dir = UEngine::Get().GetRenderer()->GetRayDirectionFromClick(FVector(pt.x, pt.y, 0));
         URaycastSystem::RaycastAll(location, dir, 100, resultAll);
-        for (int i = 0; i < resultAll.Len(); i++) {
-            UE_LOG("result%d", resultAll[i].hitObject->GetUUID());
-        }
 
         if (resultAll.Len() != 0 && resultAll[0].bBlockingHit) {
             PickedComponent = dynamic_cast<UActorComponent*>(resultAll[0].hitObject);
