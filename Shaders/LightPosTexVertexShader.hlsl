@@ -23,6 +23,7 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 position : SV_POSITION; // Transformed position to pass to the pixel shader
+    float4 posWorld : POSITION;
     float4 color : COLOR; // Color to pass to the pixel shader
     float3 normal : NORMAL;
     float2 texcoord : TEXCOORD0;
@@ -36,6 +37,7 @@ PS_INPUT mainVS(VS_INPUT input)
     float4 position;
 
     position = mul(float4(input.position, 1.0f), Model);
+    output.posWorld = position;
     position = mul(position, View);
     position = mul(position, Projection);
     output.position = position;

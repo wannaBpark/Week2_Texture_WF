@@ -275,39 +275,39 @@ std::tuple<TArray<FPosColorNormalTex>, std::vector<uint32> > FBufferCache::Creat
 	std::vector<uint32> Indices;
 	
 	// Z- 앞면
-	Vertices.Add({ -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f , 0.0f, 0.0f, 1.0f, 0.0f, 0.0f });  // Bottom-left
-	Vertices.Add({ -0.5f, 0.5f,  -0.5f, 1.0f, 0.0f, 0.0f, 1.0f , 0.0f, 0.0f, 1.0f, 1.0f, 0.0f });   // Top-left (yellow)
-	Vertices.Add({ 0.5f,  0.5f,  -0.5f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f });  // Top-right (blue))
-	Vertices.Add({ 0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f });  // Bottom-right (green)
+	Vertices.Add({ -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f, 0.0f });  // Bottom-left
+	Vertices.Add({ -0.5f, 0.5f,  -0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 0.0f });   // Top-left (yellow)
+	Vertices.Add({ 0.5f,  0.5f,  -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f });  // Top-right (blue))
+	Vertices.Add({ 0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,  1.0f, 0.0f, 1.0f });  // Bottom-right (green)
 		// Back face (Z+)
-	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,-1.0f,0.0f, 0.0f});  // Bottom-left (cyan)
-	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,-1.0f,1.0f, 0.0f});  // Top-left (blue)
-	Vertices.Add({ -0.5f,  0.5f, 0.5f,  1.0f, 1.0f, 0.0f, 1.0f , 0.0f, 0.0f,-1.0f,1.0f, 1.0f});  // Top-right (yellow)
-	Vertices.Add({ -0.5f, -0.5f, 0.5f,  1.0f, 0.0f, 1.0f, 1.0f , 0.0f, 0.0f,-1.0f,0.0f, 1.0f});  // Bottom-right (magenta)
+	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  -1.0f,0.0f, 0.0f});  // Bottom-left (cyan)
+	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,  -1.0f,1.0f, 0.0f});  // Top-left (blue)
+	Vertices.Add({ -0.5f,  0.5f, 0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  -1.0f,1.0f, 1.0f});  // Top-right (yellow)
+	Vertices.Add({ -0.5f, -0.5f, 0.5f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,  -1.0f,0.0f, 1.0f});  // Bottom-right (magenta)
 
 		// Left face (X-)
-	Vertices.Add({ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 1.0f, -1.0f,0.0f, 0.0f,0.0f, 0.0f}); // Bottom-left (purple)
-	Vertices.Add({ -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f, -1.0f,0.0f, 0.0f,1.0f, 0.0f}); // Top-left (blue)
-	Vertices.Add({ -0.5f,  0.5f,  -0.5f,  1.0f, 1.0f, 0.0f, 1.0f, -1.0f,0.0f, 0.0f,1.0f, 1.0f}); // Top-right (yellow)
-	Vertices.Add({ -0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, 1.0f, -1.0f,0.0f, 0.0f,0.0f, 1.0f}); // Bottom-right (green)
+	Vertices.Add({ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  -1.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f}); // Bottom-left (purple)
+	Vertices.Add({ -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  -1.0f,0.0f, 0.0f, 0.0f,1.0f, 0.0f}); // Top-left (blue)
+	Vertices.Add({ -0.5f,  0.5f,  -0.5f,  1.0f, 1.0f, 0.0f, -1.0f,0.0f, 0.0f, 0.0f,1.0f, 1.0f}); // Top-right (yellow)
+	Vertices.Add({ -0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, -1.0f,0.0f, 0.0f, 0.0f,0.0f, 1.0f}); // Bottom-right (green)
 
 		// Right face (X+)
-	Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 0.0f});  // Bottom-left (orange)
-	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 0.0f});  // Top-left (purple)
-	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 1.0f});  // Top-right (dark blue)
-	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 1.0f});  // Bottom-right (gray)
+	Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f});  // Bottom-left (orange)
+	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f,	1.0f, 0.0f, 0.0f, 0.0f,1.0f, 0.0f});  // Top-left (purple)
+	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f,	1.0f, 0.0f, 0.0f, 0.0f,1.0f, 1.0f});  // Top-right (dark blue)
+	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f,	1.0f, 0.0f, 0.0f,0.0f,0.0f, 1.0f});  // Bottom-right (gray)
 																	  
 		// Top face (Y+)											  
-	Vertices.Add({ -0.5f, 0.5f, -0.5f,  0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f });  // Bottom-left (light green)
-	Vertices.Add({ -0.5f, 0.5f,  0.5f,  0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,1.0f, 0.0f});  // Top-left (cyan)
-	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.5f, 0.5f, 0.0f, 1.0f , 0.0f, 1.0f, 0.0f,1.0f, 1.0f});  // Top-right (brown)
-	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f , 0.0f, 1.0f, 0.0f,0.0f, 1.0f});  // Bottom-right (white)
+	Vertices.Add({ -0.5f, 0.5f, -0.5f,  0.0f, 1.0f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f });  // Bottom-left (light green)
+	Vertices.Add({ -0.5f, 0.5f,  0.5f,  0.0f, 0.5f, 1.0f,  0.0f, 1.0f, 0.0f, 0.0f,1.0f, 0.0f});  // Top-left (cyan)
+	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,1.0f, 1.0f});  // Top-right (brown)
+	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 0.0f,0.0f, 1.0f});  // Bottom-right (white)
 																	  
 		// Bottom face (Y-)											  
-	Vertices.Add({ 0.5f,  -0.5f, -0.5f,  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, -1.0f,0.0f,0.0f, 0.0f});  // Bottom-left (brown)
-	Vertices.Add({ 0.5f,  -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f,0.0f,1.0f, 0.0f});  // Top-left (red)
-	Vertices.Add({ -0.5f,  -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f , 0.0f, -1.0f,0.0f,1.0f, 1.0f});  // Top-right (green)
-	Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, 1.0f , 0.0f, -1.0f,0.0f,0.0f, 1.0f});  // Bottom-right (purple)
+	Vertices.Add({ 0.5f,  -0.5f, -0.5f,  0.5f, 0.5f, 0.0f, 0.0f, -1.0f,0.0f, 0.0f,0.0f, 0.0f});  // Bottom-left (brown)
+	Vertices.Add({ 0.5f,  -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, -1.0f,0.0f, 0.0f,1.0f, 0.0f});  // Top-left (red)
+	Vertices.Add({ -0.5f,  -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,0.0f, -1.0f,0.0f, 0.0f,1.0f, 1.0f});  // Top-right (green)
+	Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, 0.0f, -1.0f,0.0f, 0.0f,0.0f, 1.0f});  // Bottom-right (purple)
 
 	Indices = {
 		0,  1,  2,  0,  2,  3,  // 윗면
@@ -812,3 +812,51 @@ std::tuple<TArray<FVertexSimple>, std::vector<uint32>> FBufferCache::CreateWorld
 
 	return { Vertices, Indices };
 }
+
+
+
+
+
+
+
+
+
+
+
+#pragma region cube normal interpolated version
+// Z- 앞면
+//Vertices.Add({ -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  -1.0f , -1.0f,-1.0f, 1.0f, 0.0f, 0.0f });  // Bottom-left
+//Vertices.Add({ -0.5f, 0.5f,  -0.5f, 1.0f, 0.0f, 0.0f,  -1.0f , 1.0f,-1.0f, 1.0f, 1.0f, 0.0f });   // Top-left (yellow)
+//Vertices.Add({ 0.5f,  0.5f,  -0.5f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f,-1.0f, 1.0f, 1.0f, 1.0f });  // Top-right (blue))
+//Vertices.Add({ 0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, 1.0f,  -1.0f,-1.0f, 1.0f, 0.0f, 1.0f });  // Bottom-right (green)
+//// Back face (Z+)
+//Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  1.0f, -1.0f, 1.0f,  -1.0f,0.0f, 0.0f });  // Bottom-left (cyan)
+//Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  1.0f,  1.0f, 1.0f,  -1.0f,1.0f, 0.0f });  // Top-left (blue)
+//Vertices.Add({ -0.5f,  0.5f, 0.5f,  1.0f, 1.0f, 0.0f, -1.0f,  1.0f, 1.0f,  -1.0f,1.0f, 1.0f });  // Top-right (yellow)
+//Vertices.Add({ -0.5f, -0.5f, 0.5f,  1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f,  -1.0f,0.0f, 1.0f });  // Bottom-right (magenta)
+//
+//// Left face (X-)
+//Vertices.Add({ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  -1.0f, -1.0f, 1.0f, 0.0f,0.0f, 0.0f }); // Bottom-left (purple)
+//Vertices.Add({ -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  -1.0f, 1.0f, 1.0f , 0.0f,1.0f, 0.0f }); // Top-left (blue)
+//Vertices.Add({ -0.5f,  0.5f,  -0.5f,  1.0f, 1.0f, 0.0f, -1.0f , 1.0f,-1.0f, 0.0f,1.0f, 1.0f }); // Top-right (yellow)
+//Vertices.Add({ -0.5f, -0.5f,  -0.5f,  0.0f, 1.0f, 0.0f, -1.0f ,-1.0f,-1.0f, 0.0f,0.0f, 1.0f }); // Bottom-right (green)
+//
+//// Right face (X+)
+//Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f,	1.0f,  -1.0f,-1.0f, 0.0f,0.0f, 0.0f });  // Bottom-left (orange)
+//Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f,	1.0f,  1.0f,-1.0f,  0.0f,1.0f, 0.0f });  // Top-left (purple)
+//Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f,	1.0f,  1.0f, 1.0f,  0.0f,1.0f, 1.0f });  // Top-right (dark blue)
+//Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f,	1.0f, -1.0f, 1.0f,	0.0f,0.0f, 1.0f });  // Bottom-right (gray)
+//
+//// Top face (Y+)											  
+//Vertices.Add({ -0.5f, 0.5f, -0.5f,  0.0f, 1.0f, 0.5f,  -1.0f , 1.0f,-1.0f, 0.0f, 0.0f, 0.0f });  // Bottom-left (light green)
+//Vertices.Add({ -0.5f, 0.5f,  0.5f,  0.0f, 0.5f, 1.0f,  -1.0f, 1.0f,  1.0f, 0.0f,1.0f, 0.0f });  // Top-left (cyan)
+//Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f,1.0f, 1.0f });  // Top-right (brown)
+//Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 1.0f, 1.0f,  1.0f,  1.0f,-1.0f,  0.0f,0.0f, 1.0f });  // Bottom-right (white)
+//
+//// Bottom face (Y-)											  
+//Vertices.Add({ 0.5f,  -0.5f, -0.5f,  0.5f, 0.5f, 0.0f,  1.0f, -1.0f,-1.0f, 0.0f,0.0f, 0.0f });  // Bottom-left (brown)
+//Vertices.Add({ 0.5f,  -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f, -1.0f, 1.0f, 0.0f,1.0f, 0.0f });  // Top-left (red)
+//Vertices.Add({ -0.5f,  -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,-1.0f, -1.0f, 1.0f, 0.0f,1.0f, 1.0f });  // Top-right (green)
+//Vertices.Add({ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, -1.0f, -1.0f,-1.0f, 0.0f,0.0f, 1.0f });  // Bottom-right (purple)
+
+#pragma endregion

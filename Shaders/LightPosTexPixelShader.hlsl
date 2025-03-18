@@ -19,6 +19,7 @@ cbuffer constants : register(b0)
 struct PS_INPUT
 {
     float4 position : SV_POSITION; // Transformed position to pass to the pixel shader
+    float4 posWorld : POSITION;
     float4 color : COLOR; // Color to pass to the pixel shader
     float3 normal : NORMAL;
     float2 texcoord : TEXCOORD;
@@ -34,17 +35,22 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
 {
     PS_OUTPUT output;
     
-    //output.normal = input.normal;
-    //output.texcoord = input.texcoord;
+    float3 normalWorld = normalize(input.normal);
+    float3 toEye = normalize(eyeWorldPos - input.posWorld.xyz);    
     float3 color = bUseVertexColor ? g_texture0.Sample(g_sampler, float2(input.texcoord.x, 1 - input.texcoord.y)).rgb : CustomColor;
     
     float avg = (color.r + color.g + color.b) / 3.0f;
     clip(avg < 0.1f ? -1 : 1); // png 투명 이미지 밝기 작은 값들 제거 
     if (bIsPicked)
     {
-        color *= 0.5;
+        float rim = (1.0 - dot(normalWorld, toEye));
+        rim = smoothstep(0.0, 1.0, rim);
+        rim = pow(abs(rim), 2.0f);
+        color += rim * float4(1.0f, 0.0, 0.0, 1.0) * 10.0f;
+        //color *= 0.5;
     }
-    output.color = float4(color, 1.0f) * float4(input.normal, 1.0f);
+    output.color = float4(color, 1.0f);
+    
     output.UUID = indexColor;
 
     return output;
