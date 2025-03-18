@@ -26,6 +26,7 @@ public:
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render();
 	virtual void UpdateConstantData(URenderer*& Renderer);
+	virtual void UpdateLightConstantData(URenderer*& Renderer);
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
@@ -65,7 +66,7 @@ protected:
 public:
 	FRenderResource RenderResource;
 	FConstants ConstantData;
-
+	FLightConstants LightConstantData;
 public:
 	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
 	virtual void SetUseBillboardUtil(bool bUse);
@@ -81,12 +82,6 @@ class UCubeComp : public UPrimitiveComponent
 public:
 	UCubeComp()
 	{
-		/*bCanBeRendered = true;
-		RenderResource.PrimitiveType = GetType();
-		RenderResource.Stride = sizeof(FPosColor);*/
-		// shader 관련 index 지정 필요
-		//
-
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
@@ -94,6 +89,11 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		/*RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
+		RenderResource.bUseIndexBuffer = true;*/
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 	}
 	virtual ~UCubeComp() = default;
@@ -114,8 +114,13 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
+		/*RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;*/
+		RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
@@ -125,6 +130,10 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_SphereTex;
+	}
+	void UpdateConstantData(URenderer*& Renderer) override
+	{
+		Super::UpdateLightConstantData(Renderer);
 	}
 };
 
@@ -138,8 +147,13 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
+		/*RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;*/
+		RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
 		//RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 	}
@@ -147,6 +161,10 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_TriangleTex;
+	}
+	void UpdateConstantData(URenderer*& Renderer) override
+	{
+		Super::UpdateLightConstantData(Renderer);
 	}
 };
 
@@ -184,6 +202,11 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
+		/*RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
+		RenderResource.bUseIndexBuffer = true;*/
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
@@ -192,8 +215,11 @@ public:
 	{
 		return EPrimitiveType::EPT_CylinderTex;
 	}
+	/*void UpdateConstantData(URenderer*& Renderer) override
+	{
+		Super::UpdateLightConstantData(Renderer);
+	}*/
 };
-
 
 class UConeComp : public UPrimitiveComponent
 {
@@ -205,8 +231,13 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
+		/*RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;*/
+		RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
@@ -215,6 +246,10 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_ConeTex;
+	}
+	void UpdateConstantData(URenderer*& Renderer) override
+	{
+		Super::UpdateLightConstantData(Renderer);
 	}
 };
 
@@ -228,9 +263,15 @@ public:
 		RenderResource.PrimitiveType = GetType();
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
-		RenderResource.VertexShaderIndex = 1;
+		/*RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
+		RenderResource.bUseIndexBuffer = true;*/
+		RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
+
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
@@ -238,6 +279,10 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_CircleTex;
+	}
+	void UpdateConstantData(URenderer*& Renderer) override
+	{
+		Super::UpdateLightConstantData(Renderer);
 	}
 };
 

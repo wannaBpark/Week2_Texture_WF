@@ -38,6 +38,13 @@ struct FPosColorNormalTex
     float U, V;       // Texcoord
 };
 
+struct FMatrix3
+{
+    FMatrix Model;
+    FMatrix View;
+    FMatrix Projection;
+};
+
 enum class InputLayoutType
 {
     POSCOLOR,
@@ -79,4 +86,17 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(ConstantUpdateInfo)
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FAtlasConstants)
     SHADER_PARAMETER(FMatrix, WorldPosition)
     SHADER_PARAMETER(FVector4, AtlasSzOffset)
+END_GLOBAL_SHADER_PARAMETER_STRUCT()
+
+BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FLightConstants)
+    SHADER_PARAMETER(FMatrix, Model)
+    SHADER_PARAMETER(FMatrix, View)
+    SHADER_PARAMETER(FMatrix, Projection)
+    SHADER_PARAMETER(FMatrix, InvTranspose)
+    SHADER_PARAMETER(FVector4, Color)
+    SHADER_PARAMETER(uint32, bUseVertexColor)
+    SHADER_PARAMETER(FVector, eyeWorldPos)
+    SHADER_PARAMETER(FVector4, indexColor)
+    SHADER_PARAMETER(uint32, bIsPicked)
+    SHADER_PARAMETER(FVector, Padding)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()

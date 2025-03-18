@@ -30,6 +30,8 @@ public:// UIWindows
 
 	void GetGridScaleFromIni();
 
+	void GetCameraStartSpeed();
+
 private:
 	// Mouse 전용
 	ImVec2 ResizeToScreenByCurrentRatio(const ImVec2& vec2) const
