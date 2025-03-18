@@ -331,6 +331,7 @@
     <ClInclude Include="Source\Object\Actor\WorldText.h" />
     <ClInclude Include="Source\Object\NameTypes.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\ObjectMacro.h" />
     <ClInclude Include="Source\Object\UClass.h" />
     <ClInclude Include="Source\Object\UClassManager.h" />
     <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />

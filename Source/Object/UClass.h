@@ -1,20 +1,37 @@
 #pragma once
 #include <string>
+#include "Object/UObject.h"
 
-class UClass {
+
+class UClass : public UObject
+{ 
 public:
 	UClass() = delete;
-	UClass(std::string InName, UClass* InParentClass);
+	UClass(const char* InName, UClass* InParentClass);
 	~UClass();
 
-	std::string GetName() const { return Name; }
 	UClass* GetParentClass() const { return ParentClass; }
 
 private:
-	std::string Name;
 	UClass* ParentClass;
 
 public:
-	bool IsA(UClass* OtherClass);
+	bool IsChildOf(const UClass* OtherClass) const;
 
+	template <typename T>
+		requires std::derived_from<T, UObject>
+	bool IsChildOf() const {
+		return IsA(T::StaticClass()):
+	}
+
+};
+
+struct UClassDeleter
+{
+	void operator()(UClass* ClassPtr) const
+	{
+		ClassPtr->~UClass();
+		FPlatformMemory::DecrementObjectStats(sizeof(UClass));
+		StackAllocator::GetInstance().deleteNode(ClassPtr);
+	}
 };
