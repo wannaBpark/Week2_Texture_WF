@@ -12,6 +12,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include "Object/Gizmo/WorldGizmo.h"
+#include "Core/FSceneManager.h"
 
 
 class AArrow;
@@ -229,6 +230,8 @@ void UEngine::InitRenderer()
 void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
+    World->SceneName = "MainScene";
+    //FSceneManager::Get().AddScene(World);
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
 

@@ -1,16 +1,16 @@
 #pragma once
 #include "unordered_map"
 #include "Core/AbstractClass/Singleton.h"
-#include "Object/World/World.h"
 #include "../EEnum.h"
+#include "Core/HAL/PlatformType.h"
 
-
+class UWorld;
 class FSceneManager : public TSingleton<FSceneManager>
 {
 public:
-	std::unordered_map<FString, UWorld> worldMap;
-
+	void AddScene(UWorld* world);
 	void ToggleShowFlag(EShowFlag showFlag) { showFlagMasking ^= showFlag; }
 private:
-	uint32 showFlagMasking = 0xFFFFFFFF;
+	std::unordered_map<uint32, UWorld*> worldMap;
+	inline static uint32 showFlagMasking = 0xFFFFFFFF;
 };
