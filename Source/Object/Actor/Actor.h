@@ -7,13 +7,15 @@
 #include "Object/ObjectFactory.h"
 #include "Object/USceneComponent.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-
+#include "Object/ObjectMacro.h"
 
 class UWorld;
 class UBoxCollider;
 
 class AActor : public UObject
 {
+	DECLARE_CLASS(AActor, UObject)
+
 	friend class FEditorManager;
 public:
 	AActor();
@@ -28,9 +30,6 @@ public:
 	{
 		return Depth;
 	}
-
-public:
-	static UClass* GetClass();
 
 public:
 	virtual void BeginPlay();

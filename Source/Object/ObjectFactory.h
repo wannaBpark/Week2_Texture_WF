@@ -4,6 +4,9 @@
 #include "Core/HAL/PlatformMemory.h"
 #include "Debug/DebugConsole.h"
 #include "Core/HAL//StackAllocator.h"
+#include "Object/UClass.h"
+#include "Core/Container/String.h"
+
 class UObject;
 
 class FObjectFactory
@@ -32,8 +35,13 @@ public:
 			FPlatformMemory::DecrementObjectStats(ObjectSize);          // 스탯 감소 함수 호출
 			StackAllocator::GetInstance().deleteNode(Obj);              // 삭제 시 Stack Allocator 해당 메모리도 해제
         });
+        static uint32 instanceID = 0;
         NewObject->UUID = UEngineStatics::GenUUID();
-        
+        UClass* ClassInfo = T::StaticClass();
+        NewObject->Name = FName(ClassInfo->GetName() + "_" + FString::FromInt(instanceID++));
+        auto tmp = NewObject->Name.ToString();
+        UE_LOG("%s ", *tmp);
+        NewObject->ClassType = ClassInfo;
         ///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!! TODO : FName = 오브젝트 이름 + id 붙여 반영
         // s 
         // NewObject->Name = #Object + " " + FString::FromInt(NewObject->UUID);

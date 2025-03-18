@@ -1,8 +1,10 @@
 #include "Object/Actor/Triangle.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+
 ATriangle::ATriangle()
 {
+
 	bCanEverTick = true;
 
 	UTriangleComp* CubeComponent = AddComponent<UTriangleComp>();
@@ -25,3 +27,4 @@ const char* ATriangle::GetTypeName()
 {
 	return "Triangle";
 }
+

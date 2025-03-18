@@ -1,10 +1,11 @@
-﻿#include "String.h"
+#include "String.h"
+#include <algorithm>
 #include <cctype>
 
 #include "Core/Math/MathUtility.h"
 
 
-#if IS_WIDECHAR
+#if USE_WIDECHAR
 std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
 {
     const int Size = MultiByteToWideChar(CP_UTF8, 0, NarrowStr, -1, nullptr, 0);
@@ -14,21 +15,13 @@ std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
 }
 #endif
 
-FString FString::FromInt(int32 Num)
-{
-#if IS_WIDECHAR
-    return FString{std::to_wstring(Num)};
-#else
-    return FString{std::to_string(Num)};
-#endif
-}
 
 FString FString::SanitizeFloat(float InFloat)
 {
-#if IS_WIDECHAR
-    return FString{std::to_wstring(InFloat)};
+#if USE_WIDECHAR
+    return FString{ std::to_wstring(InFloat) };
 #else
-    return FString{std::to_string(InFloat)};
+    return FString{ std::to_string(InFloat) };
 #endif
 }
 
@@ -51,11 +44,15 @@ bool FString::Equals(const FString& Other, ESearchCase::Type SearchCase) const
     {
         if (SearchCase == ESearchCase::CaseSensitive)
         {
-            return TCString<TCHAR>::Strcmp(**this, *Other) == 0; 
+            return TCString<ElementType>::Strcmp(**this, *Other) == 0;
         }
         else
         {
-            return TCString<TCHAR>::Stricmp(**this, *Other) == 0;
+            return std::ranges::equal(
+                PrivateString, Other.PrivateString, [](char a, char b)
+                {
+                    return std::tolower(a) == std::tolower(b);
+                });
         }
     }
 
@@ -76,15 +73,15 @@ int32 FString::Find(
         return INDEX_NONE;
     }
 
-    const TCHAR* StrPtr = **this;
-    const TCHAR* SubStrPtr = *SubStr;
+    const ElementType* StrPtr = **this;
+    const ElementType* SubStrPtr = *SubStr;
     const int32 StrLen = Len();
     const int32 SubStrLen = SubStr.Len();
 
-    auto CompareFunc = [SearchCase](TCHAR A, TCHAR B) -> bool {
-        return (SearchCase == ESearchCase::IgnoreCase) ? 
+    auto CompareFunc = [SearchCase](ElementType A, ElementType B) -> bool {
+        return (SearchCase == ESearchCase::IgnoreCase) ?
             tolower(A) == tolower(B) : A == B;
-    };
+        };
 
     auto FindSubString = [&](int32 Start, int32 End, int32 Step) -> int32 {
         for (int32 i = Start; i != End; i += Step)
@@ -104,7 +101,7 @@ int32 FString::Find(
             }
         }
         return INDEX_NONE;
-    };
+        };
 
     if (SearchDir == ESearchDir::FromStart)
     {

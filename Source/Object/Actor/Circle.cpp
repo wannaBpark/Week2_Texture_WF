@@ -1,13 +1,15 @@
-﻿#include "Circle.h"
+#include "Object/Actor/Circle.h"
 
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+
 ACircle::ACircle()
 {
+
     bCanEverTick = true;
 
-    UCylinderComp* CylinderComponent = AddComponent<UCylinderComp>();
-    RootComponent = CylinderComponent;
+    UCircleComp* CircleComponent = AddComponent<UCircleComp>();
+    RootComponent = CircleComponent;
 
     SetActorTransform(FTransform());
 }
@@ -26,3 +28,4 @@ const char* ACircle::GetTypeName()
 {
     return "Circle";
 }
+

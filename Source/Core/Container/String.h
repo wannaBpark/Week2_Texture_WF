@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include "CString.h"
@@ -22,39 +22,42 @@ enum : int8 { INDEX_NONE = -1 };
 /** Determines case sensitivity options for string comparisons. */
 namespace ESearchCase
 {
-enum Type : uint8
-{
-    /** Case sensitive. Upper/lower casing must match for strings to be considered equal. */
-    CaseSensitive,
+    enum Type : uint8
+    {
+        /** Case sensitive. Upper/lower casing must match for strings to be considered equal. */
+        CaseSensitive,
 
-    /** Ignore case. Upper/lower casing does not matter when making a comparison. */
-    IgnoreCase,
-};
+        /** Ignore case. Upper/lower casing does not matter when making a comparison. */
+        IgnoreCase,
+    };
 };
 
 /** Determines search direction for string operations. */
 namespace ESearchDir
 {
-enum Type : uint8
-{
-    /** Search from the start, moving forward through the string. */
-    FromStart,
+    enum Type : uint8
+    {
+        /** Search from the start, moving forward through the string. */
+        FromStart,
 
-    /** Search from the end, moving backward through the string. */
-    FromEnd,
-};
+        /** Search from the end, moving backward through the string. */
+        FromEnd,
+    };
 }
 
 class FString
 {
 private:
+    using ElementType = TCHAR;
     using BaseStringType = std::basic_string<
-        TCHAR,
-        std::char_traits<TCHAR>,
-        FDefaultAllocator<TCHAR>
+        ElementType,
+        std::char_traits<ElementType>,
+        FDefaultAllocator<ElementType>
     >;
 
     BaseStringType PrivateString;
+
+    friend struct std::hash<FString>;
 
 public:
     FString() = default;
@@ -67,7 +70,7 @@ public:
 
     FString(BaseStringType InString) : PrivateString(std::move(InString)) {}
 
-#if IS_WIDECHAR
+#if USE_WIDECHAR
 private:
     static std::wstring ConvertWideChar(const ANSICHAR* NarrowStr);
 
@@ -82,7 +85,45 @@ public:
     FString(const ANSICHAR* InString) : PrivateString(InString) {}
 #endif
 
-    static FString FromInt(int32 Num);
+#if USE_WIDECHAR
+    FORCEINLINE std::string ToAnsiString() const
+    {
+        // Wide 문자열을 UTF-8 기반의 narrow 문자열로 변환
+        if (PrivateString.empty())
+        {
+            return std::string();
+        }
+        int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, PrivateString.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        if (sizeNeeded <= 0)
+        {
+            return std::string();
+        }
+        std::string result(sizeNeeded, 0);
+        WideCharToMultiByte(CP_UTF8, 0, PrivateString.c_str(), -1, &result[0], sizeNeeded, nullptr, nullptr);
+        return result;
+    }
+#else
+    FORCEINLINE std::wstring ToWideString() const
+    {
+        // Narrow 문자열을 UTF-8로 가정하고 wide 문자열로 변환
+        if (PrivateString.empty())
+        {
+            return std::wstring();
+        }
+        int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, PrivateString.c_str(), -1, nullptr, 0);
+        if (sizeNeeded <= 0)
+        {
+            return std::wstring();
+        }
+        std::wstring wstr(sizeNeeded, 0);
+        MultiByteToWideChar(CP_UTF8, 0, PrivateString.c_str(), -1, &wstr[0], sizeNeeded);
+        return wstr;
+    }
+#endif
+    template <typename Number>
+        requires std::is_arithmetic_v<Number>
+    static FString FromInt(Number Num);
+
     static FString SanitizeFloat(float InFloat);
 
 public:
@@ -125,18 +166,30 @@ public:
         ESearchDir::Type SearchDir = ESearchDir::FromStart, int32 StartPosition = -1
     ) const;
 
-public:
-    /** TCHAR* 로 반환하는 연산자 */
-    FORCEINLINE const TCHAR* operator*() const;
+    const FString::ElementType* GetData() const;
 
-    FORCEINLINE FString operator+(const FString& SubStr) const;
+public:
+    /** ElementType* 로 반환하는 연산자 */
+    FORCEINLINE const ElementType* operator*() const;
+
+    // FORCEINLINE FString operator+(const FString& SubStr) const;
     FORCEINLINE FString& operator+=(const FString& SubStr);
     FORCEINLINE friend FString operator+(const FString& Lhs, const FString& Rhs);
 
     FORCEINLINE bool operator==(const FString& Rhs) const;
-    FORCEINLINE bool operator==(const TCHAR* Rhs) const;
+    FORCEINLINE bool operator==(const ElementType* Rhs) const;
 };
 
+template <typename Number>
+    requires std::is_arithmetic_v<Number>
+FString FString::FromInt(Number Num)
+{
+#if USE_WIDECHAR
+    return FString{ std::to_wstring(Num) };
+#else
+    return FString{ std::to_string(Num) };
+#endif
+}
 
 FORCEINLINE int32 FString::Len() const
 {
@@ -148,19 +201,19 @@ FORCEINLINE bool FString::IsEmpty() const
     return PrivateString.empty();
 }
 
-FORCEINLINE const TCHAR* FString::operator*() const
+FORCEINLINE const FString::ElementType* FString::operator*() const
 {
     return PrivateString.c_str();
 }
 
-FORCEINLINE FString FString::operator+(const FString& SubStr) const
-{
-    return this->PrivateString + SubStr.PrivateString;
-}
+// FORCEINLINE FString FString::operator+(const FString& SubStr) const
+// {
+//     return this->PrivateString + SubStr.PrivateString;
+// }
 
 FString operator+(const FString& Lhs, const FString& Rhs)
 {
-    FString CopyLhs{Lhs};
+    FString CopyLhs{ Lhs };
     return CopyLhs += Rhs;
 }
 
@@ -169,7 +222,7 @@ FORCEINLINE bool FString::operator==(const FString& Rhs) const
     return Equals(Rhs, ESearchCase::IgnoreCase);
 }
 
-FORCEINLINE bool FString::operator==(const TCHAR* Rhs) const
+FORCEINLINE bool FString::operator==(const ElementType* Rhs) const
 {
     return Equals(Rhs);
 }
@@ -179,3 +232,18 @@ FORCEINLINE FString& FString::operator+=(const FString& SubStr)
     this->PrivateString += SubStr.PrivateString;
     return *this;
 }
+
+FORCEINLINE const FString::ElementType* FString::GetData() const
+{
+    return PrivateString.data();
+}
+
+template<>
+struct std::hash<FString>
+{
+    size_t operator()(const FString& Key) const noexcept
+    {
+        return hash<FString::BaseStringType>()(Key.PrivateString);
+    }
+};
+

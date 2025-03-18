@@ -164,10 +164,10 @@
     <ClCompile Include="Source\Core\FSceneManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\SubUVManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp" />
+    <ClCompile Include="Source\Object\Actor\Circle.cpp" />
     <ClCompile Include="Source\Object\Actor\SubUV.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Object\Actor\BillBoard.cpp" />
-    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
@@ -202,7 +202,6 @@
     <ClCompile Include="Source\Object\Gizmo\WorldGizmo.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\UClass.cpp" />
-    <ClCompile Include="Source\Object\UClassManager.cpp" />
     <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -335,8 +334,8 @@
     <ClInclude Include="Source\Object\Gizmo\WorldGizmo.h" />
     <ClInclude Include="Source\Object\NameTypes.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\ObjectMacro.h" />
     <ClInclude Include="Source\Object\UClass.h" />
-    <ClInclude Include="Source\Object\UClassManager.h" />
     <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />

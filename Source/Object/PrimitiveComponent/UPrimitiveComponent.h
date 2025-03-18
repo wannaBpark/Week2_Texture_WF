@@ -5,6 +5,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
 #include "Core/Rendering/RenderResource.h"
+#include "Object/ObjectMacro.h"
 
 /*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
@@ -14,6 +15,7 @@ class UBillboardUtilComponent;
 
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
+	DECLARE_CLASS(UPrimitiveComponent, USceneComponent)
 	using Super = USceneComponent;
 public:
 	UPrimitiveComponent() {};
@@ -122,7 +124,7 @@ public:
 		RenderResource.VertexConstantIndex = 4;
 		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(3);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 		
 	}

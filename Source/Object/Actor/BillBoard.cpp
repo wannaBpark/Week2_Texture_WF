@@ -2,8 +2,10 @@
 
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+
 ABillBoard::ABillBoard()
 {
+
     bCanEverTick = true;
 
     UBillBoardComp* BillBoardComponent = AddComponent<UBillBoardComp>();

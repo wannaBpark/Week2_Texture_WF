@@ -1,43 +1,32 @@
 #include "UObject.h"
-#include "UClassManager.h"
+#include "UClass.h"
 
 
 UObject::UObject()
 {
-	EquipUClass(UObject, ClassType);
+	Name = "None";
+	ClassType = nullptr;
 }
 
 UObject::~UObject()
 {
 }
 
-UClass* UObject::GetClass()
+UClass* UObject::StaticClass()
 {
-	return UClassManager::Get().GetClass<UObject>();
+	static std::unique_ptr<UClass, UClassDeleter> StaticClassInfo = nullptr;
+	if (!StaticClassInfo)
+	{
+		constexpr size_t ClassSize = sizeof(UClass);
+		UClass* RawMemory = FPlatformMemory::Malloc<UClass, EAT_Object>(ClassSize);
+		UClass* ClassPtr = new(RawMemory) UClass("UObject", nullptr);
+		StaticClassInfo = std::unique_ptr<UClass, UClassDeleter>(ClassPtr, UClassDeleter{});
+	}
+	return StaticClassInfo.get();
 }
 
-bool UObject::IsA(UClass* OtherClass)
+bool UObject::IsA(const UClass* OtherClass) const
 {
-	if (ClassType == nullptr)
-	{
-		UE_LOG("ClassType is Null");
-		return false;
-	}
-	if (OtherClass == nullptr)
-	{
-		UE_LOG("OtherClass is Null!");
-		return false;
-	}
-
-	if (ClassType->GetName() == OtherClass->GetName())
-	{
-		return true;
-	}
-
-	if (ClassType->GetParentClass())
-	{
-		return ClassType->GetParentClass()->IsA(OtherClass);
-	}
-
-	return false;
+	const UClass* ThisClass = GetClass();
+	return ThisClass->IsChildOf(OtherClass);
 }

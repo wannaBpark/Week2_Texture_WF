@@ -5,17 +5,11 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Object/ActorComponent/Colliders/UBoxCollider.h"
-#include "Object/UClassManager.h"
 
 AActor::AActor() : Depth{ 0 }
 {
-	EquipUClass(AActor, ClassType);
 }
 
-UClass* AActor::GetClass()
-{
-	return UClassManager::Get().GetClass<AActor>();
-}
 
 void AActor::BeginPlay()
 {

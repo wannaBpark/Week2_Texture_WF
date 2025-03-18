@@ -1,8 +1,11 @@
 #include "Object/Actor/WorldGrid.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+
+
 AWorldGrid::AWorldGrid()
 {
+
 	bCanEverTick = true;
 
 	UWorldGridComp* CubeComponent = AddComponent<UWorldGridComp>();
@@ -25,3 +28,4 @@ const char* AWorldGrid::GetTypeName()
 {
 	return "WorldGrid";
 }
+

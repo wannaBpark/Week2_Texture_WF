@@ -1,9 +1,13 @@
-﻿#pragma once
+#pragma once
 #include "ICollider.h"
 #include "Object/ActorComponent/Colliders/CollisionSystem.h";
+#include "Object/ObjectMacro.h"
+
 
 class USphereCollider : public ICollider
 {
+	DECLARE_CLASS(USphereCollider, ICollider)
+
 public:
 	USphereCollider() {};
 	FVector GetCenter() const;

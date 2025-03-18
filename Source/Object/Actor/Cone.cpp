@@ -6,8 +6,10 @@
 #include <Object/World/World.h>
 #include <../EEnum.h>
 
+
 ACone::ACone()
 {
+
     bCanEverTick = true;
 
     UConeComp* ConeComponent = AddComponent<UConeComp>();
@@ -41,3 +43,4 @@ const char* ACone::GetTypeName()
 {
     return "Cone";
 }
+

@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Actor.h"
+#include "Object/ObjectMacro.h"
+
 
 class APicker : public AActor
 {
+    DECLARE_CLASS(APicker, AActor)
     using Super = AActor;
+    
 public:
     APicker();
     ~APicker() = default;

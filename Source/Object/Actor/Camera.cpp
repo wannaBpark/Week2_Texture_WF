@@ -1,4 +1,4 @@
-﻿#include "Camera.h"
+#include "Camera.h"
 
 #include "Core/Rendering/URenderer.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
@@ -6,6 +6,7 @@
 
 ACamera::ACamera()
 {
+
     bIsGizmo = true;
     
     Near = 0.1f;
@@ -20,6 +21,7 @@ ACamera::ACamera()
     StartPos.SetPosition(FVector(-5, 0, 0));
     SetActorTransform(StartPos);
 }
+
 
 void ACamera::SetFieldOfVew(float Fov)
 {

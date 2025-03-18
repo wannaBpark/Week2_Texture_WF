@@ -1,10 +1,13 @@
-﻿#pragma once
+#pragma once
 #include "Core/EngineTypes.h"
 #include "Object/UObject.h"
+#include "Object/ObjectMacro.h"
+
 
 class UActorComponent : public UObject
 {
 public:
+	DECLARE_CLASS(UActorComponent, UObject)
 	UActorComponent() = default;
 
 	virtual void BeginPlay();

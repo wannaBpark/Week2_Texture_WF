@@ -12,8 +12,10 @@
 
 #include "../URaycastSystem.h"
 
+
 APicker::APicker()
-{    
+{   
+
     bIsGizmo = true;
     
     RootComponent = AddComponent<USceneComponent>();
@@ -181,3 +183,4 @@ bool APicker::SetSelectActor(const UActorComponent* actorComponent) {
     //UE_LOG("Pick - UUID: %u", PickedComponent->GetUUID());
     return true;
 }
+

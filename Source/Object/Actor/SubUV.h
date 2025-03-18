@@ -1,10 +1,14 @@
 #pragma once
 #include "Actor.h"
 #include "Core/Container/Array.h"
+#include "Object/ObjectMacro.h"
+
 
 class ASubUV : public AActor
 {
+    DECLARE_CLASS(ASubUV, AActor)
     using Super = AActor;
+    
 public:
     ASubUV();
     virtual ~ASubUV() = default;
@@ -14,4 +18,5 @@ public:
     void SetFrame(int32 frame);
 private:
     USubUVComponent* SubUVComponent;
+
 };

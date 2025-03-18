@@ -4,8 +4,10 @@
 #include "Core/EngineTypes.h"
 #include "Debug/DebugConsole.h"
 
+
 ASubUV::ASubUV()
 {
+
 	bCanEverTick = true;
 	SubUVComponent = AddComponent<USubUVComponent>();
 	RootComponent = SubUVComponent;
@@ -31,6 +33,7 @@ void ASubUV::SetFrame(int32 frame)
 {
 	SubUVComponent->SetFrame(frame);
 }
+
 
 
 
