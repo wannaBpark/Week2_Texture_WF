@@ -25,6 +25,7 @@
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
+#include "Object/Gizmo/WorldGizmo.h"
 
 #define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
@@ -233,6 +234,7 @@ void UI::RenderPrimitiveSelection()
     {
         World->ClearWorld();
 		UEngine::Get().GetWorld()->SpawnActor<AWorldGrid>();
+        UEngine::Get().GetWorld()->SpawnActor<AWorldGizmo>();
         GetGridScaleFromIni();
 		
     }
