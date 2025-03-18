@@ -115,6 +115,58 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }
 
+void UPrimitiveComponent::UpdateLightConstantData(URenderer*& Renderer)
+{
+
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
+	if (GetOwner()->IsGizmoActor() == false)
+	{
+		if (GetOwner() == FEditorManager::Get().GetSelectedActor())
+		{
+			bIsPicked = true;
+			//UE_LOG("ispicked ");
+		}
+		else
+		{
+			bIsPicked = false;
+			//UE_LOG("bisunpicked ");
+		}
+	}
+
+	FMatrix3 MVP;
+	FMatrix modelWorld = this->GetComponentTransformMatrix();
+	if (BillboardUtil != nullptr) {
+		MVP = BillboardUtil->GetBillboardMVPMat3(Renderer);
+	}
+	modelWorld.M[3][0] = modelWorld.M[3][1] = modelWorld.M[3][2] = 0;
+	modelWorld = modelWorld.Inverse();
+	FMatrix InvTranspose = FMatrix::Transpose(modelWorld);
+	FLightConstants UpdateInfo{
+		.Model = FMatrix::Transpose(this->GetComponentTransformMatrix()),
+		.View = FMatrix::Transpose(Renderer->GetViewMatrix()),
+		.Projection = FMatrix::Transpose(Renderer->GetProjectionMatrix()),
+		.InvTranspose = InvTranspose,
+		.Color = this->GetCustomColor(),
+		.bUseVertexColor = (uint32)this->IsUseVertexColor(),
+		.eyeWorldPos = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		.indexColor = indexColor,
+		.bIsPicked = (uint32)this->IsPicked(),
+		.Padding = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+	};
+
+	if (BillboardUtil != nullptr) {
+		LightConstantData.Model = FMatrix::Transpose(MVP.Model);
+		LightConstantData.View = FMatrix::Transpose(MVP.View);
+		LightConstantData.Projection = FMatrix::Transpose(MVP.Projection);
+	}
+
+	LightConstantData = UpdateInfo;
+
+	Renderer->UpdateBuffer(LightConstantData, RenderResource.VertexConstantIndex);
+	Renderer->UpdateBuffer(LightConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+}
+
 void UBillBoardComp::SetUseBillboardUtil(bool bUse)
 {
 	bUseBillboardUtil = bUse;
@@ -238,43 +290,4 @@ void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도
 
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
 	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
-}
-
-void ULightCubeComp::UpdateConstantData(URenderer*& Renderer)
-{
-	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
-	indexColor /= 255.0f;
-	if (GetOwner()->IsGizmoActor() == false)
-	{
-		if (GetOwner() == FEditorManager::Get().GetSelectedActor())
-		{
-			bIsPicked = true;
-			//UE_LOG("ispicked ");
-		}
-		else
-		{
-			bIsPicked = false;
-			//UE_LOG("bisunpicked ");
-		}
-	}
-	FMatrix modelWorld = this->GetComponentTransformMatrix();
-	modelWorld.M[3][0] = modelWorld.M[3][1] = modelWorld.M[3][2] = 0;
-	modelWorld = modelWorld.Inverse();
-	FMatrix InvTranspose = FMatrix::Transpose(modelWorld);
-	FLightConstants UpdateInfo{
-		.Model = FMatrix::Transpose(this->GetComponentTransformMatrix()),
-		.View = FMatrix::Transpose(Renderer->GetViewMatrix()),
-		.Projection = FMatrix::Transpose(Renderer->GetProjectionMatrix()),
-		.InvTranspose = InvTranspose,
-		.Color = this->GetCustomColor(),
-		.bUseVertexColor = (uint32)this->IsUseVertexColor(),
-		.eyeWorldPos = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
-		.indexColor = indexColor,
-		.bIsPicked = (uint32)this->IsPicked(),
-		.Padding = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
-	};
-
-	ConstantData = UpdateInfo;
-	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
-	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }

@@ -46,7 +46,7 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
         float rim = (1.0 - dot(normalWorld, toEye));
         rim = smoothstep(0.0, 1.0, rim);
         rim = pow(abs(rim), 2.0f);
-        color += rim * float4(1.0f, 0.0, 0.0, 1.0) * 10.0f;
+        color += rim * float4(1.0f, 1.0, 1.0, 1.0) * 1.f;
         //color *= 0.5;
     }
     output.color = float4(color, 1.0f);
