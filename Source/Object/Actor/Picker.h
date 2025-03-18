@@ -15,10 +15,11 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
+    
+    static bool SetSelectActor(const UActorComponent* actorComponent);
 private:
     static POINT GetMousePoint();
     UActorComponent* GetAcotrByPixelPicking(const POINT& pt);
-    void PickLocalGizmo(UActorComponent* actor);
-    void PickWorldGizmo();
-    bool SetSelectActor(const UActorComponent* actorComponent);
+    static void PickLocalGizmo(UActorComponent* actor);
+    static void PickWorldGizmo();
 };

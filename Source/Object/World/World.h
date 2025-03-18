@@ -37,6 +37,7 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
+	TArray<AActor*> GetActors() { return Actors; }
   
 	bool DestroyActor(AActor* InActor);
 	

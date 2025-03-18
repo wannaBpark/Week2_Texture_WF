@@ -231,7 +231,7 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
     World->SceneName = "MainScene";
-    //FSceneManager::Get().AddScene(World);
+    FSceneManager::Get().AddScene(World);
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
 

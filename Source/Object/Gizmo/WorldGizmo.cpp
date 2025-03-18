@@ -9,6 +9,7 @@
 AWorldGizmo::AWorldGizmo()
 {
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
+	RootComponent = ZArrow;
 	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	CylinderComponents.Add(ZArrow);
@@ -28,7 +29,6 @@ AWorldGizmo::AWorldGizmo()
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
 
-	RootComponent = ZArrow;
 
 	/*AWorldText* ZText = UEngine::Get().GetWorld()->SpawnActor<AWorldText>();
 	ZText->GetRootComponent()->SetupAttachment(ZArrow);

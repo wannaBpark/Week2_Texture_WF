@@ -27,6 +27,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Object/Gizmo/WorldGizmo.h"
 #include "Core/FSceneManager.h"
+#include "Object/Gizmo/Axis.h"
 
 #define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
@@ -478,7 +479,45 @@ void UI::RenderPropertyWindow()
 
 void UI::RenderSceneManager()
 {
-    ImGui::Begin("Scene Manager");
+    ImGui::Begin("SceneManager");
+    
+    TArray<AActor*> actors;
+    if(FSceneManager::Get().GetScene(0) != nullptr)
+        actors = FSceneManager::Get().GetScene(0)->GetActors();
+
+    for (auto actor : actors) {
+        if (dynamic_cast<AAxis*>(actor)) continue;
+        if (dynamic_cast<AWorldGrid*>(actor)) continue;
+        if (dynamic_cast<AWorldGizmo*>(actor)) continue;
+        if (dynamic_cast<ACamera*>(actor)) continue;
+        if (dynamic_cast<APicker*>(actor)) continue;
+        char buffer[32];
+        sprintf_s(buffer, "UUID: %d", actor->GetUUID());
+        if (ImGui::Button(buffer)) { APicker::SetSelectActor(actor->GetRootComponent()); }
+    }
+
+    // 루트 레벨
+    if (ImGui::Button("Root Object")) { /* 클릭 처리 */ }
+
+    // 첫 번째 레벨 들여쓰기
+    ImGui::Indent();
+
+    if (ImGui::Button("Child 1")) { /* 클릭 처리 */ }
+    if (ImGui::Button("Child 2")) { /* 클릭 처리 */ }
+
+    // 두 번째 레벨 들여쓰기
+    ImGui::Indent();
+    if (ImGui::Button("Grandchild 1")) { /* 클릭 처리 */ }
+    if (ImGui::Button("Grandchild 2")) { /* 클릭 처리 */ }
+    ImGui::Unindent();
+
+    if (ImGui::Button("Child 3")) { /* 클릭 처리 */ }
+
+    // 첫 번째 레벨 들여쓰기 제거
+    ImGui::Unindent();
+
+    // 다시 루트 레벨
+    if (ImGui::Button("Another Root Object")) { /* 클릭 처리 */ }
 
     FSceneManager& SceneManager = FSceneManager::Get();
     uint32 showFlagMask = SceneManager.GetShowFlagMask();
@@ -500,6 +539,10 @@ void UI::RenderSceneManager()
     }
 
     ImGui::End();
+}
+
+void PrintChildPrimitiveButton(AActor& actor) {
+    actor.GetRootComponent();
 }
 
 void UI::GetGridScaleFromIni()
