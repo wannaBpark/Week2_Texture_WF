@@ -12,8 +12,8 @@ ACube::ACube()
 
 	bCanEverTick = true;
 
+	UCubeComp* CubeComponent = AddComponent<UCubeComp>();
 	//UCubeComp* CubeComponent = AddComponent<UCubeComp>();
-	ULightCubeComp* CubeComponent = AddComponent<ULightCubeComp>();
 	RootComponent = CubeComponent;
 
 	hitCollider = AddComponent<UBoxCollider>();
