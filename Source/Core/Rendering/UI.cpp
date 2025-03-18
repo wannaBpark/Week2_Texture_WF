@@ -486,14 +486,14 @@ void UI::RenderSceneManager()
         actors = FSceneManager::Get().GetScene(0)->GetActors();
 
     for (auto actor : actors) {
-        if (dynamic_cast<AAxis*>(actor)) continue;
-        if (dynamic_cast<AWorldGrid*>(actor)) continue;
-        if (dynamic_cast<AWorldGizmo*>(actor)) continue;
-        if (dynamic_cast<ACamera*>(actor)) continue;
-        if (dynamic_cast<APicker*>(actor)) continue;
+        UClass* uClass = actor->GetClass();
+        if (uClass == AAxis::StaticClass() || uClass == AWorldGrid::StaticClass() || uClass == AWorldGizmo::StaticClass() ||
+            uClass == ACamera::StaticClass() || uClass == APicker::StaticClass() || uClass == AGizmoHandle::StaticClass())
+            continue;
+
         char buffer[32];
         sprintf_s(buffer, "UUID: %d", actor->GetUUID());
-        if (ImGui::Button(buffer)) { APicker::SetSelectActor(actor->GetRootComponent()); }
+        if (ImGui::Button(*actor->GetFName().ToString())) { APicker::SetSelectActor(actor->GetRootComponent()); }
     }
 
     // 루트 레벨
