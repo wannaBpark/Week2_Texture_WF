@@ -1,8 +1,13 @@
 #include "Object/Actor/WorldGrid.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+#include "Object/UClassManager.h"
+
+
 AWorldGrid::AWorldGrid()
 {
+	EquipUClass(AWorldGrid, ClassType);
+
 	bCanEverTick = true;
 
 	UWorldGridComp* CubeComponent = AddComponent<UWorldGridComp>();
@@ -24,4 +29,9 @@ void AWorldGrid::Tick(float DeltaTime)
 const char* AWorldGrid::GetTypeName()
 {
 	return "WorldGrid";
+}
+
+UClass* AWorldGrid::GetClass()
+{
+	return UClassManager::Get().GetClass<AWorldGrid>();
 }

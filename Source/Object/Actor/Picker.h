@@ -17,4 +17,8 @@ public:
     virtual const char* GetTypeName() override;
 private:
     POINT GetMousePoint();
+
+public:
+    static UClass* GetClass();
+
 };

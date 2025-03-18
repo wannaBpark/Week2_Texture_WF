@@ -6,8 +6,12 @@
 
 #include "Debug/DebugConsole.h"
 
+#include "Object/UClassManager.h"
+
 AWorldText::AWorldText()
 {
+	EquipUClass(AWorldText, ClassType);
+
 	bCanEverTick = true;
 
 	USceneComponent* SceneComponent = AddComponent<USceneComponent>();
@@ -111,4 +115,9 @@ void AWorldText::SetUseBillboardUtil(bool bUse)
 	{
 		CharComps[i].SetUseBillboardUtil(bUse);
 	}
+}
+
+UClass* AWorldText::GetClass()
+{
+	return UClassManager::Get().GetClass<AWorldText>();
 }

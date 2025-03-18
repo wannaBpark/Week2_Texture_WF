@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object/Actor/Actor.h"
 
 class AArrow : public AActor
@@ -11,5 +11,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual const char* GetTypeName() override;
+
+public:
+	static UClass* GetClass();
+
 };
 

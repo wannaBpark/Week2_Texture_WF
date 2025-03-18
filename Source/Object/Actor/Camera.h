@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Matrix.h"
@@ -22,6 +22,9 @@ class ACamera : public AActor
     
 public:
     ACamera();
+
+public:
+    static UClass* GetClass();
 
 private:    
     float Near;

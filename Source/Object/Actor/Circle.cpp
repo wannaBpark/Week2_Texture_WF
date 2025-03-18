@@ -1,4 +1,4 @@
-﻿#include "Circle.h"
+#include "Circle.h"
 
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 

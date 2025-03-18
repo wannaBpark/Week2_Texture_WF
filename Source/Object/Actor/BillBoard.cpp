@@ -2,8 +2,12 @@
 
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
+#include "Object/UClassManager.h"
+
 ABillBoard::ABillBoard()
 {
+    EquipUClass(ABillBoard, ClassType);
+
     bCanEverTick = true;
 
     UBillBoardComp* BillBoardComponent = AddComponent<UBillBoardComp>();
@@ -25,4 +29,9 @@ void ABillBoard::Tick(float DeltaTime)
 const char* ABillBoard::GetTypeName()
 {
     return "BillBoard";
+}
+
+UClass* ABillBoard::GetClass()
+{
+    return UClassManager::Get().GetClass<ABillBoard>();
 }

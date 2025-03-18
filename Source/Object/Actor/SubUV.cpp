@@ -4,8 +4,13 @@
 #include "Core/EngineTypes.h"
 #include "Debug/DebugConsole.h"
 
+
+#include "Object/UClassManager.h"
+
 ASubUV::ASubUV()
 {
+	EquipUClass(ASubUV, ClassType);
+
 	bCanEverTick = true;
 	SubUVComponent = AddComponent<USubUVComponent>();
 	RootComponent = SubUVComponent;
@@ -30,6 +35,11 @@ const char* ASubUV::GetTypeName()
 void ASubUV::SetFrame(int32 frame)
 {
 	SubUVComponent->SetFrame(frame);
+}
+
+UClass* ASubUV::GetClass()
+{
+	return UClassManager::Get().GetClass<ASubUV>();
 }
 
 

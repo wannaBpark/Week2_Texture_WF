@@ -11,8 +11,12 @@
 
 #include "../URaycastSystem.h"
 
+#include "Object/UClassManager.h"
+
 APicker::APicker()
-{    
+{   
+    EquipUClass(APicker, ClassType);
+
     bIsGizmo = true;
 }
 
@@ -187,4 +191,9 @@ POINT APicker::GetMousePoint()
     pt.y = pt.y * ratioY;
 
     return pt;
+}
+
+UClass* APicker::GetClass()
+{
+    return UClassManager::Get().GetClass<APicker>();
 }

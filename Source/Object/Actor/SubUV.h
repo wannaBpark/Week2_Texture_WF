@@ -14,4 +14,7 @@ public:
     void SetFrame(int32 frame);
 private:
     USubUVComponent* SubUVComponent;
+
+public:
+    static UClass* GetClass();
 };

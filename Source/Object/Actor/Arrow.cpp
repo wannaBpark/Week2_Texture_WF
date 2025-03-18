@@ -1,8 +1,12 @@
-﻿#include "Arrow.h"
+#include "Arrow.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/UClassManager.h"
+
 
 AArrow::AArrow()
 {
+	EquipUClass(AArrow, ClassType);
+
 	bCanEverTick = true;
 
 	UCylinderComp* CylinderComp = AddComponent<UCylinderComp>();
@@ -29,4 +33,9 @@ void AArrow::Tick(float DeltaTime)
 const char* AArrow::GetTypeName()
 {
 	return "Arrow";
+}
+
+UClass* AArrow::GetClass()
+{
+	return UClassManager::Get().GetClass<AArrow>();
 }

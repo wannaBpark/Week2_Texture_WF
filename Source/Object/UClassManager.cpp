@@ -3,6 +3,19 @@
 #include "Actor/Actor.h"
 #include "Actor/Sphere.h"
 #include "Actor/Cube.h"
+#include "Actor/Arrow.h"
+#include "Actor/BillBoard.h"
+#include "Actor/Camera.h"
+#include "Actor/Circle.h"
+#include "Actor/Cone.h"
+#include "Actor/Cylinder.h"
+#include "Actor/Picker.h"
+#include "Actor/SubUV.h"
+#include "Actor/Triangle.h"
+#include "Actor/WorldGrid.h"
+#include "Actor/WorldText.h"
+
+
 
 UClassManager::UClassManager()
 {
@@ -44,6 +57,17 @@ void UClassManager::Initialize()
         {
             PushUClass(typeid(ASphere).name(), GetClass<AActor>());
             PushUClass(typeid(ACube).name(), GetClass<AActor>());
+            PushUClass(typeid(AArrow).name(), GetClass<AActor>());
+            PushUClass(typeid(ABillBoard).name(), GetClass<AActor>());
+            PushUClass(typeid(ACamera).name(), GetClass<AActor>());
+            PushUClass(typeid(ACircle).name(), GetClass<AActor>());
+            PushUClass(typeid(ACone).name(), GetClass<AActor>());
+            PushUClass(typeid(ACylinder).name(), GetClass<AActor>());
+            PushUClass(typeid(APicker).name(), GetClass<AActor>());
+            PushUClass(typeid(ASubUV).name(), GetClass<AActor>());
+            PushUClass(typeid(ATriangle).name(), GetClass<AActor>());
+            PushUClass(typeid(AWorldGrid).name(), GetClass<AActor>());
+            PushUClass(typeid(AWorldText).name(), GetClass<AActor>());
         }
     }
 }

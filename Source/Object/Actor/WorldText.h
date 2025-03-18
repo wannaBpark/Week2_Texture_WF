@@ -34,4 +34,7 @@ public:
 
 private:
     bool bUseBillboardUtil = false;
+
+public:
+    static UClass* GetClass();
 };
