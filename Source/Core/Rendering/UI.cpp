@@ -54,6 +54,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     PreRatio = GetRatio();
     CurRatio = GetRatio();
+
+    GetCameraStartSpeed();
 }
 
 void UI::Update()
@@ -244,6 +246,15 @@ void UI::RenderPrimitiveSelection()
         if (!WritePrivateProfileStringA("EditorSettings", "GridScale", gridScaleStr, INI_PATH)) {
             MessageBoxA(NULL, "Failed to save GridScale!", "Error", MB_OK | MB_ICONERROR);
         }
+
+        ACamera* Camera = FEditorManager::Get().GetCamera();
+        char cameraSpeedStr[32];
+        sprintf_s(cameraSpeedStr, "%.2f", Camera->CameraSpeed);
+
+        if (!WritePrivateProfileStringA("EditorSettings", "CameraStartSpeed", cameraSpeedStr, INI_PATH)) {
+            MessageBoxA(NULL, "Failed to save CameraSpeed!", "Error", MB_OK | MB_ICONERROR);
+        }
+
     }
     if (ImGui::Button("Load Scene"))
     {
@@ -472,4 +483,15 @@ void UI::GetGridScaleFromIni()
     GetPrivateProfileStringA("EditorSettings", "GridScale", "1.0", buffer.data(), buffer.size(), INI_PATH);
     float SavedGridScale = std::stof(buffer.data());
     UEngine::Get().GetWorld()->SetGridScale(SavedGridScale);
+}
+
+
+// Camera Speed 값 저장은 Save Scene 할 때 같이 해줌
+void UI::GetCameraStartSpeed()
+{
+    // Camera Start Speed 값을 editor.ini 파일에서 읽어옴
+    std::vector<char> buffer(256);
+    GetPrivateProfileStringA("EditorSettings", "CameraStartSpeed", "1.0", buffer.data(), buffer.size(), INI_PATH);
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    Camera->CameraSpeed = std::stof(buffer.data());
 }
