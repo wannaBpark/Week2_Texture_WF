@@ -226,6 +226,10 @@ void URenderer::CreateTexturesSamplers()
     UAtlasInfo FakerLightOffSubUV = JsonSaveHelper::LoadAtlasInfo("FakerLightOff.png");
     USubUVManager::AddAtlasInfo(FakerLightOffSubUV);
 
+    CreateTextureSRVW(L"Textures/RollingChanhui.png");
+    UAtlasInfo RollingSubUV = JsonSaveHelper::LoadAtlasInfo("RollingChanhui.png");
+    USubUVManager::AddAtlasInfo(RollingSubUV);
+
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/

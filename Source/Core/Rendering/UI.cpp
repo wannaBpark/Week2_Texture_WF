@@ -218,7 +218,7 @@ void UI::RenderPrimitiveSelection()
             else if (strcmp(items[currentItem], "SubUV2") == 0)
             {
                 ASubUV* SubUV = World->SpawnActor<ASubUV>();
-                SubUV->SetAtlas("FakerLightOff.png");
+                SubUV->SetAtlas("RollingChanhui.png");
             }
         }
     }
