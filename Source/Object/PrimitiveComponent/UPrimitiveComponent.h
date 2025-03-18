@@ -392,3 +392,30 @@ public:
 
 	void UpdateConstantData(URenderer*& Renderer) override;
 };
+
+class ULightCubeComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+public:
+	ULightCubeComp()
+	{
+		bCanBeRendered = true;
+		RenderResource.PrimitiveType = GetType();
+		RenderResource.Stride = sizeof(FPosColorNormalTex);
+		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
+		RenderResource.VertexShaderIndex = 4;
+		RenderResource.PixelShaderIndex = 4;
+		RenderResource.VertexConstantIndex = 4;
+		RenderResource.PixelConstantIndex = 4;
+		RenderResource.bUseIndexBuffer = true;
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);	// TextAtlas 추가 필요
+	}
+
+	virtual ~ULightCubeComp() = default;
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_CubeTex;
+	}
+	FLightConstants ConstantData;
+	void UpdateConstantData(URenderer*& Renderer) override;
+};
