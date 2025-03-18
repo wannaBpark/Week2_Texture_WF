@@ -6,7 +6,7 @@
 class UClass : public UObject
 { 
 public:
-	UClass() = delete;
+	UClass() { }
 	UClass(const char* InName, UClass* InParentClass);
 	~UClass();
 
@@ -21,7 +21,7 @@ public:
 	template <typename T>
 		requires std::derived_from<T, UObject>
 	bool IsChildOf() const {
-		return IsA(T::StaticClass()):
+		return IsA(T::StaticClass());
 	}
 
 };

@@ -1,5 +1,4 @@
 #include "UObject.h"
-#include "UClassManager.h"
 #include "UClass.h"
 
 
@@ -20,7 +19,7 @@ UClass* UObject::StaticClass()
 	{
 		constexpr size_t ClassSize = sizeof(UClass);
 		UClass* RawMemory = FPlatformMemory::Malloc<UClass, EAT_Object>(ClassSize);
-		UClass* ClassPtr = new(RawMemory) UClass{ "UObject", nullptr };
+		UClass* ClassPtr = new(RawMemory) UClass("UObject", nullptr);
 		StaticClassInfo = std::unique_ptr<UClass, UClassDeleter>(ClassPtr, UClassDeleter{});
 	}
 	return StaticClassInfo.get();
