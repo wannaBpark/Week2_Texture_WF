@@ -114,7 +114,7 @@ namespace
 	uint32 HashString(const CharType* Str)
 	{
 		// djb2 문자열 해싱 알고리즘
-		uint32 Hash = 5381;
+		uint32 Hash = 1234;
 		while (*Str)
 		{
 			Hash = ((Hash << 5) + Hash) + *Str;
