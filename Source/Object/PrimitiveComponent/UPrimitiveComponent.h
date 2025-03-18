@@ -5,6 +5,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
 #include "Core/Rendering/RenderResource.h"
+#include "Object/ObjectMacro.h"
 
 /*
 * NOTE : 모든 PrimitiveComponent를 상속받는 개체는 shaderidx, constantbuffer index를 개별 지정해줘야 합니다
@@ -14,6 +15,7 @@ class UBillboardUtilComponent;
 
 class UPrimitiveComponent : public USceneComponent, public FRenderResource
 {
+	DECLARE_CLASS(UPrimitiveComponent, USceneComponent)
 	using Super = USceneComponent;
 public:
 	UPrimitiveComponent() {};

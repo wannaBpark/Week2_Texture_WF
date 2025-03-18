@@ -3,12 +3,10 @@
 #include <Object/ActorComponent/Colliders/UBoxCollider.h>
 #include <Core/Engine.h>
 #include <Object/World/World.h>
-#include "Object/UClassManager.h"
 #include <../EEnum.h>
 
 ACube::ACube()
 {
-	EquipUClass(ACube, ClassType);
 
 	bCanEverTick = true;
 
@@ -43,7 +41,3 @@ const char* ACube::GetTypeName()
 	return "Cube";
 }
 
-UClass* ACube::GetClass()
-{
-	return UClassManager::Get().GetClass<ACube>();
-}

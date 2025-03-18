@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector.h"
 #include "Object/Actor/Actor.h"
+#include "Object/ObjectMacro.h"
 
 namespace ECameraProjectionMode
 {
@@ -17,11 +18,13 @@ namespace ECameraProjectionMode
 
 class ACamera : public AActor
 {
-
+    DECLARE_CLASS(ACamera, AActor)
     using Super = AActor;
     
+
 public:
     ACamera();
+
 
 private:    
     float Near;

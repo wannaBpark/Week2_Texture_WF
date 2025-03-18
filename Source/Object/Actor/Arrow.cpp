@@ -1,5 +1,6 @@
-﻿#include "Arrow.h"
+#include "Arrow.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+
 
 AArrow::AArrow()
 {
@@ -30,3 +31,4 @@ const char* AArrow::GetTypeName()
 {
 	return "Arrow";
 }
+

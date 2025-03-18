@@ -2,12 +2,16 @@
 #include "Actor.h"
 #include "Core/Container/Array.h"
 #include <string>
+#include "Object/ObjectMacro.h"
+
 
 class UWorldTextComponent;
 
 class AWorldText : public AActor
 {
+    DECLARE_CLASS(AWorldText, AActor)
     using Super = AActor;
+    
 public:
     AWorldText();
     virtual ~AWorldText() = default;
@@ -33,4 +37,5 @@ public:
 
 private:
     bool bUseBillboardUtil = false;
+
 };

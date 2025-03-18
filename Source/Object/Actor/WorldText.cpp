@@ -6,8 +6,10 @@
 
 #include "Debug/DebugConsole.h"
 
+
 AWorldText::AWorldText()
 {
+
 	bCanEverTick = true;
 
 	USceneComponent* SceneComponent = AddComponent<USceneComponent>();
@@ -112,3 +114,4 @@ void AWorldText::SetUseBillboardUtil(bool bUse)
 		CharComps[i].SetUseBillboardUtil(bUse);
 	}
 }
+
