@@ -616,13 +616,18 @@ void UI::RenderSceneManager()
         {"Show Bounding Box", EShowFlag::BoundingBox},
     };
 
-    for (const auto& [label, flag] : showFlagOptions)
+    if (ImGui::TreeNode("ShowFlag"))
     {
-        bool isEnabled = (showFlagMask & flag) != 0;
-        if (ImGui::Checkbox(label, &isEnabled))
+
+        for (const auto& [label, flag] : showFlagOptions)
         {
-            SceneManager.ToggleShowFlag(flag);
+            bool isEnabled = (showFlagMask & flag) != 0;
+            if (ImGui::Checkbox(label, &isEnabled))
+            {
+                SceneManager.ToggleShowFlag(flag);
+            }
         }
+        ImGui::TreePop();
     }
 
     ImGui::End();
