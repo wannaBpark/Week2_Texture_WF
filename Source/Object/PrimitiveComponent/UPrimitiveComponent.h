@@ -80,6 +80,7 @@ protected:
 
 class UCubeComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UCubeComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UCubeComp()
@@ -108,6 +109,7 @@ public:
 
 class USphereComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(USphereComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	USphereComp()
@@ -141,6 +143,7 @@ public:
 
 class UTriangleComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UTriangleComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UTriangleComp()
@@ -172,6 +175,7 @@ public:
 
 class ULineComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(ULineComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 
 public:
@@ -192,6 +196,7 @@ public:
 
 class UCylinderComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UCylinderComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 
 public:
@@ -225,6 +230,7 @@ public:
 
 class UConeComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UConeComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UConeComp()
@@ -257,6 +263,7 @@ public:
 
 class UCircleComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UCircleComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UCircleComp()
@@ -290,6 +297,7 @@ public:
 
 class UBillBoardComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UBillBoardComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UBillBoardComp()
@@ -320,6 +328,7 @@ public:
 
 class UWorldCharComp : public UPrimitiveComponent 
 {
+	DECLARE_CLASS(UWorldCharComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UWorldCharComp() 
@@ -354,6 +363,7 @@ public:
 };
 
 class UBoundingBoxComp : public UPrimitiveComponent {
+	DECLARE_CLASS(UBoundingBoxComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 
 public:
@@ -380,6 +390,7 @@ public:
 
 class UWorldGridComp : public UPrimitiveComponent
 {
+	DECLARE_CLASS(UWorldGridComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
 	UWorldGridComp()
@@ -407,7 +418,8 @@ public:
 
 class USubUVComponent : public UPrimitiveComponent
 {
-	using Super = USubUVComponent;
+	DECLARE_CLASS(USubUVComponent, UPrimitiveComponent)
+	using Super = UPrimitiveComponent;
 public:
 	USubUVComponent()
 	{
