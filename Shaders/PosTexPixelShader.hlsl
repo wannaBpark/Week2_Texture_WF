@@ -27,7 +27,7 @@ struct PS_OUTPUT
     float4 UUID : SV_TARGET1;
 };
 
-PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
+PS_OUTPUT mainPS(PS_INPUT input)
 {
     // output.depthPosition = output.position;
     
