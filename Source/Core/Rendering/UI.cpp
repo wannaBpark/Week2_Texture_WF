@@ -474,6 +474,37 @@ void UI::RenderPropertyWindow()
                 StringComp->SetLetterSpacing(LetterSpacing);
             }
         }
+
+        if (selectedActor->GetClass() == AWorldText::StaticClass()) 
+        {
+            AWorldText* TextActor = dynamic_cast<AWorldText*>(selectedActor);
+            if (selectedActor) {
+                ImGui::Separator();
+                ImGui::Text("Text Actor String");
+                ImGui::SameLine();
+
+                std::string textStr = TextActor->GetString();
+
+                char buffer[256];
+
+                strncpy_s(buffer, sizeof(buffer), textStr.c_str(), _TRUNCATE);
+
+                buffer[sizeof(buffer) - 1] = '\0';
+
+                float LetterSpacing = TextActor->GetLetterSpacing();
+
+                if (ImGui::InputText("WorldTextStr", buffer, sizeof(buffer))) {
+                    TextActor->SetCharComps(buffer);
+                }
+
+                if (ImGui::DragFloat("Text Letter Spacing", &LetterSpacing, 0.1f))
+                {
+                    TextActor->SetLetterSpacing(LetterSpacing);
+                }
+            }
+
+            
+        }
     }
     ImGui::End();
 }
