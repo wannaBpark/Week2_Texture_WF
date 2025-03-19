@@ -3,9 +3,9 @@
 #include "Core/Container/Array.h"
 #include <string>
 #include "Object/ObjectMacro.h"
+#include "Object/UtilComponent/UStringComponent.h"
 
-
-class UWorldTextComponent;
+class UStringComponent;
 
 class AWorldText : public AActor
 {
@@ -26,16 +26,14 @@ public:
     void SetLetterSpacing(float InLetterSpacing);
 
     void SetActive(bool bActive);
-    TArray<UWorldCharComp> CharComps;
 private:
+    UStringComponent* StringComponent;
     bool bIsActive = false;
-	float LetterSpacing{ 0.0f };
 
 public:
 	void SetUseBillboardUtil(bool bUse);
-	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+	bool IsUseBillboardUtil() const { return StringComponent->IsUseBillboardUtil(); }
 
 private:
-    bool bUseBillboardUtil = false;
 
 };
