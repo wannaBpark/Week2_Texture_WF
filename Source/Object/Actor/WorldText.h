@@ -2,12 +2,16 @@
 #include "Actor.h"
 #include "Core/Container/Array.h"
 #include <string>
+#include "Object/ObjectMacro.h"
+#include "Object/UtilComponent/UStringComponent.h"
 
-class UWorldTextComponent;
+class UStringComponent;
 
 class AWorldText : public AActor
 {
+    DECLARE_CLASS(AWorldText, AActor)
     using Super = AActor;
+    
 public:
     AWorldText();
     virtual ~AWorldText() = default;
@@ -16,22 +20,22 @@ public:
     virtual const char* GetTypeName() override;
 
     void ClearCharComps();
-    void SetCharComps(std::string InText, std::string AtlasName);
+    void SetCharComps(std::string InText, std::string InAtlasName);
+    
+    std::string GetString();
 
     float GetLetterSpacing();
     void SetLetterSpacing(float InLetterSpacing);
 
     void SetActive(bool bActive);
-
 private:
+    UStringComponent* StringComponent;
     bool bIsActive = false;
-	TArray<UWorldCharComp> CharComps;
-	float LetterSpacing{ 0.0f };
 
 public:
 	void SetUseBillboardUtil(bool bUse);
-	bool IsUseBillboardUtil() const { return bUseBillboardUtil; }
+	bool IsUseBillboardUtil() const { return StringComponent->IsUseBillboardUtil(); }
 
 private:
-    bool bUseBillboardUtil = false;
+
 };

@@ -71,6 +71,8 @@ void URenderer::CreateShader()
          *   - SIZE_T GetBufferSize
          *     - 버퍼의 크기(바이트 갯수)를 돌려준다
          */
+    ID3D11VertexShader* LightPosTexVertexShader;
+    ID3D11PixelShader* LightPosTexPixelShader;
     ID3D11VertexShader* PosTexVertexShader;
     ID3D11PixelShader* PosTexPixelShader;
     ID3D11InputLayout* PosTexInputLayout;
@@ -138,30 +140,41 @@ void URenderer::CreateShader()
         std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
         SAFE_RELEASE(ErrorMsg);
     }
-
-
-    ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
-    ShaderMapVS.insert({ 1, PosTexVertexShader});
-	ShaderMapVS.insert({ 2, AtlasVertexShader });
-
-    ShaderMapPS.insert({ 0, SimplePixelShader });
-    ShaderMapPS.insert({ 1, PosTexPixelShader });
-	ShaderMapPS.insert({ 2, AtlasPixelShader });
-
-    InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
-    InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
-
-    SAFE_RELEASE(VertexShaderCSO);
-    SAFE_RELEASE(PixelShaderCSO);
-
-    // 정점 하나의 크기를 설정 (바이트 단위)
-    Stride = sizeof(FVertexSimple);
-
+    SAFE_RELEASE(VertexShaderCSO);  SAFE_RELEASE(PixelShaderCSO);
     D3DCompileFromFile(L"Shaders/GridVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &TessVertexShaderCSO, &ErrorMsg);
     Device->CreateVertexShader(TessVertexShaderCSO->GetBufferPointer(), TessVertexShaderCSO->GetBufferSize(), nullptr, &TessVertexShader);
 
     D3DCompileFromFile(L"Shaders/GridPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &TessPixelShaderCSO, &ErrorMsg);
     Device->CreatePixelShader(TessPixelShaderCSO->GetBufferPointer(), TessPixelShaderCSO->GetBufferSize(), nullptr, &TessPixelShader);
+
+    SAFE_RELEASE(VertexShaderCSO);  SAFE_RELEASE(PixelShaderCSO);
+    D3DCompileFromFile(L"Shaders/LightPosTexVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
+    Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &LightPosTexVertexShader);
+
+    D3DCompileFromFile(L"Shaders/LightPosTexPixelShader.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
+    Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &LightPosTexPixelShader);
+
+    ShaderMapVS.insert({ 0, SimpleVertexShader});                               // 여기서 Vertex Shader, Pixel Shader, InputLayout 추가
+    ShaderMapVS.insert({ 1, PosTexVertexShader});
+    ShaderMapVS.insert({ 2, AtlasVertexShader });
+    ShaderMapVS.insert({ 3, TessVertexShader });
+    ShaderMapVS.insert({ 4, LightPosTexVertexShader });
+
+    ShaderMapPS.insert({ 0, SimplePixelShader });
+    ShaderMapPS.insert({ 1, PosTexPixelShader });
+    ShaderMapPS.insert({ 2, AtlasPixelShader });
+    ShaderMapPS.insert({ 3, TessPixelShader });
+    ShaderMapPS.insert({ 4, LightPosTexPixelShader });
+
+    InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
+    InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
+
+    
+
+    // 정점 하나의 크기를 설정 (바이트 단위)
+    Stride = sizeof(FVertexSimple);
+
+    
 
 
 }
@@ -181,7 +194,7 @@ void URenderer::CreateConstantBuffer()
     idx = CreateConstantBuffer<FPickingConstants>();    // Picking CBuffer : 1
     idx = CreateConstantBuffer<FDepthConstants>();      // DepthConstants : 2
     idx = CreateConstantBuffer<FAtlasConstants>();           // Atlas CBuffer : 3
-    idx = CreateConstantBuffer<FConstants>();           // Grid Domain CBuffer : 4
+    idx = CreateConstantBuffer<FLightConstants>();           // Lighting 테스트용 CBuffer : 4
     UE_LOG("constantbuffer size : %d", idx);
 }
 
@@ -229,6 +242,8 @@ void URenderer::CreateTexturesSamplers()
     CreateTextureSRVW(L"Textures/RollingChanhui.png");
     UAtlasInfo RollingSubUV = JsonSaveHelper::LoadAtlasInfo("RollingChanhui.png");
     USubUVManager::AddAtlasInfo(RollingSubUV);
+
+    CreateTextureSRVW(L"Textures/earth.jpg");
 
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");

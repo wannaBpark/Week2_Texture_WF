@@ -7,9 +7,11 @@
 
 ACube::ACube()
 {
+
 	bCanEverTick = true;
 
 	UCubeComp* CubeComponent = AddComponent<UCubeComp>();
+	//UCubeComp* CubeComponent = AddComponent<UCubeComp>();
 	RootComponent = CubeComponent;
 
 	hitCollider = AddComponent<UBoxCollider>();
@@ -38,3 +40,4 @@ const char* ACube::GetTypeName()
 {
 	return "Cube";
 }
+

@@ -1,9 +1,11 @@
 #pragma once
 #include "Object/Actor/Actor.h"
 #include "../EEnum.h"
+#include "Object/ObjectMacro.h"
 
 class AGizmoHandle : public AActor
 {
+	DECLARE_CLASS(AGizmoHandle, AActor)
 public:
 	AGizmoHandle();
 

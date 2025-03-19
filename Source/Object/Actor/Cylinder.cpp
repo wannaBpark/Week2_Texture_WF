@@ -6,8 +6,10 @@
 #include <Object/World/World.h>
 #include "../EEnum.h"
 
+
 ACylinder::ACylinder()
 {
+
     bCanEverTick = true;
 
     UCylinderComp* CylinderComponent = AddComponent<UCylinderComp>();
@@ -41,3 +43,4 @@ const char* ACylinder::GetTypeName()
 {
     return "Cylinder";
 }
+

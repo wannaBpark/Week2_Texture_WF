@@ -3,17 +3,25 @@
 #include "Core/EngineTypes.h"
 #include "Static/FEditorManager.h"
 #include "Core/Math/Transform.h"
-
+#include "Core/FSceneManager.h"
 #include "Debug/DebugConsole.h"
-#include "Core/Rendering//TextAtlasManager.h"
+#include "Object/UtilComponent/UStringComponent.h"
+#include <Object/ActorComponent/Colliders/UBoxCollider.h>
+#include <Core/Engine.h>
+#include <Object/World/World.h>
+
 
 AWorldText::AWorldText()
 {
+
 	bCanEverTick = true;
 
-	USceneComponent* SceneComponent = AddComponent<USceneComponent>();
-	RootComponent = SceneComponent;
+	StringComponent = AddComponent<UStringComponent>();
+	RootComponent = StringComponent;
 
+	hitCollider = AddComponent<UBoxCollider>();
+	UEngine::Get().GetWorld()->AddColliderComponent(hitCollider);
+	hitCollider->SetupAttachment(RootComponent);
 }
 
 void AWorldText::BeginPlay()
@@ -32,14 +40,6 @@ void AWorldText::Tick(float DeltaTime)
 		RootTr.Translate(FVector(0, 0, 1));
 		SetActorTransform(RootTr); 
 	}
-
-	// 현재 방식은 Single 쓰레드로 고안하여 처리, 만약 멀티 쓰레드라면 TextAtlasManager 구조 변경 필요
-	int32 num = CharComps.Num();
-	for (int32 i = 0; i < num; i++)
-	{
-		CharComps[i].Render();
-	}
-
 }
 
 const char* AWorldText::GetTypeName()
@@ -47,75 +47,47 @@ const char* AWorldText::GetTypeName()
 	return "WorldText";
 }
 
+
 void AWorldText::ClearCharComps()
 {
-	int32 num = CharComps.Num();
-	for (int32 i = 0; i < num; i++) 
-	{
-		CharComps[i].EndPlay(EEndPlayReason::Destroyed);
-	}
-	CharComps.Empty();
+	StringComponent->ClearCharComps();
 }
 
 
 void AWorldText::SetCharComps(std::string InText, std::string AtlasName)
 {
-	if (CharComps.Num() == InText.size()) {
-		for (int i = 0; i < CharComps.Num(); i++) {
-			CharComps[i].SetChar(InText[i], AtlasName);
-		}
-		return;
+	float YScale = 1.0f;
+	uint32 TextSize = InText.size();
+	if (TextSize) {
+		YScale = TextSize + (GetLetterSpacing() * (TextSize - 1));
 	}
+	hitCollider->RelativeTransform.SetScale(FVector(1.0f, YScale, 1.0f));
+	StringComponent->SetCharComps(InText, AtlasName);
+}
 
-	ClearCharComps();
-
-	if (InText.size() == 0)
-		return;
-
-	uint32 TextureIndex = UTextAtlasManager::GetTextureIndex(AtlasName);
-
-	float TextSize = static_cast<float>(InText.size());
-	float Middle = (TextSize + (TextSize - 1.0f) * LetterSpacing) / 2.0f;
-	for (int32 i = 0; i < InText.size(); i++)
-	{
-		UWorldCharComp CharComponent = UWorldCharComp(TextureIndex);
-		CharComponent.SetupAttachment(RootComponent);
-		CharComponent.SetOwner(this);
-		CharComponent.SetRelativeTransform(
-			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
-				FQuat(0, 0, 0, 1),
-				FVector(1, 1, 1)));
-		CharComponent.SetChar(InText[i], AtlasName);
-		CharComps.Add(CharComponent);
-	}
-
+std::string AWorldText::GetString()
+{
+	return StringComponent->GetString();
 }
 
 float AWorldText::GetLetterSpacing()
 {
-	return LetterSpacing;
+	return StringComponent->GetLetterSpacing();
 }
 
 // !!!!! 현재 코드상 SetTexComp 전에 불러야 함!
 void AWorldText::SetLetterSpacing(float InLetterSpacing)
 {
-	LetterSpacing = InLetterSpacing;
+	StringComponent->SetLetterSpacing(InLetterSpacing);
 }
 
 void AWorldText::SetActive(bool bActive)
 {
 	bIsActive = bActive;
-	for (int32 i = 0; i < CharComps.Num(); i++)
-	{
-		CharComps[i].SetCanBeRendered(bIsActive);
-	}
+	StringComponent->SetActive(bActive);
 }
 
 void AWorldText::SetUseBillboardUtil(bool bUse)
 {
-	bUseBillboardUtil = bUse;
-	for (int32 i = 0; i < CharComps.Num(); i++)
-	{
-		CharComps[i].SetUseBillboardUtil(bUse);
-	}
+	StringComponent->SetUseBillboardUtil(bUse);
 }

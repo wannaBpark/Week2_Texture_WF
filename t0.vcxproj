@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -161,12 +161,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\FSceneManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\SubUVManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\TextAtlasManager.cpp" />
+    <ClCompile Include="Source\Object\Actor\Circle.cpp" />
     <ClCompile Include="Source\Object\Actor\SubUV.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Object\Actor\BillBoard.cpp" />
-    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Core\HAL\StackAllocator.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
@@ -197,8 +198,12 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\JsonSaveHelper.cpp" />
+    <ClCompile Include="Source\Object\NameTypes.cpp" />
+    <ClCompile Include="Source\Object\Gizmo\WorldGizmo.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\UClass.cpp" />
     <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp" />
+    <ClCompile Include="Source\Object\UtilComponent\UStringComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -246,6 +251,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Shaders\LightPosTexPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\LightPosTexVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders\PosTexPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -275,6 +290,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\FSceneManager.h" />
     <ClInclude Include="Source\Core\Rendering\SubUVManager.h" />
     <ClInclude Include="Source\Core\Rendering\TextAtlasManager.h" />
     <ClInclude Include="Source\Object\Actor\SubUV.h" />
@@ -316,8 +332,13 @@
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\Actor\Triangle.h" />
     <ClInclude Include="Source\Object\Actor\WorldText.h" />
+    <ClInclude Include="Source\Object\Gizmo\WorldGizmo.h" />
+    <ClInclude Include="Source\Object\NameTypes.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\ObjectMacro.h" />
+    <ClInclude Include="Source\Object\UClass.h" />
     <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />
+    <ClInclude Include="Source\Object\UtilComponent\UStringComponent.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />

@@ -10,6 +10,7 @@ AActor::AActor() : Depth{ 0 }
 {
 }
 
+
 void AActor::BeginPlay()
 {
 	for (auto& Component : Components)

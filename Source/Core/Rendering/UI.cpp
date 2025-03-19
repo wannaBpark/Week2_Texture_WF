@@ -21,10 +21,14 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/BillBoard.h"
 #include "Object/Actor/WorldText.h"
+#include "Object/UtilComponent/UStringComponent.h"
 #include "Object/Actor/SubUV.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
+#include "Object/Gizmo/WorldGizmo.h"
+#include "Core/FSceneManager.h"
+#include "Object/Gizmo/Axis.h"
 
 #include "JsonSaveHelper.h"
 
@@ -56,6 +60,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     PreRatio = GetRatio();
     CurRatio = GetRatio();
+
+    GetCameraStartSpeed();
 }
 
 void UI::Update()
@@ -85,7 +91,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
-
+    RenderSceneManager();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
     // ImGui 렌더링
@@ -241,6 +247,7 @@ void UI::RenderPrimitiveSelection()
     {
         World->ClearWorld();
 		UEngine::Get().GetWorld()->SpawnActor<AWorldGrid>();
+        UEngine::Get().GetWorld()->SpawnActor<AWorldGizmo>();
         GetGridScaleFromIni();
 		
     }
@@ -254,13 +261,19 @@ void UI::RenderPrimitiveSelection()
         if (!WritePrivateProfileStringA("EditorSettings", "GridScale", gridScaleStr, INI_PATH)) {
             MessageBoxA(NULL, "Failed to save GridScale!", "Error", MB_OK | MB_ICONERROR);
         }
+
+        ACamera* Camera = FEditorManager::Get().GetCamera();
+        char cameraSpeedStr[32];
+        sprintf_s(cameraSpeedStr, "%.2f", Camera->CameraSpeed);
+
+        if (!WritePrivateProfileStringA("EditorSettings", "CameraStartSpeed", cameraSpeedStr, INI_PATH)) {
+            MessageBoxA(NULL, "Failed to save CameraSpeed!", "Error", MB_OK | MB_ICONERROR);
+        }
+
     }
     if (ImGui::Button("Load Scene"))
     {
         World->LoadWorld(SceneNameInput);
-
-        
-
     }
 	float GridScale = World->GetGridScale();
     if (ImGui::SliderFloat("Grid Scale", &GridScale, 0.1f, 100.0f)) {
@@ -506,25 +519,117 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
-        if (FEditorManager::Get().GetWorldText() != nullptr) 
+        if (FEditorManager::Get().GetStringComp() != nullptr) 
         {
             // WorldText의 경우 Char Component를 자체적으로 관리하므로 특수 처리
             // Letter Spacing을 조절할 수 있도록
-			AWorldText* wT = FEditorManager::Get().GetWorldText();
-            bool IsUseBillboard = wT->IsUseBillboardUtil();
+            UStringComponent* StringComp = FEditorManager::Get().GetStringComp();
+            bool IsUseBillboard = StringComp->IsUseBillboardUtil();
             if (ImGui::Checkbox("Use Text Billboard", &IsUseBillboard))
             {
-                wT->SetUseBillboardUtil(IsUseBillboard);
+                StringComp->SetUseBillboardUtil(IsUseBillboard);
             }
 
-            float LetterSpacing = wT->GetLetterSpacing();
+            float LetterSpacing = StringComp->GetLetterSpacing();
             if (ImGui::DragFloat("Letter Spacing", &LetterSpacing, 0.1f))
             {
-                wT->SetLetterSpacing(LetterSpacing);
+                StringComp->SetLetterSpacing(LetterSpacing);
             }
+        }
+
+        if (selectedActor->GetClass() == AWorldText::StaticClass()) 
+        {
+            AWorldText* TextActor = dynamic_cast<AWorldText*>(selectedActor);
+            if (selectedActor) {
+                ImGui::Separator();
+                ImGui::Text("Text Actor String");
+                ImGui::SameLine();
+
+                std::string textStr = TextActor->GetString();
+
+                char buffer[256];
+
+                strncpy_s(buffer, sizeof(buffer), textStr.c_str(), _TRUNCATE);
+
+                buffer[sizeof(buffer) - 1] = '\0';
+
+                float LetterSpacing = TextActor->GetLetterSpacing();
+
+                if (ImGui::InputText("WorldTextStr", buffer, sizeof(buffer))) {
+                    TextActor->SetCharComps(buffer, "koverwatch.png");
+                }
+
+                if (ImGui::DragFloat("Text Letter Spacing", &LetterSpacing, 0.1f))
+                {
+                    TextActor->SetLetterSpacing(LetterSpacing);
+                }
+            }
+
+            
         }
     }
     ImGui::End();
+}
+
+void UI::RenderSceneManager()
+{
+    ImGui::Begin("SceneManager");
+    if (ImGui::TreeNode("Primitives")) {
+        TArray<AActor*> actors;
+        if (FSceneManager::Get().GetScene(0) != nullptr)
+            actors = FSceneManager::Get().GetScene(0)->GetActors();
+
+        for (auto actor : actors) {
+            UClass* uClass = actor->GetClass();
+            if (uClass == AAxis::StaticClass() || uClass == AWorldGrid::StaticClass() || uClass == AWorldGizmo::StaticClass() ||
+                uClass == ACamera::StaticClass() || uClass == APicker::StaticClass() || uClass == AGizmoHandle::StaticClass())
+                continue;
+
+            char buffer[64];
+            sprintf_s(buffer, "%s(UUID: %d)", *actor->GetFName().ToString(), actor->GetUUID());
+            bool nodeOpen = ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth);
+
+            // 항목이 클릭되었는지 확인
+            if (ImGui::IsItemClicked()) {
+                APicker::SetSelectActor(actor->GetRootComponent());
+            }
+
+            if (nodeOpen) {
+                ImGui::Indent();
+                for (auto component : actor->GetComponents()) {
+                    ImGui::Text(*component->GetFName().ToString());
+                }
+                ImGui::Unindent();
+                ImGui::TreePop();
+            }
+        }
+        ImGui::TreePop();
+    }
+
+    FSceneManager& SceneManager = FSceneManager::Get();
+    uint32 showFlagMask = SceneManager.GetShowFlagMask();
+
+    static const std::pair<const char*, EShowFlag> showFlagOptions[] = {
+        {"Show Grid", EShowFlag::Grid},
+        {"Show Primitive", EShowFlag::Primitive},
+        {"Show Text", EShowFlag::Text},
+        {"Show Bounding Box", EShowFlag::BoundingBox},
+    };
+
+    for (const auto& [label, flag] : showFlagOptions)
+    {
+        bool isEnabled = (showFlagMask & flag) != 0;
+        if (ImGui::Checkbox(label, &isEnabled))
+        {
+            SceneManager.ToggleShowFlag(flag);
+        }
+    }
+
+    ImGui::End();
+}
+
+void PrintChildPrimitiveButton(AActor& actor) {
+    actor.GetRootComponent();
 }
 
 void UI::GetGridScaleFromIni()
@@ -535,3 +640,16 @@ void UI::GetGridScaleFromIni()
     float SavedGridScale = std::stof(buffer.data());
     UEngine::Get().GetWorld()->SetGridScale(SavedGridScale);
 }
+
+
+// Camera Speed 값 저장은 Save Scene 할 때 같이 해줌
+void UI::GetCameraStartSpeed()
+{
+    // Camera Start Speed 값을 editor.ini 파일에서 읽어옴
+    std::vector<char> buffer(256);
+    GetPrivateProfileStringA("EditorSettings", "CameraStartSpeed", "1.0", buffer.data(), buffer.size(), INI_PATH);
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    Camera->CameraSpeed = std::stof(buffer.data());
+}
+
+

@@ -1,4 +1,4 @@
-﻿#include "Plane.h"
+#include "Plane.h"
 #include "Core/Math/Matrix.h"
 
 FQuat FQuat::AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees) {
@@ -69,7 +69,7 @@ FQuat FQuat::AddQuaternions(const FQuat& q1, const FQuat& q2) {
     );
 }
 
-FQuat FQuat::MultiplyQuaternions(const FQuat& q1, const FQuat& q2) {
+FQuat FQuat::MultiplyQuaternions(const FQuat& q1, const FQuat& q2) {  //Q1 -> Q2 순서 )
     return FQuat(
         q1.W * q2.X + q1.X * q2.W + q1.Y * q2.Z - q1.Z * q2.Y, // X
         q1.W * q2.Y - q1.X * q2.Z + q1.Y * q2.W + q1.Z * q2.X, // Y

@@ -13,6 +13,8 @@
 
 #include "Object/ActorComponent/Colliders/ICollider.h"
 
+#include "Object/ObjectMacro.h"
+
 enum class EViewModeIndex : uint32
 {
 	VMI_Lit,
@@ -25,6 +27,7 @@ class AActor;
 
 class UWorld :public UObject
 {
+	DECLARE_CLASS(UWorld, UObject)
 public:
 	UWorld() = default;
 	virtual ~UWorld() = default;
@@ -37,6 +40,7 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
+	TArray<AActor*> GetActors() { return Actors; }
   
 	bool DestroyActor(AActor* InActor);
 	

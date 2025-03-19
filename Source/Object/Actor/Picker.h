@@ -1,10 +1,16 @@
 #pragma once
 
 #include "Actor.h"
+#include "Object/ObjectMacro.h"
+
+class UBoundingBoxComp;
+class UStringComponent;
 
 class APicker : public AActor
 {
+    DECLARE_CLASS(APicker, AActor)
     using Super = AActor;
+    
 public:
     APicker();
     ~APicker() = default;
@@ -15,6 +21,19 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
+    
+    static bool SetSelectActor(const UActorComponent* actorComponent);
 private:
-    POINT GetMousePoint();
+    static POINT GetMousePoint();
+    UActorComponent* GetAcotrByPixelPicking(const POINT& pt);
+    static void PickLocalGizmo(UActorComponent* actor);
+    static void PickWorldGizmo();
+
+public:
+    UBoundingBoxComp* GetBoundingBoxComp() { return BoundingBoxComp; }
+    UStringComponent* GetStringComponent() { return StringComponent; }
+
+private:
+    UBoundingBoxComp* BoundingBoxComp;
+    UStringComponent* StringComponent;
 };

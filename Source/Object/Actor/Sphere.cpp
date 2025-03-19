@@ -6,6 +6,7 @@
 
 ASphere::ASphere()
 {
+
 	bCanEverTick = true;
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
@@ -32,3 +33,4 @@ const char* ASphere::GetTypeName()
 {
 	return "Sphere";
 }
+

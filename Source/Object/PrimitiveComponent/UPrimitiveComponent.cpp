@@ -7,6 +7,7 @@
 #include "Core/Rendering/SubUVManager.h"
 #include "Core/Math/Vector.h"
 #include "Object/UtilComponent/UBillboardUtilComponent.h"	
+#include "Object/Gizmo/WorldGizmo.h"
 
 void UPrimitiveComponent::BeginPlay()
 {
@@ -77,29 +78,50 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 			//UE_LOG("bisunpicked ");
 		}		
 	}
+
 	FConstants UpdateInfo{
-		this->GetComponentTransformMatrix(),
-		this->GetCustomColor(),
-		(uint32)this->IsUseVertexColor(),
-		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
-		indexColor,
-		(uint32)this->IsPicked(),
-		FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		.MVP = this->GetComponentTransformMatrix(),
+		.Color = this->GetCustomColor(),
+		.bUseVertexColor = (uint32)this->IsUseVertexColor(),
+		.eyeWorldPos = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		.indexColor = indexColor,
+		.bIsPicked = (uint32)this->IsPicked(),
+		.Padding = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
 	};
 
 	FMatrix MVP;
+	FMatrix& WorldPosition = UpdateInfo.MVP;
 
-	if (BillboardUtil == nullptr) {
-		FMatrix& WorldPosition = UpdateInfo.MVP;
+	if (BillboardUtil != nullptr) {
+		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
+	}
+	else  {
 		// 업데이트할 자료형들
 		MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 			* FMatrix::Transpose(Renderer->GetViewMatrix())
 			* FMatrix::Transpose(WorldPosition);
 	}
-	else {
-		MVP = BillboardUtil->GetBillboardMVPMat(Renderer);
-	}
 
+	if (dynamic_cast<AWorldGizmo*>(GetOwner()) != nullptr) {
+		ACamera* Camera = FEditorManager::Get().GetCamera();
+		float ViewportSize = Camera->GetViewportSize();
+		float Near = Camera->GetNear();
+		float Far = Camera->GetFar();
+		// 카메라의 오른쪽, Up 벡터 계산
+		// 업데이트할 자료형들
+		// 단순하게 NDC 상의 오프셋을 적용하는 방법 (행렬 순서에 주의)
+		//FMatrix NDCOffset = FMatrix::GetTranslateMatrix(0.9,0.1,0);
+		MVP = FMatrix::Transpose(FMatrix::OrthoForLH(ViewportSize, ViewportSize, Near, Far))
+			* FMatrix::Transpose(Renderer->GetViewMatrix())
+			* FMatrix::Transpose(WorldPosition);
+
+		FVector delta = FVector(-0.8,-0.8,0);
+
+		MVP.M[0][3] = delta.X;
+		MVP.M[1][3] = delta.Y;
+		MVP.M[2][3] = delta.Z;
+
+	}
 
 	ConstantData = {
 		MVP, UpdateInfo.Color,
@@ -113,6 +135,58 @@ void UPrimitiveComponent::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 	Renderer->UpdateBuffer(ConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
+}
+
+void UPrimitiveComponent::UpdateLightConstantData(URenderer*& Renderer)
+{
+
+	FVector4 indexColor = APicker::EncodeUUID(this->GetUUID());
+	indexColor /= 255.0f;
+	if (GetOwner()->IsGizmoActor() == false)
+	{
+		if (GetOwner() == FEditorManager::Get().GetSelectedActor())
+		{
+			bIsPicked = true;
+			//UE_LOG("ispicked ");
+		}
+		else
+		{
+			bIsPicked = false;
+			//UE_LOG("bisunpicked ");
+		}
+	}
+
+	FMatrix3 MVP;
+	FMatrix modelWorld = this->GetComponentTransformMatrix();
+	if (BillboardUtil != nullptr) {
+		MVP = BillboardUtil->GetBillboardMVPMat3(Renderer);
+	}
+	modelWorld.M[3][0] = modelWorld.M[3][1] = modelWorld.M[3][2] = 0;
+	modelWorld = modelWorld.Inverse();
+	FMatrix InvTranspose = FMatrix::Transpose(FMatrix::Transpose(modelWorld));
+	FLightConstants UpdateInfo{
+		.Model = FMatrix::Transpose(this->GetComponentTransformMatrix()),
+		.View = FMatrix::Transpose(Renderer->GetViewMatrix()),
+		.Projection = FMatrix::Transpose(Renderer->GetProjectionMatrix()),
+		.InvTranspose = InvTranspose,
+		.Color = this->GetCustomColor(),
+		.bUseVertexColor = (uint32)this->IsUseVertexColor(),
+		.eyeWorldPos = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+		.indexColor = indexColor,
+		.bIsPicked = (uint32)this->IsPicked(),
+		.Padding = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition(),
+	};
+
+	if (BillboardUtil != nullptr) {
+		LightConstantData.Model = FMatrix::Transpose(MVP.Model);
+		LightConstantData.View = FMatrix::Transpose(MVP.View);
+		LightConstantData.Projection = FMatrix::Transpose(MVP.Projection);
+	}
+
+	LightConstantData = UpdateInfo;
+
+	Renderer->UpdateBuffer(LightConstantData, RenderResource.VertexConstantIndex);
+	Renderer->UpdateBuffer(LightConstantData, RenderResource.PixelConstantIndex);		// 픽셀 상수 버퍼 업데이트 시 
 }
 
 void UBillBoardComp::SetUseBillboardUtil(bool bUse)
@@ -138,8 +212,6 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FVector rightVector = FVector::CrossProduct(upVector, billboardToEye);
 	upVector.Normalize();
 	rightVector.Normalize();
-
-
 	FVector adjustedUp = FVector::CrossProduct(billboardToEye, rightVector);
 	adjustedUp.Normalize();
 
@@ -158,6 +230,7 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())
 		* FMatrix::Transpose(Renderer->GetViewMatrix())   // 기존의 View Matrix를 사용
 		* FMatrix::Transpose(BillBoardTransform);         // 빌보드 변환 적용
+
 
 	// 상수 버퍼 업데이트
 	ConstantData.MVP = MVP;
@@ -196,7 +269,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
-void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
+void UCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar(), AtlasName);
@@ -216,7 +289,8 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 			* FMatrix::Transpose(WorldPosition);
 	}
 	else {
-		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, GetOwner()->GetRootComponent(), this->RelativeTransform.GetPosition().Y);
+		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, Parent, this->RelativeTransform.GetPosition().Y);
+
 	}
 
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
@@ -239,3 +313,5 @@ void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도
 	AtlasConstantData = { MVP, UpdateInfo.AtlasSzOffset };
 	Renderer->UpdateBuffer(AtlasConstantData, RenderResource.VertexConstantIndex);
 }
+
+

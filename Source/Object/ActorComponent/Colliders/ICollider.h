@@ -2,10 +2,12 @@
 #include "Core/Math/Vector.h";
 #include "Object/USceneComponent.h"
 #include "Core/Math/Transform.h"
+#include "Object/ObjectMacro.h"
 
 class ICollider : public USceneComponent
 {
 public:
+	DECLARE_CLASS(ICollider, USceneComponent)
 	virtual ~ICollider() = default;
 
 	inline bool GetIsTrigger() const { return bIsTrigger; }

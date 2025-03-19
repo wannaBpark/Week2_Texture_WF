@@ -1,10 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector.h"
 #include "Object/Actor/Actor.h"
+#include "Object/ObjectMacro.h"
 
 namespace ECameraProjectionMode
 {
@@ -17,11 +18,13 @@ namespace ECameraProjectionMode
 
 class ACamera : public AActor
 {
-
+    DECLARE_CLASS(ACamera, AActor)
     using Super = AActor;
     
+
 public:
     ACamera();
+
 
 private:    
     float Near;
@@ -39,6 +42,8 @@ public:
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
+
+    void ResetRotation() { RootComponent->RelativeTransform.SetRotation(FVector(0, 0, 0)); }
 
     void SetFieldOfVew(float Fov);
     void SetViewportSize(float inViewprotSize);

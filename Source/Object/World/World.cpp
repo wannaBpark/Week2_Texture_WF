@@ -1,19 +1,21 @@
 #include "World.h"
 #include <cassert>
 #include "JsonSavehelper.h"
-
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
 #include "Object/Actor/Camera.h"
 #include <Object/Gizmo/GizmoHandle.h>
-
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Circle.h"
 #include "Object/Actor/Sphere.h"
+#include "Object/Actor/WorldGrid.h"
+#include "Object/Actor/WorldText.h"
+#include "Object/Gizmo/Axis.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Core/FSceneManager.h" 
 
 
 void UWorld::BeginPlay()
@@ -117,6 +119,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
 
+	uint32 showFlagMask = FSceneManager::Get().GetShowFlagMask();
+
 	for (auto& RenderComponent : RenderComponents)
 	{
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
@@ -125,17 +129,34 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 			continue;
 		}
 
+		if ((showFlagMask & EShowFlag::Grid) == 0 && RenderComponent->GetOwner()->GetClass() == AWorldGrid::StaticClass())
+		{
+			continue; // Grid 렌더링 비활성화
+		}
+		if ((showFlagMask & EShowFlag::Primitive) == 0 
+			&& RenderComponent->GetOwner()->GetClass() != AAxis::StaticClass()
+			&& RenderComponent->GetClass() != UBoundingBoxComp::StaticClass())
+		{
+			continue; // Primitive 렌더링 비활성화
+			// 기본적으로 RenderComponent는 PrimitiveComponent이므로
+			// AAxis는 예외
+			// BoundingBox 예외
+			// Text는 AWorldText의 Tick에서 처리
+		}
+		if ((showFlagMask & EShowFlag::BoundingBox) == 0 && RenderComponent->GetClass() == UBoundingBoxComp::StaticClass())
+		{
+			continue; // Bounding Box
+		}
+
 		uint32 UUID = RenderComponent->GetUUID();
 		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		// RenderComponent->UpdateConstantDepth(Renderer, depth);
 		RenderComponent->Render();
 	}
 
 	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
+	for (auto& RenderComponent : ZIgnoreRenderComponents)
 	{
 		uint32 UUID = RenderComponent->GetUUID();
-		//uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
 		RenderComponent->Render();
 	}
