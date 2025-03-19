@@ -52,6 +52,11 @@ void AWorldText::SetCharComps(std::string InText)
 	StringComponent->SetCharComps(InText);
 }
 
+std::string AWorldText::GetString()
+{
+	return StringComponent->GetString();
+}
+
 float AWorldText::GetLetterSpacing()
 {
 	return StringComponent->GetLetterSpacing();

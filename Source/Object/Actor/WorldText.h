@@ -21,6 +21,8 @@ public:
 
     void ClearCharComps();
     void SetCharComps(std::string InText);
+    
+    std::string GetString();
 
     float GetLetterSpacing();
     void SetLetterSpacing(float InLetterSpacing);

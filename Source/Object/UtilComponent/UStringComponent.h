@@ -2,6 +2,7 @@
 #include "Object/USceneComponent.h"
 #include "Object/ObjectMacro.h"
 #include "Core/Container/Array.h"
+#include <string>
 
 class UCharComp;
 
@@ -17,6 +18,8 @@ public:
 
 	void ClearCharComps();
 	void SetCharComps(std::string InText);
+
+	std::string GetString();
 
 	float GetLetterSpacing();
 	void SetLetterSpacing(float InLetterSpacing);

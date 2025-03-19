@@ -69,6 +69,17 @@ void UStringComponent::SetCharComps(std::string InText)
 	}
 }
 
+std::string UStringComponent::GetString()
+{
+	std::string CharString = "";
+	for (uint32 i = 0; i < CharComps.Num(); i++) 
+	{
+		CharString += CharComps[i].GetChar();
+	}
+
+	return CharString;
+}
+
 float UStringComponent::GetLetterSpacing()
 {
 	return LetterSpacing;
