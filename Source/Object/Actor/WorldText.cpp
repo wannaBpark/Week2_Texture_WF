@@ -7,6 +7,7 @@
 #include "Debug/DebugConsole.h"
 
 
+
 AWorldText::AWorldText()
 {
 
@@ -116,4 +117,3 @@ void AWorldText::SetUseBillboardUtil(bool bUse)
 		CharComps[i].SetUseBillboardUtil(bUse);
 	}
 }
-
