@@ -289,7 +289,7 @@ void UCharComp::UpdateConstantData(URenderer*& Renderer)
 			* FMatrix::Transpose(WorldPosition);
 	}
 	else {
-		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, GetOwner()->GetRootComponent(), this->RelativeTransform.GetPosition().Y);
+		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, Parent, this->RelativeTransform.GetPosition().Y);
 
 	}
 

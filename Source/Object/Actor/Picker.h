@@ -4,6 +4,7 @@
 #include "Object/ObjectMacro.h"
 
 class UBoundingBoxComp;
+class UStringComponent;
 
 class APicker : public AActor
 {
@@ -30,7 +31,9 @@ private:
 
 public:
     UBoundingBoxComp* GetBoundingBoxComp() { return BoundingBoxComp; }
+    UStringComponent* GetStringComponent() { return StringComponent; }
 
 private:
     UBoundingBoxComp* BoundingBoxComp;
+    UStringComponent* StringComponent;
 };

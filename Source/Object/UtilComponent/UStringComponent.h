@@ -26,7 +26,7 @@ public:
 
 private:
 	bool bIsActive = false;
-	float LetterSpacing{ 0.0f };
+	float LetterSpacing{ -0.5f };
 
 public:
 	void SetUseBillboardUtil(bool bUse);

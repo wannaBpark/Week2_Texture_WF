@@ -21,6 +21,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/BillBoard.h"
 #include "Object/Actor/WorldText.h"
+#include "Object/UtilComponent/UStringComponent.h"
 #include "Object/Actor/SubUV.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
@@ -456,21 +457,21 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
-        if (FEditorManager::Get().GetWorldText() != nullptr) 
+        if (FEditorManager::Get().GetStringComp() != nullptr) 
         {
             // WorldText의 경우 Char Component를 자체적으로 관리하므로 특수 처리
             // Letter Spacing을 조절할 수 있도록
-			AWorldText* wT = FEditorManager::Get().GetWorldText();
-            bool IsUseBillboard = wT->IsUseBillboardUtil();
+            UStringComponent* StringComp = FEditorManager::Get().GetStringComp();
+            bool IsUseBillboard = StringComp->IsUseBillboardUtil();
             if (ImGui::Checkbox("Use Text Billboard", &IsUseBillboard))
             {
-                wT->SetUseBillboardUtil(IsUseBillboard);
+                StringComp->SetUseBillboardUtil(IsUseBillboard);
             }
 
-            float LetterSpacing = wT->GetLetterSpacing();
+            float LetterSpacing = StringComp->GetLetterSpacing();
             if (ImGui::DragFloat("Letter Spacing", &LetterSpacing, 0.1f))
             {
-                wT->SetLetterSpacing(LetterSpacing);
+                StringComp->SetLetterSpacing(LetterSpacing);
             }
         }
     }

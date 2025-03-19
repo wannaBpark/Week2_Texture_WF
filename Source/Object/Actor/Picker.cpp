@@ -9,6 +9,7 @@
 #include "ImGui/imgui.h"
 #include "Camera.h"
 #include "Object/Gizmo/WorldGizmo.h"
+#include "Object/UtilComponent/UStringComponent.h"
 
 #include "../URaycastSystem.h"
 
@@ -21,6 +22,9 @@ APicker::APicker()
 
     BoundingBoxComp = AddComponent<UBoundingBoxComp>();
     BoundingBoxComp->SetCanBeRendered(false);
+
+    StringComponent = AddComponent<UStringComponent>();
+    StringComponent->SetActive(false);
 }
 
 FVector4 APicker::EncodeUUID(uint32 UUID)

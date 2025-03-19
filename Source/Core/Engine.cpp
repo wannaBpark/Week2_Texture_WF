@@ -242,6 +242,7 @@ void UEngine::InitWorld()
     World->SpawnActor<AAxis>();
     APicker* Picker = World->SpawnActor<APicker>();
     FEditorManager::Get().SetBoundingBox(Picker->GetBoundingBoxComp());
+    FEditorManager::Get().SetStringComp(Picker->GetStringComponent());
 
     World->SpawnActor<AWorldGrid>();
     AWorldGizmo* WorldGizmo = World->SpawnActor<AWorldGizmo>();

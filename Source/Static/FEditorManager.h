@@ -2,7 +2,7 @@
 #include "Object/Actor/Actor.h"
 
 class AGizmoHandle;
-class AWorldText;
+class UStringComponent;
 
 class FEditorManager : public TSingleton<FEditorManager>
 {
@@ -18,14 +18,15 @@ public:
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
-	AWorldText* GetWorldText() const { return WorldText; }
+	UStringComponent* GetStringComp() const { return StringComp; }
 
     void SetBoundingBox(UBoundingBoxComp* InBoundingBoxComp);
+    void SetStringComp(UStringComponent* InStringComp);
     
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
     AGizmoHandle* GizmoHandle = nullptr;
-	AWorldText* WorldText = nullptr;
+	UStringComponent* StringComp = nullptr;
     UBoundingBoxComp* BoundingBoxComp = nullptr;
 };
