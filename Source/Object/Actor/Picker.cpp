@@ -15,10 +15,12 @@
 
 APicker::APicker()
 {   
-
     bIsGizmo = true;
     
     RootComponent = AddComponent<USceneComponent>();
+
+    BoundingBoxComp = AddComponent<UBoundingBoxComp>();
+    BoundingBoxComp->SetCanBeRendered(false);
 }
 
 FVector4 APicker::EncodeUUID(uint32 UUID)

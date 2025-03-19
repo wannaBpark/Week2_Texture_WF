@@ -19,6 +19,8 @@ public:
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
 	AWorldText* GetWorldText() const { return WorldText; }
+
+    void SetBoundingBox(UBoundingBoxComp* InBoundingBoxComp);
     
 private:
     ACamera* Camera = nullptr;

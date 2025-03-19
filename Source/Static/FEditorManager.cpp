@@ -20,8 +20,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
     }
 
     if (BoundingBoxComp == nullptr) {
-        BoundingBoxComp = NewActor->AddComponent<UBoundingBoxComp>();
-        BoundingBoxComp->RegisterComponentWithWorld(UEngine::Get().GetWorld());
+        UE_LOG("BoudningBoxComp is NUll ERROR!");
 
     }
 
@@ -65,4 +64,9 @@ void FEditorManager::SelectActor(AActor* NewActor)
 void FEditorManager::SetCamera(ACamera* NewCamera)
 {
     Camera = NewCamera;
+}
+
+void FEditorManager::SetBoundingBox(UBoundingBoxComp* InBoundingBoxComp)
+{
+    BoundingBoxComp = InBoundingBoxComp;
 }
