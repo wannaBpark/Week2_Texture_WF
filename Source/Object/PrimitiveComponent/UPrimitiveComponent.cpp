@@ -269,7 +269,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
-void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
+void UCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
