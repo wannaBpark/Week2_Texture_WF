@@ -209,17 +209,16 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 
 	// 카메라의 오른쪽, Up 벡터 계산
 	FVector upVector = camera->GetActorTransform().GetLocalUp();
-	FVector rightVector = FVector::CrossProduct(upVector, billboardToEye);
+	FVector rightVector = -camera->GetActorTransform().GetLocalRight();
 	upVector.Normalize();
 	rightVector.Normalize();
-	FVector adjustedUp = FVector::CrossProduct(billboardToEye, rightVector);
-	adjustedUp.Normalize();
+	
 
 	// 빌보드 회전 행렬 생성
 	FMatrix BillboardRotation = FMatrix(
 		{ billboardToEye.X, billboardToEye.Y, billboardToEye.Z, 0.0f },
 		{ rightVector.X,    rightVector.Y,    rightVector.Z,    0.0f },
-		{ adjustedUp.X,     adjustedUp.Y,     adjustedUp.Z,     0.0f },
+		{ upVector.X,     upVector.Y,     upVector.Z,     0.0f },
 		{ 0.0f, 0.0f, 0.0f, 1.0f }
 	);
 
