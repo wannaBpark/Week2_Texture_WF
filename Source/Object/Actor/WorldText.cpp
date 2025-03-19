@@ -47,6 +47,12 @@ const char* AWorldText::GetTypeName()
 	return "WorldText";
 }
 
+void AWorldText::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	StringComponent->ClearCharComps();
+	Super::EndPlay(EndPlayReason);
+}
+
 
 void AWorldText::ClearCharComps()
 {

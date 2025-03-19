@@ -246,9 +246,16 @@ void UI::RenderPrimitiveSelection()
     if (ImGui::Button("New Scene"))
     {
         World->ClearWorld();
+        FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+        World->SpawnActor<AAxis>();
+        APicker* Picker = World->SpawnActor<APicker>();
+        FEditorManager::Get().SetBoundingBox(Picker->GetBoundingBoxComp());
+        FEditorManager::Get().SetStringComp(Picker->GetStringComponent());
+
 		UEngine::Get().GetWorld()->SpawnActor<AWorldGrid>();
         UEngine::Get().GetWorld()->SpawnActor<AWorldGizmo>();
         GetGridScaleFromIni();
+        GetCameraStartSpeed();
 		
     }
     if (ImGui::Button("Save Scene"))

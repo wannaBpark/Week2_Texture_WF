@@ -224,7 +224,7 @@ void UBillBoardComp::UpdateConstantData(URenderer*& Renderer)
 	);
 
 	// 빌보드 위치를 고려한 최종 변환 행렬
-	FMatrix BillBoardTransform = this->GetComponentTransformMatrix() * BillboardRotation;
+	FMatrix BillBoardTransform = BillboardRotation * this->GetComponentTransformMatrix();
 
 	// MVP 행렬 생성 (뷰 행렬을 Renderer에서 가져옴)
 	FMatrix MVP = FMatrix::Transpose(Renderer->GetProjectionMatrix())

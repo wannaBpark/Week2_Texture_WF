@@ -246,7 +246,7 @@ void UEngine::InitWorld()
 
     World->SpawnActor<AWorldGrid>();
     AWorldGizmo* WorldGizmo = World->SpawnActor<AWorldGizmo>();
-	World->BeginPlay();
+	/*World->BeginPlay();*/
 }
 
 void UEngine::ShutdownWindow()

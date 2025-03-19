@@ -19,6 +19,8 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
 
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
     void ClearCharComps();
     void SetCharComps(std::string InText, std::string InAtlasName);
     
