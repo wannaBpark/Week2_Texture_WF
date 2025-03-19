@@ -1,4 +1,4 @@
-﻿#pragma comment(lib, "user32")
+#pragma comment(lib, "user32")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
 
@@ -13,7 +13,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(nShowCmd);
 
 	UEngine& Engine = UEngine::Get();
-	Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1280, 720);
+	Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1400, 800);
 
 	Engine.Run();
 

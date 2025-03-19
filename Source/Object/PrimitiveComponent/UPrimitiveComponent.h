@@ -247,7 +247,7 @@ public:
 		RenderResource.VertexConstantIndex = 4;
 		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(0);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(8);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 	}
 	virtual ~UConeComp() = default;
@@ -309,7 +309,7 @@ public:
 		RenderResource.VertexShaderIndex = 1;
 		RenderResource.PixelShaderIndex = 1;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);		// 1번째 Texture 사용 : tree.png [값이 없으면 초기화]
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(7);		// 1번째 Texture 사용 : tree.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 		//
 	}

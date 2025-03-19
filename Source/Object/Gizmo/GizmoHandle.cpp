@@ -278,7 +278,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 			AT.MoveLocal(FVector(LocalDelta.X * MoveSpeedFactor, 0, 0));
 			break;
 		case EGizmoType::Rotate:
-			AT.RotateRoll(Result.X);
+			AT.RotateRoll(Result.X);  // 로컬 축을 기준으로 회전
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({ Result.X * 0.1f, 0, 0 });
