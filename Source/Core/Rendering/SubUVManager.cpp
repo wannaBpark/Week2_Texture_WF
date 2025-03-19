@@ -41,6 +41,67 @@ void USubUVManager::CalculateCellSize()
     }
 }
 
+void USubUVManager::AddAtlasInfo(UAtlasInfo& InAtlasInfo)
+{
+    UAtlasInfo AtlasInfo = UAtlasInfo(InAtlasInfo);
+
+    AtlasInfos.Add(AtlasInfo);
+}
+
+FVector4 USubUVManager::GetFrameUV(int FrameIndex, uint32 IndexNum)
+{
+    if (AtlasInfos.Num() < IndexNum) 
+    {
+        UE_LOG("SubUVManager Invalid IndexNum!");
+        return FVector4();
+    }
+
+    UAtlasInfo AtlasInfo = AtlasInfos[IndexNum];
+    Initialize(AtlasInfo.AtlasWidth, AtlasInfo.AtlasHeight, AtlasInfo.ColNum, AtlasInfo.RowNum, AtlasInfo.TotalFrame);
+    return GetFrameUV(FrameIndex);
+}
+
+FVector4 USubUVManager::GetFrameUV(int FrameIndex, std::string AtlasName)
+{
+    UAtlasInfo AtlasInfo;
+    for (int i = 0; i < AtlasInfos.Num(); i++) 
+    {
+        if (AtlasInfos[i].AtlasName == AtlasName) 
+        {
+            AtlasInfo = UAtlasInfo(AtlasInfos[i]);
+            break;
+        }
+    }
+
+    if (AtlasInfo.AtlasName == "") 
+    {
+        UE_LOG("SubUVManager InValid AtlasName!");
+        return FVector4();
+    }
+
+    Initialize(AtlasInfo.AtlasWidth, AtlasInfo.AtlasHeight, AtlasInfo.ColNum, AtlasInfo.RowNum, AtlasInfo.TotalFrame);
+    return GetFrameUV(FrameIndex);
+}
+
+uint32 USubUVManager::GetTextureIndex(std::string AtlasName)
+{
+    UAtlasInfo AtlasInfo;
+    for (int i = 0; i < AtlasInfos.Num(); i++) {
+        if (AtlasInfos[i].AtlasName == AtlasName) {
+            AtlasInfo = UAtlasInfo(AtlasInfos[i]);
+            break;
+        }
+    }
+
+    if (AtlasInfo.AtlasName == "")
+    {
+        UE_LOG("UTextAtlasManager Invalid AtlasName!");
+        return -1;
+    }
+
+    return AtlasInfo.TextureIndex;
+}
+
 FVector4 USubUVManager::GetFrameUV(int FrameIndex)
 {
     FVector4 UVRect = { 0.f, 0.f, 0.f, 0.f };
@@ -62,10 +123,10 @@ FVector4 USubUVManager::GetFrameUV(int FrameIndex)
     }
 
     // UV 계산
-    UVRect.X = static_cast<float>(CellWidth) / static_cast<float>(AtlasWidth);
-    UVRect.Y = static_cast<float>(CellHeight) / static_cast<float>(AtlasHeight);
-    UVRect.Z = col * static_cast<float>(CellWidth) / static_cast<float>(AtlasWidth);
-    UVRect.W = row * static_cast<float>(CellHeight) / static_cast<float>(AtlasHeight);
+    UVRect.X = static_cast<float>(CellWidth);
+    UVRect.Y = static_cast<float>(CellHeight);
+    UVRect.Z = col * static_cast<float>(CellWidth);
+    UVRect.W = row * static_cast<float>(CellHeight);
 
     return UVRect;
 }

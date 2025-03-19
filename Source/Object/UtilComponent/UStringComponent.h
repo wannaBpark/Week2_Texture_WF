@@ -17,7 +17,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void ClearCharComps();
-	void SetCharComps(std::string InText);
+	void SetCharComps(std::string InText, std::string InAtlasName);
 
 	std::string GetString();
 

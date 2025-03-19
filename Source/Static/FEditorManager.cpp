@@ -55,7 +55,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
         BoundingBoxComp->SetCanBeRendered(true);
 		StringComp->SetActive(true);
         std::string ActorUUID = "UID: " + std::to_string(NewActor->GetUUID());
-        StringComp->SetCharComps(ActorUUID);
+        StringComp->SetCharComps(ActorUUID, "koverwatch.png");
         //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
 		//FTransform GizmoTransform = GizmoHandle->GetActorTransform();
 		//GizmoTransform.SetPosition(Pos);

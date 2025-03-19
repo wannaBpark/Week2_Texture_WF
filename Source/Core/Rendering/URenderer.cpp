@@ -21,6 +21,9 @@
 
 #include "../Source/Object/World/World.h" // World로부터 GridScale을 가져옴
 
+#include "Core/Rendering/TextAtlasManager.h";
+#include "Core/Rendering/SubUVManager.h";
+
 #define SAFE_RELEASE(p)       { if (p) { (p)->Release();  (p) = nullptr; } }
 
 void URenderer::Create(HWND hWindow)
@@ -75,6 +78,7 @@ void URenderer::CreateShader()
     ID3D11InputLayout* PosTexInputLayout;
     ID3D11VertexShader* AtlasVertexShader;
     ID3D11PixelShader* AtlasPixelShader;
+    ID3D11PixelShader* AtlasNoClipPixelShader;
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PosTexVertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
@@ -137,6 +141,14 @@ void URenderer::CreateShader()
         std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
         SAFE_RELEASE(ErrorMsg);
     }
+
+    SAFE_RELEASE(AtlasPixelShaderCSO);
+    D3DCompileFromFile(L"Shaders/AtlasPixelShader.hlsl", nullptr, nullptr, "mainPSNoClip", "ps_5_0", 0, 0, &AtlasPixelShaderCSO, &ErrorMsg);
+    if (FAILED(Device->CreatePixelShader(AtlasPixelShaderCSO->GetBufferPointer(), AtlasPixelShaderCSO->GetBufferSize(), nullptr, &AtlasNoClipPixelShader))) {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        SAFE_RELEASE(ErrorMsg);
+    }
+
     SAFE_RELEASE(VertexShaderCSO);  SAFE_RELEASE(PixelShaderCSO);
     D3DCompileFromFile(L"Shaders/GridVertexShader.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &TessVertexShaderCSO, &ErrorMsg);
     Device->CreateVertexShader(TessVertexShaderCSO->GetBufferPointer(), TessVertexShaderCSO->GetBufferSize(), nullptr, &TessVertexShader);
@@ -162,6 +174,7 @@ void URenderer::CreateShader()
     ShaderMapPS.insert({ 2, AtlasPixelShader });
     ShaderMapPS.insert({ 3, TessPixelShader });
     ShaderMapPS.insert({ 4, LightPosTexPixelShader });
+    ShaderMapPS.insert({ 5, AtlasNoClipPixelShader });
 
     InputLayoutMap.insert({ InputLayoutType::POSCOLOR, SimpleInputLayout });
     InputLayoutMap.insert({ InputLayoutType::POSCOLORNORMALTEX, PosTexInputLayout });
@@ -221,8 +234,27 @@ void URenderer::CreateTexturesSamplers()
 
     CreateTextureSRVW(L"Textures/box.jpg");
     CreateTextureSRVW(L"Textures/koverwatch.png");
-    CreateTextureSRVW(L"Textures/faker.PNG");
+    UAtlasInfo KoverwatchText = JsonSaveHelper::LoadAtlasInfo("koverwatch.png");
+    UTextAtlasManager::AddAtlasInfo(KoverwatchText);
+
+    CreateTextureSRVW(L"Textures/Faker.png");
+    UAtlasInfo FakerSubUV = JsonSaveHelper::LoadAtlasInfo("Faker.png");
+    USubUVManager::AddAtlasInfo(FakerSubUV);
+
+    CreateTextureSRVW(L"Textures/koverwatchBlack.png");
+    UAtlasInfo KoverwatchBlackText = JsonSaveHelper::LoadAtlasInfo("koverwatchBlack.png");
+    UTextAtlasManager::AddAtlasInfo(KoverwatchBlackText);
+
+    CreateTextureSRVW(L"Textures/FakerLightOff.png");
+    UAtlasInfo FakerLightOffSubUV = JsonSaveHelper::LoadAtlasInfo("FakerLightOff.png");
+    USubUVManager::AddAtlasInfo(FakerLightOffSubUV);
+
+    CreateTextureSRVW(L"Textures/RollingChanhui.png");
+    UAtlasInfo RollingSubUV = JsonSaveHelper::LoadAtlasInfo("RollingChanhui.png");
+    USubUVManager::AddAtlasInfo(RollingSubUV);
+
     CreateTextureSRVW(L"Textures/earth.jpg");
+
     //CreateTextureSRV(L"Textures/box.dds");
     //CreateTextureSRV(L"../../../Textures/bg5.dds");
     /*CreateTextureSRVW(L"Textures/box.jpg");*/

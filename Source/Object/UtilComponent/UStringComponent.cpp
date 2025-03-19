@@ -38,13 +38,13 @@ void UStringComponent::ClearCharComps()
 	CharComps.Empty();
 }
 
-void UStringComponent::SetCharComps(std::string InText)
+void UStringComponent::SetCharComps(std::string InText, std::string InAtlasName)
 {
 	if (CharComps.Num() == InText.size()) 
 	{
 		for (uint32 i = 0; i < CharComps.Num(); i++) 
 		{
-			CharComps[i]->SetChar(InText[i]);
+			CharComps[i]->SetChar(InText[i], InAtlasName);
 		}
 		return;
 	}
@@ -64,7 +64,7 @@ void UStringComponent::SetCharComps(std::string InText)
 			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
 				FQuat(0, 0, 0, 1),
 				FVector(1, 1, 1)));
-		CharComponent->SetChar(InText[i]);
+		CharComponent->SetChar(InText[i], InAtlasName);
 		CharComps.Add(CharComponent);
 	}
 }

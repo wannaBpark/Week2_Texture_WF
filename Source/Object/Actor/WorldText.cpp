@@ -53,7 +53,8 @@ void AWorldText::ClearCharComps()
 	StringComponent->ClearCharComps();
 }
 
-void AWorldText::SetCharComps(std::string InText)
+
+void AWorldText::SetCharComps(std::string InText, std::string AtlasName)
 {
 	float YScale = 1.0f;
 	uint32 TextSize = InText.size();
@@ -61,7 +62,7 @@ void AWorldText::SetCharComps(std::string InText)
 		YScale = TextSize + (GetLetterSpacing() * (TextSize - 1));
 	}
 	hitCollider->RelativeTransform.SetScale(FVector(1.0f, YScale, 1.0f));
-	StringComponent->SetCharComps(InText);
+	StringComponent->SetCharComps(InText, AtlasName);
 }
 
 std::string AWorldText::GetString()

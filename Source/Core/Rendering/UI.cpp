@@ -30,6 +30,8 @@
 #include "Core/FSceneManager.h"
 #include "Object/Gizmo/Axis.h"
 
+#include "JsonSaveHelper.h"
+
 #define INI_PATH "./editor.ini" // grid scale 저장할 ini 파일 경로
 
 
@@ -136,6 +138,8 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+
+    RenderAtlasData();
     
     ImGui::End();
 }
@@ -167,7 +171,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText", "SubUV"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone","Triangle","Circle", "BillBoard", "WorldText", "SubUV", "SubUV2"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -209,12 +213,18 @@ void UI::RenderPrimitiveSelection()
 				AWorldText* wT = World->SpawnActor<AWorldText>();
                 std::string xx = "hello world!";
                 wT->SetLetterSpacing(-0.5f);
-                wT->SetCharComps(xx);
+                wT->SetCharComps(xx, "koverwatchBlack.png");
 				wT->SetActorTransform(FTransform(FVector(0, 0, 2), FQuat(0, 0, 0, 1), FVector(1, 1, 1)));
 			}
             else if (strcmp(items[currentItem], "SubUV") == 0)
             {
-                World->SpawnActor<ASubUV>();
+                ASubUV* SubUV = World->SpawnActor<ASubUV>();
+                SubUV->SetAtlas("Faker.png");
+            }
+            else if (strcmp(items[currentItem], "SubUV2") == 0)
+            {
+                ASubUV* SubUV = World->SpawnActor<ASubUV>();
+                SubUV->SetAtlas("RollingChanhui.png");
             }
         }
     }
@@ -380,6 +390,58 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
 }
 
+void UI::RenderAtlasData() 
+{
+    ImGui::Separator();
+    ImGui::Text("Atlas Data");
+    ImGui::Text("Add Atlas Data");
+
+    ImGui::InputText("AtlasName", AtlasName, sizeof(AtlasName));
+    
+    ImGui::PushItemWidth(75);
+    ImGui::DragInt("ColNum", &ColNum);
+    ImGui::SameLine(0, 37);
+    ImGui::DragInt("RowNum", &RowNum);
+    ImGui::DragInt("AtlasWidth", &AtlasWidth);
+    ImGui::SameLine();
+    ImGui::DragInt("AtlasHeight", &AtlasHeight);
+    ImGui::DragInt("TextureIndex", &TextureIndex);
+    ImGui::DragInt("TotalFrame", &TotalFrame);
+
+    if (ImGui::Button("Make New Atlas Data")) 
+    {
+        UAtlasInfo AtlasInfo = UAtlasInfo();
+        AtlasInfo.AtlasName = AtlasName;
+        AtlasInfo.ColNum = ColNum;
+        AtlasInfo.RowNum = RowNum;
+        AtlasInfo.AtlasWidth = AtlasWidth;
+        AtlasInfo.AtlasHeight = AtlasHeight;
+        AtlasInfo.TextureIndex = TextureIndex;
+        AtlasInfo.TotalFrame = TotalFrame;
+
+        if (JsonSaveHelper::SaveAtlasInfo(AtlasInfo)) 
+        {
+            AtlasSaveCondition = 1;
+        }
+        else 
+        {
+            AtlasSaveCondition = -1;
+        }
+        
+    }
+
+    if (AtlasSaveCondition == 1)
+    {
+        ImGui::SameLine();
+        ImGui::Text("Save Atlas Data Success!");
+    }
+    else if (AtlasSaveCondition == -1)
+    {
+        ImGui::SameLine();
+        ImGui::Text("Save Atlas Data Fail! Check AtlasName is Not Null");
+    }
+}
+
 void UI::RenderPropertyWindow()
 {
 
@@ -494,7 +556,7 @@ void UI::RenderPropertyWindow()
                 float LetterSpacing = TextActor->GetLetterSpacing();
 
                 if (ImGui::InputText("WorldTextStr", buffer, sizeof(buffer))) {
-                    TextActor->SetCharComps(buffer);
+                    TextActor->SetCharComps(buffer, "koverwatch.png");
                 }
 
                 if (ImGui::DragFloat("Text Letter Spacing", &LetterSpacing, 0.1f))

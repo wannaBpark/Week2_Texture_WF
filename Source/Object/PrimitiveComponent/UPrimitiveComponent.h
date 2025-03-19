@@ -126,7 +126,7 @@ public:
 		RenderResource.VertexConstantIndex = 4;
 		RenderResource.PixelConstantIndex = 4;
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(3);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(6);		// 0번째 Texture 사용 : box2.png [값이 없으면 초기화]
 		// shader 관련 index 지정 필요
 		
 	}
@@ -353,9 +353,10 @@ public:
 
 private:
 	char Character = 'a';
+	std::string AtlasName = "";
 
 public:
-	void SetChar(char InCharacter) { Character = InCharacter; }
+	void SetChar(char InCharacter, std::string InAtlasName) { Character = InCharacter; AtlasName = InAtlasName; }
 	char GetChar() const { return Character; }
 	FAtlasConstants AtlasConstantData;
 
@@ -428,11 +429,10 @@ public:
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
 		RenderResource.VertexShaderIndex = 2;				// 2 : Atlas Vertex Shader
-		RenderResource.PixelShaderIndex = 2;				// 2 : Atlas Pixel Shader		
+		RenderResource.PixelShaderIndex = 5;				// 2 : Atlas Pixel Shader		
 		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
 		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
 		RenderResource.bUseIndexBuffer = true;
-		RenderResource.ShaderResourceViewIndices.emplace().push_back(2);	// 
 	}
 
 	virtual ~USubUVComponent() = default;
@@ -441,11 +441,16 @@ public:
 		return EPrimitiveType::EPT_SubUV;
 	}
 
+	void AddTextureID(uint32 TextureID) {
+		RenderResource.ShaderResourceViewIndices.emplace().push_back(TextureID);	// 
+	}
+
 private:
 	char Frame = 0;
+	std::string AtlasName = "";
 
 public:
-	void SetFrame(int InFrame) { Frame = InFrame; }
+	void SetFrame(int InFrame, std::string InAtlasName) { Frame = InFrame; AtlasName = InAtlasName; }
 	int32 GetFrame() const { return Frame; }
 	FAtlasConstants AtlasConstantData;
 

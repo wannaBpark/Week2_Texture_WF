@@ -2,6 +2,7 @@
 #include "Debug/DebugConsole.h"
 #include "Core/Math/Vector.h"
 
+
 UTextAtlasManager::UTextAtlasManager()
 {
 
@@ -30,6 +31,60 @@ void UTextAtlasManager::SetMargin(int InMarginX, int InMarginY)
 {
 	MarginX = InMarginX;
 	MarginY = InMarginY;
+}
+
+FVector4 UTextAtlasManager::GetCharUV(char character, uint32 IndexNum)
+{
+    if (AtlasInfos.Num() < IndexNum) 
+    {
+        UE_LOG("UTextAtlasManager Invalid IndexNum!");
+        return FVector4();
+    }
+
+    UAtlasInfo AtlasInfo = AtlasInfos[IndexNum];
+    SetAtlasManager(AtlasInfo.AtlasWidth, AtlasInfo.AtlasHeight, AtlasInfo.ColNum, AtlasInfo.RowNum, 0, 0);
+    return GetCharUV(character);
+}
+
+FVector4 UTextAtlasManager::GetCharUV(char character, std::string AtlasName)
+{
+    UAtlasInfo AtlasInfo;
+    for (int i = 0; i < AtlasInfos.Num(); i++) 
+    {
+        if (AtlasInfos[i].AtlasName == AtlasName) 
+        {
+            AtlasInfo = UAtlasInfo(AtlasInfos[i]);
+            break;
+        }
+    }
+
+    if (AtlasInfo.AtlasName == "")
+    {
+        UE_LOG("UTextAtlasManager Invalid AtlasName!");
+        return FVector4();
+    }
+
+    SetAtlasManager(AtlasInfo.AtlasWidth, AtlasInfo.AtlasHeight, AtlasInfo.ColNum, AtlasInfo.RowNum, 0, 0);
+    return GetCharUV(character);
+}
+
+uint32 UTextAtlasManager::GetTextureIndex(std::string AtlasName)
+{
+    UAtlasInfo AtlasInfo;
+    for (int i = 0; i < AtlasInfos.Num(); i++) {
+        if (AtlasInfos[i].AtlasName == AtlasName) {
+            AtlasInfo = UAtlasInfo(AtlasInfos[i]);
+            break;
+        }
+    }
+
+    if (AtlasInfo.AtlasName == "")
+    {
+        UE_LOG("UTextAtlasManager Invalid AtlasName!");
+        return -1;
+    }
+
+    return AtlasInfo.TextureIndex;
 }
 
 FVector4 UTextAtlasManager::GetCharUV(char character)
@@ -66,4 +121,11 @@ FVector4 UTextAtlasManager::GetCharUV(char character)
     rect.W = static_cast<float>(y) / static_cast<float>(AtlasHeight);
 
     return rect;
+}
+
+void UTextAtlasManager::AddAtlasInfo(UAtlasInfo& InAtlasInfo)
+{
+    UAtlasInfo AtlasInfo = UAtlasInfo(InAtlasInfo);
+    
+    AtlasInfos.Add(AtlasInfo);
 }

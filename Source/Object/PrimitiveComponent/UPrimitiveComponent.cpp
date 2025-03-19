@@ -272,7 +272,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 void UCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
-	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
+	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar(), AtlasName);
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,
@@ -300,7 +300,7 @@ void UCharComp::UpdateConstantData(URenderer*& Renderer)
 void USubUVComponent::UpdateConstantData(URenderer*& Renderer)   // 빌보드도 추가
 {
 	FVector4 SzOffset;
-	SzOffset = USubUVManager::GetFrameUV(this->GetFrame());
+	SzOffset = USubUVManager::GetFrameUV(this->GetFrame(), AtlasName);
 	FAtlasConstants UpdateInfo{
 		this->GetComponentTransformMatrix(),
 		SzOffset,
