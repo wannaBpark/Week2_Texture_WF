@@ -493,18 +493,22 @@ void UI::RenderSceneManager()
 
             char buffer[64];
             sprintf_s(buffer, "%s(UUID: %d)", *actor->GetFName().ToString(), actor->GetUUID());
-            if (ImGui::TreeNode(buffer))
-                ImGui::TreePop();
+            bool nodeOpen = ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth);
 
-            if(ImGui::IsItemClicked()) APicker::SetSelectActor(actor->GetRootComponent());
-
-            ImGui::Indent();
-            for (auto component : actor->GetComponents()) {
-                ImGui::Text(*component->GetFName().ToString());
+            // 항목이 클릭되었는지 확인
+            if (ImGui::IsItemClicked()) {
+                APicker::SetSelectActor(actor->GetRootComponent());
             }
-            ImGui::Unindent();
-        }
 
+            if (nodeOpen) {
+                ImGui::Indent();
+                for (auto component : actor->GetComponents()) {
+                    ImGui::Text(*component->GetFName().ToString());
+                }
+                ImGui::Unindent();
+                ImGui::TreePop();
+            }
+        }
         ImGui::TreePop();
     }
 
