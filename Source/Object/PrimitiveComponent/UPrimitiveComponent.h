@@ -429,7 +429,7 @@ public:
 		RenderResource.Stride = sizeof(FPosColorNormalTex);
 		RenderResource.InputLayoutType = InputLayoutType::POSCOLORNORMALTEX;
 		RenderResource.VertexShaderIndex = 2;				// 2 : Atlas Vertex Shader
-		RenderResource.PixelShaderIndex = 2;				// 2 : Atlas Pixel Shader		
+		RenderResource.PixelShaderIndex = 5;				// 2 : Atlas Pixel Shader		
 		RenderResource.VertexConstantIndex = 3;				// 3 : Atlas Vertex Shader Constant Buffer		
 		RenderResource.PixelConstantIndex = -1;				// -1 : [No] PS CBuffer		
 		RenderResource.bUseIndexBuffer = true;
