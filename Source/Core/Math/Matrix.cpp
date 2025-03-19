@@ -222,7 +222,7 @@ FMatrix FMatrix::GetScaleMatrix(const FVector& InScale)
 }
 
 
-FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)  // 로드리게스 공식
+FMatrix FMatrix::GetRotateMatrix(const FQuat& Q) 
 {
 	// 쿼터니언 요소 추출
 	const float x = Q.X, y = Q.Y, z = Q.Z, w = Q.W;
