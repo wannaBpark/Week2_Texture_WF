@@ -376,7 +376,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp, FRenderResou
             }
         }
         DeviceContext->PSSetShaderResources(0, static_cast<UINT>(SRVArray.size()), SRVArray.data());
-        DeviceContext->PSSetSamplers(0, 1, &SamplerMap[0]);                                             // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
+        DeviceContext->PSSetSamplers(0, 1, SamplerMap[0].GetAddressOf());                                           // TODO : 샘플러 기본 1개로 설정되있는 것 각자 여러개 접근토록 바꿔야 함
     }
 	
 
