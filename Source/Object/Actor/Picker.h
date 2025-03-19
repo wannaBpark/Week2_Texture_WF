@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "Object/ObjectMacro.h"
 
+class UBoundingBoxComp;
+class UStringComponent;
 
 class APicker : public AActor
 {
@@ -26,4 +28,12 @@ private:
     UActorComponent* GetAcotrByPixelPicking(const POINT& pt);
     static void PickLocalGizmo(UActorComponent* actor);
     static void PickWorldGizmo();
+
+public:
+    UBoundingBoxComp* GetBoundingBoxComp() { return BoundingBoxComp; }
+    UStringComponent* GetStringComponent() { return StringComponent; }
+
+private:
+    UBoundingBoxComp* BoundingBoxComp;
+    UStringComponent* StringComponent;
 };

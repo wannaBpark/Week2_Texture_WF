@@ -326,12 +326,12 @@ public:
 
 
 
-class UWorldCharComp : public UPrimitiveComponent 
+class UCharComp : public UPrimitiveComponent 
 {
-	DECLARE_CLASS(UWorldCharComp, UPrimitiveComponent)
+	DECLARE_CLASS(UCharComp, UPrimitiveComponent)
 	using Super = UPrimitiveComponent;
 public:
-	UWorldCharComp() 
+	UCharComp() 
 	{
 		bCanBeRendered = true;
 		RenderResource.PrimitiveType = GetType();
@@ -345,7 +345,7 @@ public:
 		RenderResource.ShaderResourceViewIndices.emplace().push_back(1);	// TextAtlas 추가 필요
 	}
 
-	virtual ~UWorldCharComp() = default;
+	virtual ~UCharComp() = default;
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_WorldText;

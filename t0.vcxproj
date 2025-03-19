@@ -203,6 +203,7 @@
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\UClass.cpp" />
     <ClCompile Include="Source\Object\UtilComponent\UBillboardUtilComponent.cpp" />
+    <ClCompile Include="Source\Object\UtilComponent\UStringComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -337,6 +338,7 @@
     <ClInclude Include="Source\Object\ObjectMacro.h" />
     <ClInclude Include="Source\Object\UClass.h" />
     <ClInclude Include="Source\Object\UtilComponent\UBillboardUtilComponent.h" />
+    <ClInclude Include="Source\Object\UtilComponent\UStringComponent.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />

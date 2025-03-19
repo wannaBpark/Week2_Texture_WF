@@ -269,7 +269,7 @@ void UWorldGridComp::UpdateConstantData(URenderer*& Renderer)
 
 	Renderer->UpdateBuffer(ConstantData, RenderResource.VertexConstantIndex);
 }
-void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
+void UCharComp::UpdateConstantData(URenderer*& Renderer)
 {
 	FVector4 SzOffset;
 	SzOffset = UTextAtlasManager::GetCharUV(this->GetChar());
@@ -289,7 +289,7 @@ void UWorldCharComp::UpdateConstantData(URenderer*& Renderer)
 			* FMatrix::Transpose(WorldPosition);
 	}
 	else {
-		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, GetOwner()->GetRootComponent(), this->RelativeTransform.GetPosition().Y);
+		MVP = UBillboardUtilComponent::GetBillboardMVPMatForText(Renderer, Parent, this->RelativeTransform.GetPosition().Y);
 
 	}
 

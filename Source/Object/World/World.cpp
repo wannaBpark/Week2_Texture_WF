@@ -12,6 +12,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/WorldText.h"
+#include "Object/Gizmo/Axis.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Core/FSceneManager.h" 
@@ -132,11 +133,17 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		{
 			continue; // Grid 렌더링 비활성화
 		}
-		if ((showFlagMask & EShowFlag::Primitive) == 0 && dynamic_cast<UPrimitiveComponent*>(RenderComponent) != nullptr)
+		if ((showFlagMask & EShowFlag::Primitive) == 0 
+			&& RenderComponent->GetOwner()->GetClass() != AAxis::StaticClass()
+			&& RenderComponent->GetClass() != UBoundingBoxComp::StaticClass())
 		{
 			continue; // Primitive 렌더링 비활성화
+			// 기본적으로 RenderComponent는 PrimitiveComponent이므로
+			// AAxis는 예외
+			// BoundingBox 예외
+			// Text는 AWorldText의 Tick에서 처리
 		}
-		if ((showFlagMask & EShowFlag::BoundingBox) == 0 && dynamic_cast<UBoundingBoxComp*>(RenderComponent) != nullptr)
+		if ((showFlagMask & EShowFlag::BoundingBox) == 0 && RenderComponent->GetClass() == UBoundingBoxComp::StaticClass())
 		{
 			continue; // Bounding Box
 		}

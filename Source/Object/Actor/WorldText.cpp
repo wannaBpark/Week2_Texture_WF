@@ -5,7 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/FSceneManager.h"
 #include "Debug/DebugConsole.h"
-
+#include "Object/UtilComponent/UStringComponent.h"
 
 
 AWorldText::AWorldText()
@@ -13,8 +13,8 @@ AWorldText::AWorldText()
 
 	bCanEverTick = true;
 
-	USceneComponent* SceneComponent = AddComponent<USceneComponent>();
-	RootComponent = SceneComponent;
+	StringComponent = AddComponent<UStringComponent>();
+	RootComponent = StringComponent;
 
 }
 
@@ -34,15 +34,6 @@ void AWorldText::Tick(float DeltaTime)
 		RootTr.Translate(FVector(0, 0, 1));
 		SetActorTransform(RootTr); 
 	}
-	int32 num = CharComps.Num();
-
-	if (((FSceneManager::Get().GetShowFlagMask() & EShowFlag::Text) != 0) && ((FSceneManager::Get().GetShowFlagMask() & EShowFlag::Primitive) != 0))
-	{
-		for (int32 i = 0; i < num; i++)
-		{
-			CharComps[i].Render();
-		}
-	}
 }
 
 const char* AWorldText::GetTypeName()
@@ -50,70 +41,35 @@ const char* AWorldText::GetTypeName()
 	return "WorldText";
 }
 
+
 void AWorldText::ClearCharComps()
 {
-	int32 num = CharComps.Num();
-	for (int32 i = 0; i < num; i++) 
-	{
-		CharComps[i].EndPlay(EEndPlayReason::Destroyed);
-	}
-	CharComps.Empty();
+	StringComponent->ClearCharComps();
 }
 
 void AWorldText::SetCharComps(std::string InText)
 {
-	if (CharComps.Num() == InText.size()) {
-		for (int i = 0; i < CharComps.Num(); i++) {
-			CharComps[i].SetChar(InText[i]);
-		}
-		return;
-	}
-
-	ClearCharComps();
-
-	if (InText.size() == 0)
-		return;
-	float TextSize = static_cast<float>(InText.size());
-	float Middle = (TextSize + (TextSize - 1.0f) * LetterSpacing) / 2.0f;
-	for (int32 i = 0; i < InText.size(); i++)
-	{
-		UWorldCharComp CharComponent = UWorldCharComp();
-		CharComponent.SetupAttachment(RootComponent);
-		CharComponent.SetOwner(this);
-		CharComponent.SetRelativeTransform(
-			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
-				FQuat(0, 0, 0, 1),
-				FVector(1, 1, 1)));
-		CharComponent.SetChar(InText[i]);
-		CharComps.Add(CharComponent);
-	}
+	StringComponent->SetCharComps(InText);
 }
 
 float AWorldText::GetLetterSpacing()
 {
-	return LetterSpacing;
+	return StringComponent->GetLetterSpacing();
 }
 
 // !!!!! 현재 코드상 SetTexComp 전에 불러야 함!
 void AWorldText::SetLetterSpacing(float InLetterSpacing)
 {
-	LetterSpacing = InLetterSpacing;
+	StringComponent->SetLetterSpacing(InLetterSpacing);
 }
 
 void AWorldText::SetActive(bool bActive)
 {
 	bIsActive = bActive;
-	for (int32 i = 0; i < CharComps.Num(); i++)
-	{
-		CharComps[i].SetCanBeRendered(bIsActive);
-	}
+	StringComponent->SetActive(bActive);
 }
 
 void AWorldText::SetUseBillboardUtil(bool bUse)
 {
-	bUseBillboardUtil = bUse;
-	for (int32 i = 0; i < CharComps.Num(); i++)
-	{
-		CharComps[i].SetUseBillboardUtil(bUse);
-	}
+	StringComponent->SetUseBillboardUtil(bUse);
 }
