@@ -128,7 +128,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 			continue;
 		}
 
-		if ((showFlagMask & EShowFlag::Grid) == 0 && dynamic_cast<AWorldGrid*>(RenderComponent->GetOwner()) != nullptr)
+		if ((showFlagMask & EShowFlag::Grid) == 0 && RenderComponent->GetOwner()->GetClass() == AWorldGrid::StaticClass())
 		{
 			continue; // Grid 렌더링 비활성화
 		}
