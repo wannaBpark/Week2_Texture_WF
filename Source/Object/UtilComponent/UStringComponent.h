@@ -25,7 +25,7 @@ public:
 	void SetLetterSpacing(float InLetterSpacing);
 
 	void SetActive(bool bActive);
-	TArray<UCharComp> CharComps;
+	TArray<UCharComp*> CharComps;
 
 private:
 	bool bIsActive = false;

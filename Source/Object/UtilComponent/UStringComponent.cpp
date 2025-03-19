@@ -23,7 +23,7 @@ void UStringComponent::Tick(float DeltaTime)
 	{
 		for (int32 i = 0; i < num; i++)
 		{
-			CharComps[i].Render();
+			CharComps[i]->Render();
 		}
 	}
 }
@@ -33,7 +33,7 @@ void UStringComponent::ClearCharComps()
 	uint32 num = CharComps.Num();
 	for (uint32 i = 0; i < num; i++) 
 	{
-		CharComps[i].EndPlay(EEndPlayReason::Destroyed);
+		CharComps[i]->EndPlay(EEndPlayReason::Destroyed);
 	}
 	CharComps.Empty();
 }
@@ -44,7 +44,7 @@ void UStringComponent::SetCharComps(std::string InText)
 	{
 		for (uint32 i = 0; i < CharComps.Num(); i++) 
 		{
-			CharComps[i].SetChar(InText[i]);
+			CharComps[i]->SetChar(InText[i]);
 		}
 		return;
 	}
@@ -57,14 +57,14 @@ void UStringComponent::SetCharComps(std::string InText)
 	float Middle = (TextSize + (TextSize - 1.0f) * LetterSpacing) / 2.0f;
 	for (int32 i = 0; i < InText.size(); i++)
 	{
-		UCharComp CharComponent = UCharComp();
-		CharComponent.Parent = this;
-		CharComponent.SetOwner(GetOwner());
-		CharComponent.SetRelativeTransform(
+		UCharComp* CharComponent = FObjectFactory::ConstructObject<UCharComp>();
+		CharComponent->Parent = this;
+		CharComponent->SetOwner(GetOwner());
+		CharComponent->SetRelativeTransform(
 			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
 				FQuat(0, 0, 0, 1),
 				FVector(1, 1, 1)));
-		CharComponent.SetChar(InText[i]);
+		CharComponent->SetChar(InText[i]);
 		CharComps.Add(CharComponent);
 	}
 }
@@ -74,7 +74,7 @@ std::string UStringComponent::GetString()
 	std::string CharString = "";
 	for (uint32 i = 0; i < CharComps.Num(); i++) 
 	{
-		CharString += CharComps[i].GetChar();
+		CharString += CharComps[i]->GetChar();
 	}
 
 	return CharString;
@@ -96,7 +96,7 @@ void UStringComponent::SetLetterSpacing(float InLetterSpacing)
 	float Middle = (TextSize + (TextSize - 1.0f) * LetterSpacing) / 2.0f;
 	for (uint32 i = 0; i < CharComps.Num(); i++)
 	{
-		CharComps[i].SetRelativeTransform(
+		CharComps[i]->SetRelativeTransform(
 			FTransform(FVector(0.f, -Middle + 0.5f + static_cast<float>(i) * (1 + LetterSpacing), 0.f),
 				FQuat(0, 0, 0, 1),
 				FVector(1, 1, 1)));
@@ -109,7 +109,7 @@ void UStringComponent::SetActive(bool bActive)
 	bIsActive = bActive;
 	for (uint32 i = 0; i < CharComps.Num(); i++) 
 	{
-		CharComps[i].SetCanBeRendered(bIsActive);
+		CharComps[i]->SetCanBeRendered(bIsActive);
 	}
 }
 
@@ -118,7 +118,7 @@ void UStringComponent::SetUseBillboardUtil(bool bUse)
 	bUseBillboardUtil = bUse;
 	for (uint32 i = 0; i < CharComps.Num(); i++) 
 	{
-		CharComps[i].SetUseBillboardUtil(bUse);
+		CharComps[i]->SetUseBillboardUtil(bUse);
 	}
 }
 

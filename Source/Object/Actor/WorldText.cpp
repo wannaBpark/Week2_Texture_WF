@@ -6,6 +6,9 @@
 #include "Core/FSceneManager.h"
 #include "Debug/DebugConsole.h"
 #include "Object/UtilComponent/UStringComponent.h"
+#include <Object/ActorComponent/Colliders/UBoxCollider.h>
+#include <Core/Engine.h>
+#include <Object/World/World.h>
 
 
 AWorldText::AWorldText()
@@ -16,6 +19,9 @@ AWorldText::AWorldText()
 	StringComponent = AddComponent<UStringComponent>();
 	RootComponent = StringComponent;
 
+	hitCollider = AddComponent<UBoxCollider>();
+	UEngine::Get().GetWorld()->AddColliderComponent(hitCollider);
+	hitCollider->SetupAttachment(RootComponent);
 }
 
 void AWorldText::BeginPlay()
@@ -49,6 +55,12 @@ void AWorldText::ClearCharComps()
 
 void AWorldText::SetCharComps(std::string InText)
 {
+	float YScale = 1.0f;
+	uint32 TextSize = InText.size();
+	if (TextSize) {
+		YScale = TextSize + (GetLetterSpacing() * (TextSize - 1));
+	}
+	hitCollider->RelativeTransform.SetScale(FVector(1.0f, YScale, 1.0f));
 	StringComponent->SetCharComps(InText);
 }
 
