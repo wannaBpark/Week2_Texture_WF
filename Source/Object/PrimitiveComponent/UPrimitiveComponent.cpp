@@ -179,7 +179,7 @@ void UPrimitiveComponent::UpdateLightConstantData(URenderer*& Renderer)
 
 	if (BillboardUtil != nullptr) {
 		LightConstantData.Model = FMatrix::Transpose(MVP.Model);
-		LightConstantData.View = FMatrix::Transpose(MVP.View);
+		LightConstantData.View = FMatrix::Transpose(MVP.View); 
 		LightConstantData.Projection = FMatrix::Transpose(MVP.Projection);
 	}
 
